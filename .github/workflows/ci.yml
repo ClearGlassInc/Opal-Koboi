@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Repository health check
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f README.md
+          echo "README.md found."
+          echo "Repository validation passed."
+
+      - name: Validate HTML files
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t html_files < <(find . -type f -name '*.html' -not -path './.git/*')
+          if [ "${#html_files[@]}" -eq 0 ]; then
+            echo "No HTML files found. Skipping HTML validation."
+          else
+            python - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          import sys
+
+          class Parser(HTMLParser):
+              pass
+
+          failed = False
+          for path in Path('.').rglob('*.html'):
+              if '.git' in path.parts:
+                  continue
+              try:
+                  Parser().feed(path.read_text(encoding='utf-8'))
+                  print(f'OK {path}')
+              except Exception as exc:
+                  failed = True
+                  print(f'ERROR {path}: {exc}')
+          sys.exit(1 if failed else 0)
+          PY
+          fi

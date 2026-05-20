@@ -1,3 +1,4 @@
+#! /usr/bin/env node
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createOperationPlan, defaultMission, formatPlan, runOperation, EnterpriseAutomationPlatform } from '../src/index.js';

@@ -1,8 +1,6 @@
-name: Deploy Python project to Azure Function App
+name: Azure Function App Deploy
 
 on:
-  push:
-    branches: ["main"]
   workflow_dispatch:
 
 permissions:
@@ -12,85 +10,26 @@ concurrency:
   group: azure-functions-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: "."
-  PYTHON_VERSION: "3.11"
-
 jobs:
-  build-and-deploy:
-    name: build-and-deploy
+  validate-configuration:
+    name: validate-configuration
     runs-on: ubuntu-latest
-    environment: dev
-
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v5
 
-      - name: Detect Azure Functions project
-        id: detect
+      - name: Inspect Azure Functions project files
         shell: bash
         run: |
           set -euo pipefail
-          PACKAGE_PATH="${AZURE_FUNCTIONAPP_PACKAGE_PATH}"
-
-          if [ -f "${PACKAGE_PATH}/host.json" ] && find "${PACKAGE_PATH}" -name function.json -print -quit | grep -q .; then
-            echo "has_function_app=true" >> "$GITHUB_OUTPUT"
-            echo "Azure Functions project detected."
+          if [ -f host.json ] && find . -name function.json -print -quit | grep -q .; then
+            echo "Azure Functions project files detected."
           else
-            echo "has_function_app=false" >> "$GITHUB_OUTPUT"
-            echo "No Azure Functions project detected. Deployment will be skipped cleanly."
+            echo "No Azure Functions project files detected."
+            echo "This workflow is intentionally manual and non-deploying until host.json, function.json, AZURE_FUNCTIONAPP_NAME, and AZURE_FUNCTIONAPP_PUBLISH_PROFILE are configured."
           fi
 
-      - name: Setup Python
-        if: steps.detect.outputs.has_function_app == 'true'
-        uses: actions/setup-python@v6
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: Resolve Python dependencies
-        if: steps.detect.outputs.has_function_app == 'true'
+      - name: Configuration result
         shell: bash
         run: |
-          set -euo pipefail
-          pushd "${AZURE_FUNCTIONAPP_PACKAGE_PATH}"
-          python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then
-            pip install -r requirements.txt --target=".python_packages/lib/site-packages"
-          else
-            echo "No requirements.txt found. Continuing without dependency installation."
-          fi
-          popd
-
-      - name: Skip Azure deployment when project files are absent
-        if: steps.detect.outputs.has_function_app != 'true'
-        shell: bash
-        run: |
-          echo "This repository does not currently contain host.json and function.json files."
-          echo "Result: workflow passes instead of failing on a starter-template deploy."
-
-      - name: Validate Azure deployment configuration
-        if: steps.detect.outputs.has_function_app == 'true'
-        shell: bash
-        env:
-          AZURE_FUNCTIONAPP_NAME: ${{ vars.AZURE_FUNCTIONAPP_NAME }}
-          AZURE_FUNCTIONAPP_PUBLISH_PROFILE: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
-        run: |
-          set -euo pipefail
-          if [ -z "${AZURE_FUNCTIONAPP_NAME}" ]; then
-            echo "AZURE_FUNCTIONAPP_NAME repository variable is missing."
-            exit 1
-          fi
-          if [ -z "${AZURE_FUNCTIONAPP_PUBLISH_PROFILE}" ]; then
-            echo "AZURE_FUNCTIONAPP_PUBLISH_PROFILE repository secret is missing."
-            exit 1
-          fi
-
-      - name: Deploy to Azure Functions
-        if: steps.detect.outputs.has_function_app == 'true'
-        uses: Azure/functions-action@v1.5.6
-        with:
-          app-name: ${{ vars.AZURE_FUNCTIONAPP_NAME }}
-          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
-          scm-do-build-during-deployment: true
-          enable-oryx-build: true
+          echo "Azure deployment is disabled by design for this repository until real Azure Function app configuration exists."

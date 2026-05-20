@@ -16,46 +16,29 @@ concurrency:
 
 jobs:
   validate:
-    name: validate
+    name: validate-enterprise-platform
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Repository health check
-        shell: bash
-        run: |
-          set -euo pipefail
-          test -f README.md
-          echo "README.md found."
-          echo "Repository validation passed."
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
 
-      - name: Validate HTML files
-        shell: bash
-        run: |
-          set -euo pipefail
-          mapfile -t html_files < <(find . -type f -name '*.html' -not -path './.git/*')
-          if [ "${#html_files[@]}" -eq 0 ]; then
-            echo "No HTML files found. Skipping HTML validation."
-          else
-            python - <<'PY'
-          from html.parser import HTMLParser
-          from pathlib import Path
-          import sys
+      - name: Install dependencies
+        run: npm ci
 
-          class Parser(HTMLParser):
-              pass
+      - name: Run platform tests
+        run: npm test
 
-          failed = False
-          for path in Path('.').rglob('*.html'):
-              if '.git' in path.parts:
-                  continue
-              try:
-                  Parser().feed(path.read_text(encoding='utf-8'))
-                  print(f'OK {path}')
-              except Exception as exc:
-                  failed = True
-                  print(f'ERROR {path}: {exc}')
-          sys.exit(1 if failed else 0)
-          PY
-          fi
+      - name: Build platform package
+        run: npm run build
+
+      - name: Run dashboard command
+        run: npm run dashboard
+
+      - name: Run orchestration command
+        run: npm run orchestrate

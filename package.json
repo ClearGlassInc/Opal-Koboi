@@ -6,6 +6,13 @@
   "license": "MIT",
   "author": "ClearGlass Inc.",
   "homepage": "https://clearglassinc.github.io/opal/",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "bin": {
+    "opal-koboi": "./bin/opal-koboi.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ClearGlassInc/Opal-Koboi.git"
@@ -25,8 +32,12 @@
     "node": ">=20"
   },
   "scripts": {
+    "start": "node bin/opal-koboi.js status",
+    "opal": "node bin/opal-koboi.js",
+    "plan": "node bin/opal-koboi.js plan",
+    "run": "node bin/opal-koboi.js run",
     "validate": "node scripts/validate-package.mjs",
-    "test": "npm run validate",
+    "test": "npm run validate && node test/opal-koboi.test.mjs",
     "build": "node scripts/build-package.mjs",
     "ci": "npm test && npm run build",
     "prepack": "npm run ci"
@@ -34,6 +45,7 @@
   "files": [
     "README.md",
     "LICENSE*",
+    "bin/**/*",
     "docs/**/*",
     "src/**/*",
     "dist/**/*",

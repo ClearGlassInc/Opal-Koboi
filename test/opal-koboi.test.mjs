@@ -1,5 +1,14 @@
 import assert from 'node:assert/strict';
-import { createOperationPlan, runOperation, scoreTask, classifyPriority } from '../src/index.js';
+import {
+  AuditLedger,
+  EnterpriseAutomationPlatform,
+  PolicyEngine,
+  WorkflowEngine,
+  classifyPriority,
+  createOperationPlan,
+  runOperation,
+  scoreTask
+} from '../src/index.js';
 
 const task = {
   title: 'Deploy ClearGlass automation layer',
@@ -27,4 +36,30 @@ assert.equal(result.ok, true);
 assert.equal(result.program, 'opal-koboi');
 assert.equal(result.message.includes('Deploy ClearGlass automation layer'), true);
 
-console.log('Opal-Koboi runtime tests passed.');
+const audit = new AuditLedger();
+audit.add('test.event', { ok: true });
+assert.equal(audit.all().length, 1);
+
+const policy = new PolicyEngine();
+const policyResult = policy.evaluatePlan(plan);
+assert.equal(policyResult.allowed, true);
+
+const workflow = new WorkflowEngine({ audit, policy });
+const workflowResult = workflow.run({
+  name: 'Test Workflow',
+  steps: [
+    { type: 'note', name: 'intake', message: 'ready' },
+    { type: 'plan', name: 'planning', input: { mission: 'Workflow mission', tasks: [task] } },
+    { type: 'metric', name: 'readiness', value: 90, minimum: 75 },
+    { type: 'gate', name: 'approval', allow: true }
+  ]
+});
+assert.equal(workflowResult.ok, true);
+assert.equal(workflowResult.results.length, 4);
+
+const platform = new EnterpriseAutomationPlatform();
+const dashboard = platform.dashboard({ mission: 'Dashboard mission', tasks: [task] });
+assert.equal(dashboard.platform, 'Opal-Koboi');
+assert.equal(dashboard.health, 'green');
+
+console.log('Opal-Koboi enterprise platform tests passed.');

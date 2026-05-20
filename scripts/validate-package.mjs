@@ -4,7 +4,7 @@ import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const pkg = require('../package.json');
 
-const requiredFields = ['name', 'version', 'description', 'license', 'scripts'];
+const requiredFields = ['name', 'version', 'description', 'license', 'scripts', 'main', 'bin', 'exports'];
 const missingFields = requiredFields.filter((field) => !pkg[field]);
 
 if (missingFields.length > 0) {
@@ -21,6 +21,18 @@ if (!/^\d+\.\d+\.\d+/.test(pkg.version)) {
 
 if (!existsSync('README.md')) {
   throw new Error('README.md is required before package publishing.');
+}
+
+if (!existsSync('src/index.js')) {
+  throw new Error('src/index.js is required for the runtime library.');
+}
+
+if (!existsSync('bin/opal-koboi.js')) {
+  throw new Error('bin/opal-koboi.js is required for the command line program.');
+}
+
+if (!existsSync('test/opal-koboi.test.mjs')) {
+  throw new Error('test/opal-koboi.test.mjs is required for runtime verification.');
 }
 
 const readme = readFileSync('README.md', 'utf8');

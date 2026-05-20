@@ -1,0 +1,45 @@
+{
+  "name": "@clearglassinc/opal-koboi",
+  "version": "2.0.0",
+  "description": "ClearGlass Inc. advanced automation layer for operational intelligence, workflow control, and disciplined execution.",
+  "type": "module",
+  "license": "MIT",
+  "author": "ClearGlass Inc.",
+  "homepage": "https://clearglassinc.github.io/opal/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ClearGlassInc/Opal-Koboi.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ClearGlassInc/Opal-Koboi/issues"
+  },
+  "keywords": [
+    "clearglass",
+    "opal-koboi",
+    "automation",
+    "operations",
+    "intelligence",
+    "workflow-control"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "validate": "node scripts/validate-package.mjs",
+    "test": "npm run validate",
+    "build": "node scripts/build-package.mjs",
+    "ci": "npm test && npm run build",
+    "prepack": "npm run ci"
+  },
+  "files": [
+    "README.md",
+    "LICENSE*",
+    "docs/**/*",
+    "src/**/*",
+    "dist/**/*",
+    "package.json"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

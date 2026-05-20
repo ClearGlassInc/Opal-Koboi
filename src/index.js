@@ -37,11 +37,7 @@ const DEFAULT_TASKS = Object.freeze([
 
 export function clampScore(value) {
   const number = Number(value);
-
-  if (!Number.isFinite(number)) {
-    return 0;
-  }
-
+  if (!Number.isFinite(number)) return 0;
   return Math.max(0, Math.min(100, Math.round(number)));
 }
 
@@ -50,19 +46,12 @@ export function scoreTask(task, weights = DEFAULT_WEIGHTS) {
   const urgency = clampScore(task.urgency);
   const confidence = clampScore(task.confidence ?? 70);
   const effort = clampScore(task.effort ?? 50);
-
-  const score =
-    impact * weights.impact +
-    urgency * weights.urgency +
-    confidence * weights.confidence +
-    (100 - effort) * weights.effort;
-
+  const score = impact * weights.impact + urgency * weights.urgency + confidence * weights.confidence + (100 - effort) * weights.effort;
   return clampScore(score);
 }
 
 export function classifyPriority(score) {
   const normalized = clampScore(score);
-
   if (normalized >= 80) return 'critical';
   if (normalized >= 65) return 'high';
   if (normalized >= 45) return 'medium';
@@ -70,18 +59,11 @@ export function classifyPriority(score) {
 }
 
 export function normalizeTask(task, index = 0) {
-  if (!task || typeof task !== 'object') {
-    throw new TypeError(`Task at index ${index} must be an object.`);
-  }
-
+  if (!task || typeof task !== 'object') throw new TypeError(`Task at index ${index} must be an object.`);
   const title = String(task.title ?? task.name ?? '').trim();
-  if (!title) {
-    throw new Error(`Task at index ${index} is missing a title.`);
-  }
-
+  if (!title) throw new Error(`Task at index ${index} is missing a title.`);
   const id = String(task.id ?? title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || `task-${index + 1}`);
   const score = scoreTask(task);
-
   return {
     id,
     title,
@@ -102,11 +84,8 @@ export function createOperationPlan(input = {}) {
   const normalizedTasks = tasks.map(normalizeTask).sort((a, b) => b.score - a.score || b.urgency - a.urgency);
   const critical = normalizedTasks.filter((task) => task.priority === 'critical').length;
   const high = normalizedTasks.filter((task) => task.priority === 'high').length;
-  const averageScore = normalizedTasks.length
-    ? clampScore(normalizedTasks.reduce((sum, task) => sum + task.score, 0) / normalizedTasks.length)
-    : 0;
+  const averageScore = normalizedTasks.length ? clampScore(normalizedTasks.reduce((sum, task) => sum + task.score, 0) / normalizedTasks.length) : 0;
   const nextAction = normalizedTasks[0] ?? null;
-
   return {
     mission,
     generatedAt: new Date().toISOString(),
@@ -124,38 +103,29 @@ export function createOperationPlan(input = {}) {
 
 export function formatPlan(plan) {
   const lines = [];
-
   lines.push(`Opal-Koboi Mission: ${plan.mission}`);
   lines.push(`Posture: ${plan.summary.posture}`);
   lines.push(`Average Score: ${plan.summary.averageScore}`);
   lines.push(`Tasks: ${plan.summary.totalTasks} | Critical: ${plan.summary.critical} | High: ${plan.summary.high}`);
-
   if (plan.nextAction) {
     lines.push('');
     lines.push(`Next Action: [${plan.nextAction.priority.toUpperCase()}] ${plan.nextAction.title}`);
     lines.push(`Owner: ${plan.nextAction.owner} | Score: ${plan.nextAction.score}`);
   }
-
   lines.push('');
   lines.push('Ranked Tasks:');
-  for (const [index, task] of plan.tasks.entries()) {
-    lines.push(`${index + 1}. ${task.title} — ${task.priority} (${task.score})`);
-  }
-
+  for (const [index, task] of plan.tasks.entries()) lines.push(`${index + 1}. ${task.title} — ${task.priority} (${task.score})`);
   return lines.join('\n');
 }
 
 export function runOperation(input = {}) {
   const plan = createOperationPlan(input);
-
   return {
     ok: true,
     program: 'opal-koboi',
-    version: '2.0.0',
+    version: '2.1.0',
     plan,
-    message: plan.nextAction
-      ? `Execute next: ${plan.nextAction.title}`
-      : 'No tasks available.'
+    message: plan.nextAction ? `Execute next: ${plan.nextAction.title}` : 'No tasks available.'
   };
 }
 
@@ -163,3 +133,5 @@ export const defaultMission = Object.freeze({
   mission: 'Opal-Koboi Advanced Automation',
   tasks: DEFAULT_TASKS
 });
+
+export { AuditLedger, PolicyEngine, WorkflowEngine, EnterpriseAutomationPlatform } from './platform.js';

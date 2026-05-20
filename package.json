@@ -1,7 +1,7 @@
 {
   "name": "@clearglassinc/opal-koboi",
-  "version": "2.0.0",
-  "description": "ClearGlass Inc. advanced automation layer for operational intelligence, workflow control, and disciplined execution.",
+  "version": "2.1.0",
+  "description": "ClearGlass Inc. enterprise automation platform for mission planning, workflow orchestration, policy control, audit logging, and operational intelligence.",
   "type": "module",
   "license": "MIT",
   "author": "ClearGlass Inc.",
@@ -24,22 +24,30 @@
     "clearglass",
     "opal-koboi",
     "automation",
+    "orchestration",
     "operations",
     "intelligence",
-    "workflow-control"
+    "workflow-control",
+    "audit",
+    "policy",
+    "enterprise"
   ],
   "engines": {
     "node": ">=20"
   },
   "scripts": {
-    "start": "node bin/opal-koboi.js status",
+    "start": "node bin/opal-koboi.js dashboard examples/mission.json",
     "opal": "node bin/opal-koboi.js",
-    "plan": "node bin/opal-koboi.js plan",
-    "run": "node bin/opal-koboi.js run",
+    "status": "node bin/opal-koboi.js status",
+    "plan": "node bin/opal-koboi.js plan examples/mission.json",
+    "run": "node bin/opal-koboi.js run examples/mission.json",
+    "orchestrate": "node bin/opal-koboi.js orchestrate examples/workflow.json",
+    "dashboard": "node bin/opal-koboi.js dashboard examples/mission.json",
     "validate": "node scripts/validate-package.mjs",
     "test": "npm run validate && node test/opal-koboi.test.mjs",
     "build": "node scripts/build-package.mjs",
     "ci": "npm test && npm run build",
+    "demo": "npm run dashboard && npm run orchestrate",
     "prepack": "npm run ci"
   },
   "files": [
@@ -48,6 +56,7 @@
     "bin/**/*",
     "docs/**/*",
     "src/**/*",
+    "examples/**/*",
     "dist/**/*",
     "package.json"
   ],

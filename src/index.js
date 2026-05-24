@@ -62,7 +62,9 @@ export function normalizeTask(task, index = 0) {
   if (!task || typeof task !== 'object') throw new TypeError(`Task at index ${index} must be an object.`);
   const title = String(task.title ?? task.name ?? '').trim();
   if (!title) throw new Error(`Task at index ${index} is missing a title.`);
-  const id = String(task.id ?? title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || `task-${index + 1}`);
+  const id = String(
+    task.id ?? (title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || `task-${index + 1}`)
+  );
   const score = scoreTask(task);
   return {
     id,

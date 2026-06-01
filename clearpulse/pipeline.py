@@ -112,6 +112,9 @@ class ClearPulsePipeline:
                 alert_type="UNENCRYPTED_PHI",
                 severity=severity_from_findings(count),
                 summary=f"{count} unencrypted identifier(s) found in {file_path}",
+                # Per-file dedup identity: distinct files stay distinct, while a
+                # re-scan of the same file within the window still collapses.
+                trace_id=f"phi:{file_path}",
                 payload={"file_path": file_path, "match_count": count},
             ))
             if alert is not None:

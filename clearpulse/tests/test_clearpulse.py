@@ -219,6 +219,24 @@ class IngestionTests(unittest.TestCase):
         # Trailing 'Z' parsed as UTC.
         self.assertEqual(facts[0].service_start.tzinfo, UTC)
 
+    def test_parse_raw_fhir_procedure_bundle(self):
+        # Procedure.performer is a LIST of components wrapping actor.reference.
+        bundle = {
+            "resourceType": "Bundle",
+            "entry": [{"resource": {
+                "resourceType": "Procedure",
+                "subject": {"reference": "Patient/P-9912"},
+                "performer": [{"actor": {"reference": "Practitioner/DR-442"}}],
+                "code": {"coding": [{"code": "73721"}]},
+                "performedPeriod": {"start": "2026-06-01T09:00:00Z",
+                                    "end": "2026-06-01T09:45:00Z"},
+            }}],
+        }
+        facts = parse_encounter_bundle(bundle)
+        self.assertEqual(facts[0].patient_id, "P-9912")
+        self.assertEqual(facts[0].provider_id, "DR-442")
+        self.assertEqual(facts[0].cpt_code, "73721")
+
 
 class PipelineTests(unittest.TestCase):
     def test_billing_collision_raises_alert(self):
@@ -253,6 +271,17 @@ class PipelineTests(unittest.TestCase):
             alerts = ClearPulsePipeline().scan_paths([tmp])
         self.assertTrue(alerts)
         self.assertEqual(alerts[0].alert_type, "UNENCRYPTED_PHI")
+
+    def test_scan_multiple_files_are_not_deduped(self):
+        from clearpulse.pipeline import ClearPulsePipeline
+
+        with tempfile.TemporaryDirectory() as tmp:
+            for name in ("a.csv", "b.csv"):
+                with open(os.path.join(tmp, name), "w", encoding="utf-8") as fh:
+                    fh.write("ssn\n123-45-6789\n")
+            alerts = ClearPulsePipeline().scan_paths([tmp])
+        # Distinct files must each yield their own alert (per-file dedup key).
+        self.assertEqual(len({a.payload["file_path"] for a in alerts}), 2)
 
 
 if __name__ == "__main__":

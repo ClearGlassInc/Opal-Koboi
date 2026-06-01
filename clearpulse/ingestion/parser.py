@@ -78,9 +78,25 @@ def _normalise_bundle(bundle: dict[str, Any]) -> dict[str, Any]:
 
 
 def _ref_id(ref: Any) -> Optional[str]:
+    """Resolve a logical id from a FHIR reference, performer list, or actor wrap.
+
+    Handles the common shapes: a plain ``Reference`` dict, a ``Procedure``
+    ``performer`` list whose entries wrap the reference under ``actor``, and a
+    ``Claim`` single-provider ``Reference``.
+    """
+    if isinstance(ref, list):
+        for item in ref:
+            resolved = _ref_id(item)
+            if resolved:
+                return resolved
+        return None
     if isinstance(ref, dict):
+        if "actor" in ref:
+            return _ref_id(ref["actor"])
         reference = ref.get("reference", "")
-        return reference.split("/")[-1] if reference else ref.get("id")
+        if reference:
+            return reference.split("/")[-1]
+        return ref.get("id")
     return None
 
 

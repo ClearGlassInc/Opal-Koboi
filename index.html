@@ -1,707 +1,429 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>CLEARGLASS Guardian Command Nexus Specification</title>
-  <style>
-    code{white-space: pre-wrap;}
-    span.smallcaps{font-variant: small-caps;}
-    div.columns{display: flex; gap: min(4vw, 1.5em);}
-    div.column{flex: auto; overflow-x: auto;}
-    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    /* The extra [class] is a hack that increases specificity enough to
-       override a similar rule in reveal.js */
-    ul.task-list[class]{list-style: none;}
-    ul.task-list li input[type="checkbox"] {
-      font-size: inherit;
-      width: 0.8em;
-      margin: 0 0.8em 0.2em -1.6em;
-      vertical-align: middle;
-    }
-    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
-  </style>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="dark" />
+  <title>CLEARGLASS // SENTINEL — Command Console</title>
+  <meta name="description" content="SENTINEL is ClearGlass Inc.'s defense-grade command console — an operational control layer for autonomous intelligence systems. Real-time oversight, predictive routing, and audited automation." />
+  <meta name="theme-color" content="#04060b" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="CLEARGLASS // SENTINEL Command Console" />
+  <meta property="og:description" content="A defense-grade operational control layer for elite AI systems." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="assets/css/console.css" />
 </head>
 <body>
-<header id="title-block-header">
-<h1 class="title">CLEARGLASS Guardian Command Nexus Specification</h1>
-</header>
-<h1 id="spec1-clearglass-guardian-command-nexus">SPEC‑1: CLEARGLASS
-Guardian Command Nexus</h1>
-<h2 id="purpose-and-scope">1. Purpose and Scope</h2>
-<p>The <strong>Guardian Command Nexus</strong> is the central
-command‑and‑control dashboard for CLEARGLASSINC’s GUARDIAN suite. It is
-a single‑page web application that provides operators with real‑time
-oversight of security workflows, simulated environments and system
-health. Its cyberpunk aesthetic hides a sophisticated architecture that
-orchestrates reactive state management, simulations, audit logging and
-AI‑driven command routing.</p>
-<p>The purpose of this specification is to clearly define the initial
-production version, inform refactoring of the existing prototype, and
-provide a base for future extension. In scope are the modules already
-present in the current HTML artifact—shell kernel, reactive state
-fabric, simulation grid, audit ledger, operator routing and AI command
-orchestration—as well as their integration points. Out of scope are
-detailed implementation of third‑party integrations (e.g. PowerShell
-modules) or platform‑specific deployment scripts; these may be defined
-in later specs.</p>
-<h2 id="system-overview">2. System Overview</h2>
-<p>The Command Nexus is architected as a client‑side SPA built with
-modern JavaScript (ES6+) and an application framework (assumed to be
-React or Vue given the prototype’s reactive state fabric). The
-application bootstraps a <strong>shell kernel</strong> that coordinates
-all subsystems and exposes a command bus to the UI. A <strong>state
-fabric</strong> holds canonical application state and broadcasts changes
-via events. A <strong>simulation grid</strong> synthesises sensor and
-environmental data at a configurable cadence to drive dashboards and AI
-reasoning. An <strong>audit ledger</strong> records all operator actions
-and system events with severity levels and metadata. <strong>AI command
-orchestration</strong> parses natural‑language intents from operators or
-connected systems and translates them into structured actions.
-<strong>Operator routing</strong> provides navigation between views
-(Dashboard, Pipeline, Surveillance, Tasks, AI Console, System) and
-orchestrates hotkeys and quick actions. The <strong>visual
-layer</strong> comprises responsive panels, charts and terminal
-components consistent with the cyberpunk console aesthetic.</p>
-<p>The HTML front end communicates with back‑end services via internal
-APIs. For the initial version these may be mocked or stubbed; the
-specification assumes eventual REST or GraphQL endpoints for persistence
-(audit log export, state snapshots), AI inference and external data
-feeds. External systems (e.g. network scanners, SOC tools) will
-integrate through defined interfaces but are not implemented in this
-revision.</p>
-<h2 id="core-requirements">3. Core Requirements</h2>
-<h3 id="functional-requirements">3.1 Functional Requirements</h3>
-<ul>
-<li><strong>Dashboard view:</strong> Display high‑level metrics from the
-simulation grid and real operations. Operators can interact with widgets
-to drill down into pipeline tasks, surveillance feeds and incident
-timelines.</li>
-<li><strong>Pipeline view:</strong> Visualise and manage workflows such
-as network scans, security automation or predictive analysis. Tasks move
-through stages with status indicators.</li>
-<li><strong>Surveillance view:</strong> Present live or simulated sensor
-feeds (e.g. CCTV, network traffic). Operators can control playback and
-adjust filters.</li>
-<li><strong>Tasks view:</strong> List assigned tasks, alerts and
-incidents with sorting and filtering. Operators can acknowledge, snooze
-or transfer tasks.</li>
-<li><strong>AI console:</strong> Accept natural‑language commands,
-display parsed intents and proposed actions, and allow operators to
-confirm execution. Provide a transcript of AI conversations.</li>
-<li><strong>System view:</strong> Show system health (CPU, memory,
-network) and log messages. Allow administrators to start/stop
-subsystems.</li>
-<li><strong>Audit logging:</strong> Record all operator actions
-(navigation, confirmations, command executions), AI actions, and system
-events with timestamp, severity and context.</li>
-<li><strong>State persistence:</strong> Persist state fabric snapshots
-and audit ledger entries to local storage or back‑end services. Support
-schema versioning to handle migrations.</li>
-<li><strong>Simulation controls:</strong> Provide settings to adjust
-simulation cadence, toggle stochastic/deterministic mode and seed
-values.</li>
-</ul>
-<h3 id="nonfunctional-requirements">3.2 Non‑Functional Requirements</h3>
-<ul>
-<li><strong>Performance:</strong> The dashboard should render initial
-content within 2 seconds on modern browsers and maintain 60 fps during
-interaction. Simulation updates should not block UI rendering.</li>
-<li><strong>Reliability:</strong> The shell kernel must recover
-gracefully from subsystem failures. Unhandled exceptions should be
-captured by the audit ledger and displayed in the System view.</li>
-<li><strong>Usability:</strong> The interface shall support keyboard
-navigation and screen‑reader labels. Hotkeys must not conflict with
-browser shortcuts.</li>
-<li><strong>Maintainability:</strong> Code should be modularised by
-subsystem with typed interfaces. Event names and payload shapes should
-be centralised. Tests should cover reducers, command parsing and
-critical UI flows.</li>
-<li><strong>Extensibility:</strong> New views and AI intents should be
-pluggable without changing core modules. The spec defines clear
-extension points for PowerShell integration and SOC workflows.</li>
-</ul>
-<h3 id="scalability-considerations">3.3 Scalability Considerations</h3>
-<p>The simulation grid and AI routing may grow as new sensors and models
-are added. Architect the state fabric so that data entities are
-normalised and keyed by stable identifiers. External service calls must
-be asynchronous with timeout and retry logic. Logging should be batched
-for export rather than writing per event.</p>
-<h2 id="domain-model">4. Domain Model</h2>
-<p>The domain is centred on <strong>events</strong> generated by the
-simulation, operator actions, AI commands and external systems. The
-following entities capture domain concepts:</p>
-<table>
-<colgroup>
-<col style="width: 6%" />
-<col style="width: 35%" />
-<col style="width: 58%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Entity</th>
-<th>Description</th>
-<th>Fields / Notes</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>Task</code></td>
-<td>Represents a unit of work in the pipeline (e.g. network scan, report
-generation).</td>
-<td><code>id</code>, <code>name</code>, <code>type</code>,
-<code>status</code>, <code>assignedTo</code>, <code>createdAt</code>,
-<code>updatedAt</code>, <code>dueAt</code>, <code>parameters</code>
-(object), <code>logs</code> (array of references)</td>
-</tr>
-<tr class="even">
-<td><code>Alert</code></td>
-<td>Generated when simulation or monitoring detects an anomaly.</td>
-<td><code>id</code>, <code>severity</code>, <code>source</code>
-(simulation sensor, external feed), <code>description</code>,
-<code>timestamp</code>, <code>acknowledgedBy</code>,
-<code>relatedTaskId</code></td>
-</tr>
-<tr class="odd">
-<td><code>Incident</code></td>
-<td>Collection of related alerts or tasks that constitute a security
-incident.</td>
-<td><code>id</code>, <code>name</code>, <code>description</code>,
-<code>startTime</code>, <code>endTime</code>, <code>alerts</code> (array
-of alert ids), <code>tasks</code> (array of task ids),
-<code>status</code>, <code>owner</code></td>
-</tr>
-<tr class="even">
-<td><code>TimelineEvent</code></td>
-<td>Ordered events displayed on dashboards and surveillance views.</td>
-<td><code>id</code>, <code>type</code>, <code>timestamp</code>,
-<code>data</code> (arbitrary JSON), <code>relatedId</code>
-(task/incident/alert), <code>displayLabel</code>,
-<code>severity</code></td>
-</tr>
-<tr class="odd">
-<td><code>AuditEntry</code></td>
-<td>Immutable record of an action or system event.</td>
-<td><code>id</code>, <code>timestamp</code>, <code>actor</code>
-(operator username or system), <code>action</code> (string key),
-<code>context</code> (object), <code>severity</code>,
-<code>correlationId</code></td>
-</tr>
-<tr class="even">
-<td><code>SimulationState</code></td>
-<td>Holds state of simulated environment at a given tick.</td>
-<td><code>tick</code>, <code>readings</code> (map of sensor name →
-value), <code>activeEntities</code> (list of simulated objects),
-<code>seed</code>, <code>mode</code>
-(<code>deterministic|stochastic</code>)</td>
-</tr>
-<tr class="odd">
-<td><code>OperatorSession</code></td>
-<td>Captures logged‑in user’s session for routing and state
-restoration.</td>
-<td><code>userId</code>, <code>roles</code>, <code>startTime</code>,
-<code>endTime</code>, <code>viewPreferences</code>,
-<code>hotkeyBindings</code>, <code>activeTasks</code> (list of task
-ids)</td>
-</tr>
-<tr class="even">
-<td><code>AIIntent</code></td>
-<td>Parsed intent from the AI command orchestration.</td>
-<td><code>id</code>, <code>input</code> (raw text),
-<code>intentType</code>, <code>entities</code> (map),
-<code>confidence</code>, <code>proposedActions</code> (array),
-<code>resolved</code> (<code>boolean</code>),
-<code>resolutionNotes</code></td>
-</tr>
-</tbody>
-</table>
-<p>Entities are stored in the state fabric keyed by <code>id</code>;
-relations are maintained through reference fields. Ownership of state
-follows these rules:</p>
-<ul>
-<li><strong>Operator client:</strong> Maintains transient UI state
-(collapsed panels, unsaved form inputs) and active tab.</li>
-<li><strong>State fabric:</strong> Owns canonical domain entities;
-updates occur only through reducers triggered by dispatched events. No
-module writes state directly.</li>
-<li><strong>Back‑end services:</strong> Persist long‑term state (audit
-log, snapshots) and provide data to simulation or AI modules. The front
-end writes via API calls.</li>
-</ul>
-<h2 id="ai-command-orchestration">5. AI Command Orchestration</h2>
-<p>AI command orchestration converts natural‑language instructions into
-structured commands executed by the system. The module comprises a
-<strong>parser</strong>, an <strong>intent classifier</strong>, and an
-<strong>execution planner</strong>.</p>
-<h3 id="intent-handling-model">5.1 Intent Handling Model</h3>
-<ol type="1">
-<li><strong>Input acquisition:</strong> Operator types or speaks a
-command in the AI console.</li>
-<li><strong>Pre‑processing:</strong> Text is normalised (case‑folding,
-punctuation removal) and tokenised. A local model or cloud service
-classifies the intent type and extracts entities (target task, time
-range, severity, etc.).</li>
-<li><strong>Intent representation:</strong> The parser produces an
-<code>AIIntent</code> object. Example intents include
-<code>create_task</code>, <code>escalate_alert</code>,
-<code>summarize_incident</code>, <code>adjust_simulation</code>,
-<code>query_state</code>, <code>execute_powershell</code> (future
-extension).</li>
-<li><strong>Confirmation dialog:</strong> For intents with side effects,
-the console presents a summary of proposed actions and awaits operator
-confirmation.</li>
-<li><strong>Execution:</strong> Upon confirmation, commands are
-dispatched through the shell kernel to relevant subsystems (e.g. state
-fabric for task creation, pipeline orchestrator for workflow
-changes).</li>
-<li><strong>Feedback:</strong> Results, success or error messages are
-returned to the AI console, appended to the transcript and logged in the
-audit ledger.</li>
-</ol>
-<h3 id="command-parsing-approach">5.2 Command Parsing Approach</h3>
-<p>For the initial implementation, a rule‑based parser suffices. A
-mapping table translates imperative verbs to intent types and uses
-regular expressions to extract entities. For example:</p>
-<table>
-<colgroup>
-<col style="width: 38%" />
-<col style="width: 17%" />
-<col style="width: 43%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Example input</th>
-<th>Detected intent</th>
-<th>Extracted entities</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>“Run a network scan on subnet 10.0.0.0”</td>
-<td><code>create_task</code></td>
-<td><code>{ taskType: "networkScan", target: "10.0.0.0" }</code></td>
-</tr>
-<tr class="even">
-<td>“Escalate all high severity alerts”</td>
-<td><code>escalate_alert</code></td>
-<td><code>{ severity: "high" }</code></td>
-</tr>
-<tr class="odd">
-<td>“Summarize the last incident report”</td>
-<td><code>summarize_incident</code></td>
-<td><code>{ incidentScope: "last" }</code></td>
-</tr>
-</tbody>
-</table>
-<p>Ambiguities are resolved by asking clarifying questions: if multiple
-tasks match “Run the scan again,” the system lists candidates and
-requests selection. Unknown intents trigger an error message with
-guidance.</p>
-<h3 id="error-handling-and-ambiguity-resolution">5.3 Error Handling and
-Ambiguity Resolution</h3>
-<ul>
-<li>Unknown verbs or malformed commands produce a
-<code>unrecognized_intent</code> with an explanatory message.</li>
-<li>Missing required entities prompt the operator to supply the missing
-information.</li>
-<li>Execution errors (e.g. network call failures) are surfaced to the
-operator and recorded in the audit ledger at
-severity = <code>error</code>.</li>
-<li>Timeouts in AI inference result in retries up to three times; after
-which a <code>timeout</code> response is returned.</li>
-</ul>
-<h2 id="reactive-state-fabric">6. Reactive State Fabric</h2>
-<h3 id="store-design">6.1 Store Design</h3>
-<p>The state fabric follows a unidirectional data flow pattern. A single
-store holds all domain entities in normalised form. Actions dispatched
-on the shell kernel are processed by <strong>reducers</strong> that
-compute new state snapshots without mutation. Views subscribe to
-selectors that derive data slices and re‑render when relevant state
-changes.</p>
-<p>State is partitioned into logical modules:</p>
-<table>
-<colgroup>
-<col style="width: 14%" />
-<col style="width: 85%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Slice</th>
-<th>Contents</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>tasks</code></td>
-<td>Map of task ID → <code>Task</code></td>
-</tr>
-<tr class="even">
-<td><code>alerts</code></td>
-<td>Map of alert ID → <code>Alert</code></td>
-</tr>
-<tr class="odd">
-<td><code>incidents</code></td>
-<td>Map of incident ID → <code>Incident</code></td>
-</tr>
-<tr class="even">
-<td><code>timeline</code></td>
-<td>Ordered list of <code>TimelineEvent</code></td>
-</tr>
-<tr class="odd">
-<td><code>audit</code></td>
-<td>Append‑only list of <code>AuditEntry</code> (may be stored
-separately for performance)</td>
-</tr>
-<tr class="even">
-<td><code>simulation</code></td>
-<td>Current <code>SimulationState</code> and history buffer</td>
-</tr>
-<tr class="odd">
-<td><code>operator</code></td>
-<td><code>OperatorSession</code> information</td>
-</tr>
-<tr class="even">
-<td><code>ai</code></td>
-<td>Current AI console state (input text, list of <code>AIIntent</code>,
-transcript)</td>
-</tr>
-</tbody>
-</table>
-<h3 id="events-reducers-selectors-and-subscriptions">6.2 Events,
-Reducers, Selectors and Subscriptions</h3>
-<ul>
-<li><strong>Events (actions):</strong> Named messages with type and
-payload (e.g. <code>TASK_CREATE</code>, <code>ALERT_ACKNOWLEDGE</code>,
-<code>AI_INTENT_RESOLVED</code>). Event names are namespaced
-(e.g. <code>ai/intentResolved</code>).</li>
-<li><strong>Reducers:</strong> Pure functions that accept current state
-and an event payload and return a new state. Each slice may have its own
-reducer composition but uses a shared schema version constant.</li>
-<li><strong>Selectors:</strong> Functions that derive computed data for
-components, memoised for performance. For example,
-<code>selectActiveAlertsBySeverity(state, severity)</code> returns
-filtered alerts.</li>
-<li><strong>Subscriptions:</strong> UI components and subsystems
-subscribe to relevant selectors. When state updates, subscribers
-re‑evaluate selectors and update the UI.</li>
-</ul>
-<h3 id="persistence-strategy-and-schema-versioning">6.3 Persistence
-Strategy and Schema Versioning</h3>
-<p>State snapshots and audit logs must be persisted for recovery and
-analysis. The front end serialises the state fabric (excluding transient
-UI state) to localStorage or IndexedDB on intervals and upon critical
-events (e.g. navigation away). A <code>schemaVersion</code> field is
-stored along with the data. When loading persisted state, the shell
-kernel checks the version; if mismatched, a migration script transforms
-old data to the current schema. Audit ledger entries are written to a
-separate storage area for efficient append. Exporting the audit ledger
-triggers a synchronous retrieval of all entries and sends them to a
-back‑end API for archival.</p>
-<h2 id="simulation-grid">7. Simulation Grid</h2>
-<p>The simulation grid models environmental and system processes to
-provide realistic data streams in the absence of live feeds. It can
-simulate sensor readings (temperature, bandwidth usage, CPU load),
-adversarial behaviours (intrusion attempts, DDoS patterns) and pipeline
-tasks (scans, automations).</p>
-<h3 id="update-cadence">7.1 Update Cadence</h3>
-<p>A scheduler in the shell kernel triggers simulation updates at a
-configurable interval (default: 1 second). Each tick advances the
-<code>tick</code> counter, updates sensor readings based on
-deterministic or stochastic functions, and emits
-<code>SIMULATION_UPDATE</code> events with the new
-<code>SimulationState</code>. The update cadence should be adjustable
-via the System view.</p>
-<h3 id="deterministic-vs-stochastic-behaviour">7.2 Deterministic vs
-Stochastic Behaviour</h3>
-<p>Operators can toggle the simulation mode:</p>
-<ul>
-<li><strong>Deterministic:</strong> Uses fixed seed and predictable
-progression. Useful for demos and regression testing.</li>
-<li><strong>Stochastic:</strong> Adds noise and random events using
-seeded RNG. Suitable for training and stress testing.</li>
-</ul>
-<p>Sensor models should be encapsulated in discrete functions that
-accept seed, tick and parameters and output values. New models can be
-added without modifying the scheduler.</p>
-<h3 id="impact-on-ui-and-ai-output">7.3 Impact on UI and AI Output</h3>
-<p>Simulation updates drive the data visualised in dashboards and may
-generate alerts or incidents when thresholds are crossed. The AI command
-orchestration can query simulation state to answer operator questions
-such as “What is the current CPU load?” Therefore, the simulation grid
-must publish its state through the state fabric and allow query by
-selectors. When the simulation triggers events (e.g. simulated
-intrusion), corresponding actions (e.g. <code>ALERT_CREATE</code>) are
-dispatched.</p>
-<h2 id="audit-ledger">8. Audit Ledger</h2>
-<p>The audit ledger is a tamper‑evident log of events for accountability
-and post‑mortem analysis.</p>
-<h3 id="what-gets-logged">8.1 What Gets Logged</h3>
-<ul>
-<li><strong>Operator actions:</strong> Navigation changes, form
-submissions, AI intent confirmations, task assignments, acknowledgement
-of alerts.</li>
-<li><strong>System events:</strong> Simulation updates, pipeline
-transitions, subsystem errors, configuration changes.</li>
-<li><strong>Security events:</strong> Login/logout, permission changes,
-failed authentication attempts.</li>
-<li><strong>AI interactions:</strong> Raw command text, parsed intent,
-execution results and errors.</li>
-</ul>
-<p>Each entry includes a severity level (<code>info</code>,
-<code>warning</code>, <code>error</code>, <code>critical</code>) and may
-reference related entities via <code>correlationId</code> for
-cross‑linking in UI.</p>
-<h3 id="retention-and-export-strategy">8.2 Retention and Export
-Strategy</h3>
-<p>Audit entries are persisted locally for the duration of the operator
-session and periodically flushed to a back‑end service. The export
-process groups entries by date and severity and uploads in batches to
-minimise network overhead. An operator can initiate a manual export
-through the System view. Retention policy is configurable (e.g. keep
-last 10 days on client), and expired entries are purged once
-exported.</p>
-<h3 id="relationship-to-security-and-operator-actions">8.3 Relationship
-to Security and Operator Actions</h3>
-<p>The audit ledger forms part of the security boundary: destructive
-actions (e.g. deleting tasks, executing PowerShell commands) must
-require explicit confirmation and generate high‑severity audit entries.
-The ledger should be write‑only from the perspective of modules; only
-the System view has read access for display. Permissioning is enforced
-such that only administrators can export or clear logs.</p>
-<h2 id="operator-routing-and-ux">9. Operator Routing and UX</h2>
-<p>The operator routing subsystem manages navigation and user experience
-across the various views.</p>
-<h3 id="tabs-views-and-hotkeys">9.1 Tabs, Views and Hotkeys</h3>
-<ul>
-<li><strong>Views:</strong> <code>dashboard</code>,
-<code>pipeline</code>, <code>surveillance</code>, <code>tasks</code>,
-<code>aiConsole</code>, <code>system</code>. The shell kernel maintains
-the active view in the <code>operator</code> slice.</li>
-<li><strong>Tabs:</strong> Represent open contexts within each view
-(e.g. multiple task details). Tabs can be closed or rearranged.</li>
-<li><strong>Hotkeys:</strong> Provide rapid actions:
-e.g. <code>Ctrl+1</code>..<code>Ctrl+6</code> to switch views,
-<code>Ctrl+/</code> to focus on AI console, <code>Ctrl+S</code> to save
-state snapshot. Hotkey bindings are configurable in operator
-preferences.</li>
-</ul>
-<h3 id="boot-sequence-and-loading-states">9.2 Boot Sequence and Loading
-States</h3>
-<p>Upon page load, the shell kernel executes a boot sequence:</p>
-<ol type="1">
-<li>Initialise state fabric with default schema and attempt to hydrate
-from persisted snapshot.</li>
-<li>Start simulation grid and load any saved seed/mode settings.</li>
-<li>Initialise audit ledger and log <code>SYSTEM_BOOT</code> event.</li>
-<li>Launch AI command module and load conversation history if
-available.</li>
-<li>Render UI components once core modules are initialised. Display
-loading indicators and error messages if subsystems fail to start.</li>
-</ol>
-<h3 id="accessibility-and-operator-feedback">9.3 Accessibility and
-Operator Feedback</h3>
-<p>The UI must support ARIA roles for screen readers. Colour choices
-should meet WCAG 2.1 contrast ratios. Error and success notifications
-should appear in an accessible toast component. Feedback from AI
-commands should clearly differentiate between system messages, AI
-suggestions and operator actions. Operators should receive confirmation
-dialogues for actions with side effects. Focus management must ensure
-modals trap focus until dismissed.</p>
-<h2 id="integration-interfaces">10. Integration Interfaces</h2>
-<h3 id="internal-apis-between-subsystems">10.1 Internal APIs between
-Subsystems</h3>
-<p>The shell kernel exposes a set of event names and payload shapes that
-subsystems use to interact.</p>
-<table>
-<colgroup>
-<col style="width: 16%" />
-<col style="width: 35%" />
-<col style="width: 47%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th>Event Name</th>
-<th>Payload shape</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>task/create</code></td>
-<td><code>{ name, type, parameters }</code></td>
-<td>Request creation of a new Task. Reducer allocates <code>id</code>
-and adds to store.</td>
-</tr>
-<tr class="even">
-<td><code>task/updateStatus</code></td>
-<td><code>{ id, status }</code></td>
-<td>Update a task’s status; triggers pipeline update and audit
-entry.</td>
-</tr>
-<tr class="odd">
-<td><code>alert/acknowledge</code></td>
-<td><code>{ id, actorId }</code></td>
-<td>Mark an alert as acknowledged by an operator.</td>
-</tr>
-<tr class="even">
-<td><code>incident/resolve</code></td>
-<td><code>{ id, resolutionNotes }</code></td>
-<td>Mark an incident as resolved and log outcome.</td>
-</tr>
-<tr class="odd">
-<td><code>simulation/update</code></td>
-<td><code>{ tick, readings, activeEntities }</code></td>
-<td>New simulation state from grid. Used by selectors to update
-charts.</td>
-</tr>
-<tr class="even">
-<td><code>ai/intentParsed</code></td>
-<td><code>{ intentId, intentType, entities, confidence }</code></td>
-<td>AI parser output; triggers display of proposed actions in AI
-console.</td>
-</tr>
-<tr class="odd">
-<td><code>ai/intentConfirmed</code></td>
-<td><code>{ intentId }</code></td>
-<td>Operator confirms execution; dispatch to appropriate event
-(task/create, etc.).</td>
-</tr>
-<tr class="even">
-<td><code>audit/log</code></td>
-<td><code>{ actor, action, context, severity }</code></td>
-<td>Append entry to audit ledger.</td>
-</tr>
-<tr class="odd">
-<td><code>router/navigate</code></td>
-<td><code>{ view, params }</code></td>
-<td>Switch active view or open context tab.</td>
-</tr>
-</tbody>
-</table>
-<h3 id="external-interfaces">10.2 External Interfaces</h3>
-<p>The initial implementation can stub external services. Anticipated
-REST endpoints include:</p>
-<ul>
-<li><code>POST /api/audit/export</code> – Accepts a batch of
-<code>AuditEntry</code> and returns status.</li>
-<li><code>GET /api/state/snapshot</code> – Returns latest persisted
-state for hydration.</li>
-<li><code>POST /api/ai/parse</code> – Submits natural‑language input and
-returns <code>AIIntent</code>. In early versions this may be handled
-locally via rule‑based parser.</li>
-<li><code>POST /api/powershell/execute</code> – Executes a PowerShell
-script (future extension). Secured and audited.</li>
-</ul>
-<p>Event payloads exchanged with external services should be JSON
-encoded using camelCase keys. All requests include an authentication
-token (to be defined in security spec) and handle 401/403 responses by
-routing to login.</p>
-<h2 id="security-and-safety">11. Security and Safety</h2>
-<p>The Guardian Command Nexus must operate within strict security
-boundaries.</p>
-<ul>
-<li><strong>Trust boundaries:</strong> The browser front end is
-untrusted; back‑end services validate all inputs and enforce
-permissions. Only authorised operators may access sensitive views
-(e.g. incident details). CORS and CSP headers restrict loading of
-external resources.</li>
-<li><strong>Safe execution:</strong> Destructive actions (deleting
-entities, executing commands) require confirmation with a summary of the
-impact. Confirmation dialogues are modal and default to cancel.</li>
-<li><strong>Logging and permissioning:</strong> The audit ledger logs
-all actions with actor identity. Role‑based access controls restrict
-features (e.g. only administrators can export logs or change simulation
-mode). Passwords or secrets are never logged.</li>
-<li><strong>Data protection:</strong> Persisted data is encrypted at
-rest when stored server‑side. Transmission uses HTTPS with TLS 1.2+.
-Operators are automatically logged out after configurable
-inactivity.</li>
-<li><strong>Input sanitisation:</strong> All user inputs are escaped to
-prevent injection attacks. AI command parsing ensures that executed
-commands are within allowed actions; arbitrary code execution
-(e.g. PowerShell) is disabled in the first version.</li>
-</ul>
-<h2 id="acceptance-criteria">12. Acceptance Criteria</h2>
-<p>The first production‑ready release of the Guardian Command Nexus
-shall satisfy the following conditions:</p>
-<ol type="1">
-<li><strong>All views implemented:</strong> Dashboard, Pipeline,
-Surveillance, Tasks, AI Console and System views render correctly,
-switching via navigation or hotkeys.</li>
-<li><strong>State management:</strong> Actions correctly update the
-state fabric; selectors drive UI updates without direct mutation.</li>
-<li><strong>Simulation:</strong> Simulation grid generates data at
-configurable cadence and mode; dashboards reflect changes in real
-time.</li>
-<li><strong>AI console:</strong> Accepts natural‑language input,
-produces parsed intents via rule‑based parser, and executes confirmed
-commands, logging all actions.</li>
-<li><strong>Audit logging:</strong> All operator and system events
-recorded with severity and persisted; export function uploads logs.</li>
-<li><strong>Error handling:</strong> Subsystem failures are surfaced in
-System view; unhandled errors do not crash the application.</li>
-<li><strong>Accessibility:</strong> UI meets minimum WCAG 2.1 level AA
-requirements; keyboard navigation and screen reader labels are
-provided.</li>
-<li><strong>Tests:</strong> Unit tests cover reducers, simulation
-models, command parsing and routing; integration tests cover critical
-flows.</li>
-</ol>
-<h2 id="future-extensions">13. Future Extensions</h2>
-<h3 id="suggested-next-milestones">13.1 Suggested Next Milestones</h3>
-<ol type="1">
-<li><strong>PowerShell Integration:</strong> Define and implement secure
-execution of PowerShell scripts from AI commands. Provide a sandboxed
-environment and extend audit logging to capture command outputs.</li>
-<li><strong>SOC Workflow Integration:</strong> Integrate with Security
-Operations Centre tools (e.g. SIEM) to ingest real events and enrich
-simulation. Define connectors and mapping to domain entities.</li>
-<li><strong>Predictive Analysis and Anomaly Detection:</strong>
-Incorporate machine learning models to predict incidents based on
-historical data and simulation patterns. Present predictions in the
-dashboard with confidence intervals.</li>
-<li><strong>Reporting Module:</strong> Generate PDF or HTML reports
-summarising incidents, audit logs and simulation statistics. Provide
-scheduling and export options.</li>
-<li><strong>Collaboration Features:</strong> Enable multiple operators
-to collaborate, share annotations and transfer tasks. Implement
-WebSocket sync of state changes.</li>
-</ol>
-<h3 id="modularisation-roadmap">13.2 Modularisation Roadmap</h3>
-<p>The current monolithic front end should be decomposed into packages:
-<code>core</code> (shell kernel, state fabric), <code>ui</code>
-(components and styling), <code>simulation</code>, <code>ai</code>,
-<code>audit</code>, and <code>integrations</code>. Each package exposes
-public APIs and can be independently tested. Use TypeScript to add type
-safety and facilitate refactoring.</p>
-<h3 id="potential-enhancements">13.3 Potential Enhancements</h3>
-<ul>
-<li><strong>Pluggable AI intents:</strong> Allow external providers to
-register new intent handlers via configuration.</li>
-<li><strong>Visual theming:</strong> Support dark/light modes and custom
-themes while preserving the console aesthetic.</li>
-<li><strong>Mobile responsiveness:</strong> Adapt layouts for tablet and
-small screens without losing functionality.</li>
-<li><strong>Advanced analytics:</strong> Integrate streaming analytics
-dashboards (e.g. Grafana) for real‑time metrics.</li>
-</ul>
-<h2 id="implementation-priority">Implementation Priority</h2>
-<ol type="1">
-<li><strong>Core Framework and State Fabric:</strong> Establish the
-shell kernel, event bus, reducers, selectors and routing. Implement
-domain models and ensure persistence with schema versioning. Without
-this foundation, other modules cannot be integrated.</li>
-<li><strong>Simulation Grid and Dashboard:</strong> Build the simulation
-scheduler and sensor models, and render dashboard widgets. Provide
-controls for cadence and mode. This enables demonstrable value early and
-facilitates testing of state updates and rendering.</li>
-<li><strong>AI Command Orchestration:</strong> Implement the rule‑based
-parser, console UI and command execution flow with confirmation
-dialogues. Connect to state fabric and logging. This unlocks advanced
-interactions and sets the stage for future PowerShell and SOC
-integrations.</li>
-</ol>
+  <a class="skip-link" href="#main">Skip to console</a>
+
+  <!-- ============================ BACKGROUND FIELD ============================ -->
+  <div class="field" aria-hidden="true">
+    <div class="field__grid"></div>
+    <div class="field__bloom field__bloom--1"></div>
+    <div class="field__bloom field__bloom--2"></div>
+    <div class="field__bloom field__bloom--3"></div>
+    <div class="field__scan"></div>
+    <div class="field__vignette"></div>
+  </div>
+
+  <!-- ============================== COMMAND RAIL ============================== -->
+  <header class="cmdbar">
+    <div class="cmdbar__inner">
+      <a class="brand" href="#main" aria-label="ClearGlass Sentinel home">
+        <svg class="brand__mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="bm" x1="0" y1="0" x2="40" y2="40">
+              <stop offset="0" stop-color="#34e3ea"/><stop offset=".5" stop-color="#2f6bff"/><stop offset="1" stop-color="#8b5cf6"/>
+            </linearGradient>
+          </defs>
+          <path d="M20 2 L35 11 V29 L20 38 L5 29 V11 Z" stroke="url(#bm)" stroke-width="1.6" fill="rgba(52,227,234,.06)"/>
+          <path d="M20 9 L29 14.5 V25.5 L20 31 L11 25.5 V14.5 Z" stroke="url(#bm)" stroke-width="1.2" opacity=".7"/>
+          <circle cx="20" cy="20" r="3.4" fill="url(#bm)"/>
+        </svg>
+        <span>
+          <span class="brand__name">CLEAR<span>GLASS</span></span>
+          <span class="brand__sub">SENTINEL // OPS</span>
+        </span>
+      </a>
+
+      <nav class="nav" data-nav aria-label="Primary">
+        <a href="#capabilities">Capabilities</a>
+        <a href="#telemetry">Telemetry</a>
+        <a href="#systems">Systems</a>
+        <a href="#components">Components</a>
+        <a href="spec.html">Spec</a>
+      </nav>
+
+      <div class="cmdbar__status">
+        <span class="cmdbar__clock" data-clock>--:--:-- UTC</span>
+        <span class="chip chip--ok"><span class="chip__dot"></span>Operational</span>
+        <button class="nav-toggle" data-nav-toggle aria-label="Toggle navigation" aria-expanded="false">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="shell">
+
+    <!-- ================================= HERO ================================= -->
+    <section class="section hero">
+      <div class="container hero__grid">
+        <div data-reveal>
+          <span class="eyebrow">Defense-Grade Operations Layer</span>
+          <h1 class="hero__title">
+            Command the<br><span class="glx">autonomous</span> frontier.
+          </h1>
+          <p class="hero__lede">
+            SENTINEL is the control layer for elite AI systems — a real-time operations
+            console fusing predictive routing, audited automation, and total mission
+            oversight into a single, hardened surface.
+          </p>
+
+          <div class="hero__cta btn-row">
+            <a class="btn btn--command btn--lg" href="#systems">
+              <span class="btn__pip"></span>
+              <span class="btn__label">Initialize Console</span>
+            </a>
+            <a class="btn btn--ghost btn--lg btn--reticle" href="#capabilities">
+              <span class="btn__label">View Capabilities</span>
+              <svg class="btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>
+            </a>
+          </div>
+
+          <div class="hero__meta">
+            <div>
+              <span class="metric-value"><span data-count="99.99">0</span><small style="color:var(--cyan)">%</small></span>
+              <span class="label-mono">Uptime SLA</span>
+            </div>
+            <div>
+              <span class="metric-value"><span data-count="1.42">0</span><small style="color:var(--cyan)">M/s</small></span>
+              <span class="label-mono">Event Ingest</span>
+            </div>
+            <div>
+              <span class="metric-value"><span data-count="312">0</span><small style="color:var(--cyan)">ms</small></span>
+              <span class="label-mono">Decision Loop</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- HUD console panel -->
+        <div class="hud glass glass--ticks glass--pulse" data-reveal data-delay="120" data-tilt>
+          <div class="hud__bar">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="5"/></svg>
+            Live Operations Feed
+            <span class="dots"><i></i><i></i><i></i></span>
+          </div>
+          <div class="hud__body">
+            <div class="radar" aria-hidden="true">
+              <div class="radar__sweep"></div>
+              <div class="radar__blip" style="top:32%;left:62%"></div>
+              <div class="radar__blip" style="top:58%;left:40%;animation-delay:1.1s"></div>
+              <div class="radar__blip" style="top:46%;left:72%;animation-delay:2s"></div>
+            </div>
+
+            <div class="telemetry">
+              <div class="telemetry__row">
+                <span class="label-mono">Compute</span>
+                <span class="bar"><span data-fill="74"></span></span>
+                <span class="metric-value">74%</span>
+              </div>
+              <div class="telemetry__row">
+                <span class="label-mono">Inference</span>
+                <span class="bar bar--violet"><span data-fill="88"></span></span>
+                <span class="metric-value">88%</span>
+              </div>
+              <div class="telemetry__row">
+                <span class="label-mono">Integrity</span>
+                <span class="bar bar--green"><span data-fill="100"></span></span>
+                <span class="metric-value">OK</span>
+              </div>
+            </div>
+
+            <div class="btn-row" style="gap:10px">
+              <span class="chip chip--live"><span class="chip__dot"></span>Streaming</span>
+              <span class="chip chip--violet"><span class="chip__dot"></span>ARTEMIS</span>
+              <span class="chip chip--ok"><span class="chip__dot"></span>Secured</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== METRIC BAND ============================== -->
+    <section class="section" id="telemetry" style="padding-top:0">
+      <div class="container">
+        <div class="grid metrics">
+          <article class="metric glass frame--cut" data-reveal>
+            <div class="metric__head"><span class="label-mono">Active Nodes</span><span class="chip chip--live"><span class="chip__dot"></span>Live</span></div>
+            <div class="metric__num"><span data-count="248">0</span></div>
+            <div class="metric__delta up">▲ 12 since shift start</div>
+            <svg class="metric__spark" viewBox="0 0 120 36" preserveAspectRatio="none"><path d="M0 28 L15 24 L30 26 L45 18 L60 20 L75 12 L90 14 L105 6 L120 9"/></svg>
+          </article>
+          <article class="metric glass frame--cut" data-reveal data-delay="80">
+            <div class="metric__head"><span class="label-mono">Threats Neutralized</span><span class="chip chip--ok"><span class="chip__dot"></span>24h</span></div>
+            <div class="metric__num"><span data-count="1394">0</span></div>
+            <div class="metric__delta up">▲ 8.2% vs. prior cycle</div>
+            <svg class="metric__spark" viewBox="0 0 120 36" preserveAspectRatio="none"><path d="M0 30 L15 22 L30 24 L45 16 L60 18 L75 10 L90 13 L105 8 L120 4"/></svg>
+          </article>
+          <article class="metric glass frame--cut" data-reveal data-delay="160">
+            <div class="metric__head"><span class="label-mono">Mean Latency</span><span class="chip chip--warn"><span class="chip__dot"></span>Watch</span></div>
+            <div class="metric__num"><span data-count="42">0</span><small>ms</small></div>
+            <div class="metric__delta down">▼ 3ms auto-optimized</div>
+            <svg class="metric__spark" viewBox="0 0 120 36" preserveAspectRatio="none"><path d="M0 10 L15 14 L30 11 L45 18 L60 15 L75 22 L90 19 L105 24 L120 21"/></svg>
+          </article>
+          <article class="metric glass frame--cut" data-reveal data-delay="240">
+            <div class="metric__head"><span class="label-mono">Model Confidence</span><span class="chip chip--violet"><span class="chip__dot"></span>AI</span></div>
+            <div class="metric__num"><span data-count="0.991">0</span></div>
+            <div class="metric__delta up">▲ stable convergence</div>
+            <svg class="metric__spark" viewBox="0 0 120 36" preserveAspectRatio="none"><path d="M0 26 L15 20 L30 22 L45 14 L60 16 L75 11 L90 12 L105 8 L120 7"/></svg>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== CAPABILITIES ============================== -->
+    <section class="section" id="capabilities">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <span class="eyebrow">Operational Capabilities</span>
+          <h2>A single console for total mission control.</h2>
+          <p>Every subsystem is engineered for authority, auditability, and speed — built to run elite autonomous operations without ceding human oversight.</p>
+        </div>
+
+        <div class="grid cards">
+          <article class="card glass glass--ticks" data-reveal data-tilt>
+            <div class="card__top">
+              <div class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2 L20 6 V12 C20 17 16 21 12 22 C8 21 4 17 4 12 V6 Z"/><path d="M9 12l2 2 4-4"/></svg></div>
+              <span class="chip chip--ok"><span class="chip__dot"></span>Hardened</span>
+            </div>
+            <h3>Zero-Trust Command</h3>
+            <p>Every action is authenticated, scoped, and sealed to an immutable audit ledger. No silent execution. Ever.</p>
+            <div class="card__foot"><span class="label-mono">AES-256 / GCM</span><span class="label-mono" style="color:var(--cyan)">SEC-01</span></div>
+          </article>
+
+          <article class="card glass glass--ticks" data-reveal data-delay="80" data-tilt>
+            <div class="card__top">
+              <div class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></div>
+              <span class="chip chip--violet"><span class="chip__dot"></span>Autonomous</span>
+            </div>
+            <h3>Predictive Routing</h3>
+            <p>ARTEMIS agents forecast load, reroute around degradation, and converge on consensus in sub-second windows.</p>
+            <div class="card__foot"><span class="label-mono">312ms loop</span><span class="label-mono" style="color:var(--cyan)">AI-02</span></div>
+          </article>
+
+          <article class="card glass glass--ticks" data-reveal data-delay="160" data-tilt>
+            <div class="card__top">
+              <div class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg></div>
+              <span class="chip chip--live"><span class="chip__dot"></span>Streaming</span>
+            </div>
+            <h3>Real-Time Telemetry</h3>
+            <p>1.42M events/sec ingested, fused, and visualized as a live operational picture — no refresh, no lag.</p>
+            <div class="card__foot"><span class="label-mono">1.42M ev/s</span><span class="label-mono" style="color:var(--cyan)">TEL-03</span></div>
+          </article>
+
+          <article class="card glass glass--ticks" data-reveal data-tilt>
+            <div class="card__top">
+              <div class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+              <span class="chip chip--ok"><span class="chip__dot"></span>Sealed</span>
+            </div>
+            <h3>Immutable Audit</h3>
+            <p>Cryptographically chained event ledger. Every decision is reconstructable, attributable, and tamper-evident.</p>
+            <div class="card__foot"><span class="label-mono">Block #48,213</span><span class="label-mono" style="color:var(--cyan)">AUD-04</span></div>
+          </article>
+
+          <article class="card glass glass--ticks" data-reveal data-delay="80" data-tilt>
+            <div class="card__top">
+              <div class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="9"/></svg></div>
+              <span class="chip chip--warn"><span class="chip__dot"></span>Adaptive</span>
+            </div>
+            <h3>Simulation Grid</h3>
+            <p>Run adversarial scenarios against live models. Converge, validate, and promote — all before deployment.</p>
+            <div class="card__foot"><span class="label-mono">312ms converge</span><span class="label-mono" style="color:var(--cyan)">SIM-05</span></div>
+          </article>
+
+          <article class="card glass glass--ticks" data-reveal data-delay="160" data-tilt>
+            <div class="card__top">
+              <div class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v6H4zM4 14h16v6H4z"/><path d="M8 7h.01M8 17h.01"/></svg></div>
+              <span class="chip chip--ok"><span class="chip__dot"></span>Federated</span>
+            </div>
+            <h3>Edge Orchestration</h3>
+            <p>Coordinate distributed nodes across regions with self-healing failover and hot model hot-swaps.</p>
+            <div class="card__foot"><span class="label-mono">248 nodes</span><span class="label-mono" style="color:var(--cyan)">ORC-06</span></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- =============================== SYSTEMS / LOG =============================== -->
+    <section class="section" id="systems">
+      <div class="container grid" style="grid-template-columns: 1.1fr 1fr; align-items:start; gap:clamp(20px,3vw,40px)">
+        <div class="trace glass glass--stealth" data-reveal>
+          <div class="trace__head">
+            <span class="chip chip--live"><span class="chip__dot"></span>Live</span>
+            <h3>System Event Stream</h3>
+          </div>
+          <div class="log" data-log aria-live="polite" aria-label="Live system event log"></div>
+        </div>
+
+        <div data-reveal data-delay="120">
+          <span class="eyebrow">Operational Posture</span>
+          <h2 class="section-head" style="margin-bottom:18px;font-size:clamp(1.7rem,3.4vw,2.6rem)">The system never sleeps. Neither does its memory.</h2>
+          <p class="dim" style="margin-bottom:24px">Watch the kernel work. Every handshake, rotation, and consensus event is streamed, classified, and sealed in real time — the same feed your operators command from.</p>
+
+          <div class="grid" style="grid-template-columns:1fr 1fr;gap:14px">
+            <div class="glass frame--cut" style="padding:18px">
+              <span class="label-mono">Encryption</span>
+              <div class="metric-value" style="font-size:1.1rem;margin-top:8px">AES-256/GCM</div>
+              <span class="chip chip--ok" style="margin-top:12px"><span class="chip__dot"></span>Rotating</span>
+            </div>
+            <div class="glass frame--cut" style="padding:18px">
+              <span class="label-mono">Model Build</span>
+              <div class="metric-value" style="font-size:1.1rem;margin-top:8px">v10.1 PROMETHEUS</div>
+              <span class="chip chip--violet" style="margin-top:12px"><span class="chip__dot"></span>Hot-swap</span>
+            </div>
+          </div>
+
+          <div class="btn-row" style="margin-top:24px">
+            <button class="btn btn--secondary" data-loading-demo>
+              <span class="btn__spinner"></span>
+              <span class="btn__label">Run Diagnostic</span>
+            </button>
+            <button class="btn btn--ghost btn--sm">Export Ledger</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ COMPONENT LIBRARY ============================ -->
+    <section class="section" id="components">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <span class="eyebrow">Interface System</span>
+          <h2>A reusable command vocabulary.</h2>
+          <p>One coherent set of controls, chips, and panels — engineered for clarity under pressure. Drop them anywhere; they always speak the same language.</p>
+        </div>
+
+        <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(290px,1fr))">
+          <!-- Buttons -->
+          <div class="glass module" data-reveal>
+            <span class="module__no">// CTRL-01</span>
+            <h3>Action Controls</h3>
+            <p class="dim" style="margin-bottom:18px">Five variants, layered hover energy, and depth-aware click ripple.</p>
+            <div class="btn-row" style="gap:12px">
+              <button class="btn btn--primary">Primary</button>
+              <button class="btn btn--secondary">Secondary</button>
+              <button class="btn btn--ghost">Ghost</button>
+              <button class="btn btn--danger">Abort</button>
+            </div>
+            <div class="btn-row" style="gap:12px;margin-top:14px">
+              <button class="btn btn--command"><span class="btn__pip"></span><span class="btn__label">Command</span></button>
+              <button class="btn btn--ghost btn--sm">Small</button>
+              <button class="btn btn--ghost" disabled>Disabled</button>
+            </div>
+          </div>
+
+          <!-- Chips -->
+          <div class="glass module" data-reveal data-delay="80">
+            <span class="module__no">// CTRL-02</span>
+            <h3>Status Chips</h3>
+            <p class="dim" style="margin-bottom:18px">Glanceable system state with pulsing signal dots.</p>
+            <div class="btn-row" style="gap:10px">
+              <span class="chip chip--ok"><span class="chip__dot"></span>Operational</span>
+              <span class="chip chip--live"><span class="chip__dot"></span>Streaming</span>
+              <span class="chip chip--warn"><span class="chip__dot"></span>Degraded</span>
+              <span class="chip chip--crit"><span class="chip__dot"></span>Critical</span>
+              <span class="chip chip--violet"><span class="chip__dot"></span>AI Active</span>
+              <span class="chip"><span class="chip__dot"></span>Standby</span>
+            </div>
+          </div>
+
+          <!-- Action bar / stealth -->
+          <div class="glass glass--stealth module" data-reveal data-delay="160">
+            <span class="module__no">// CTRL-03</span>
+            <h3>Stealth Action Bar</h3>
+            <p class="dim" style="margin-bottom:18px">Low-chroma glass variant for dense operational surfaces.</p>
+            <div class="glass frame--cut" style="padding:14px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+              <span class="chip chip--ok"><span class="chip__dot"></span>Armed</span>
+              <span class="label-mono" style="margin-right:auto">SECTOR 7-G</span>
+              <button class="btn btn--ghost btn--sm">Hold</button>
+              <button class="btn btn--primary btn--sm">Deploy</button>
+            </div>
+            <ul style="margin-top:18px">
+              <li>GPU-accelerated motion</li>
+              <li>Respects reduced-motion</li>
+              <li>Accessible focus states</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================ CTA BAND ================================ -->
+    <section class="section cta-band">
+      <div class="container" data-reveal>
+        <div class="glass glass--pulse frame--cut">
+          <span class="eyebrow" style="justify-content:center">Deploy SENTINEL</span>
+          <h2>Take command of the systems you can't afford to lose.</h2>
+          <p>Stand up a hardened operations layer over your autonomous fleet in days — not quarters. Full audit, full oversight, full speed.</p>
+          <div class="btn-row">
+            <a class="btn btn--command btn--lg" href="spec.html"><span class="btn__pip"></span><span class="btn__label">Read the Spec</span></a>
+            <a class="btn btn--ghost btn--lg" href="https://github.com/clearglassinc/opal-koboi"><span class="btn__label">View Repository</span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================================= FOOTER ================================= -->
+  <footer class="foot">
+    <div class="container">
+      <div class="foot__grid">
+        <div class="foot__col" style="max-width:320px">
+          <a class="brand" href="#main" style="margin-bottom:14px">
+            <svg class="brand__mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+              <path d="M20 2 L35 11 V29 L20 38 L5 29 V11 Z" stroke="url(#bm)" stroke-width="1.6" fill="rgba(52,227,234,.06)"/>
+              <circle cx="20" cy="20" r="3.4" fill="url(#bm)"/>
+            </svg>
+            <span class="brand__name">CLEAR<span>GLASS</span></span>
+          </a>
+          <p class="dim" style="font-size:.88rem">The operational control layer for elite autonomous intelligence systems.</p>
+        </div>
+        <div class="foot__col">
+          <h4>System</h4>
+          <a href="#capabilities">Capabilities</a>
+          <a href="#telemetry">Telemetry</a>
+          <a href="#systems">Event Stream</a>
+          <a href="#components">Components</a>
+        </div>
+        <div class="foot__col">
+          <h4>Resources</h4>
+          <a href="spec.html">Specification</a>
+          <a href="docs/RUNBOOK.md">Runbook</a>
+          <a href="README.md">Readme</a>
+          <a href="docs/clearglass-nexus-v10.1-prometheus.html">Nexus v10.1</a>
+        </div>
+        <div class="foot__col">
+          <h4>Status</h4>
+          <p class="label-mono" style="color:var(--green)">▸ All systems operational</p>
+          <p class="label-mono" style="margin-top:8px">Build PROMETHEUS-10.1</p>
+          <p class="label-mono" style="margin-top:8px" data-clock>--:--:-- UTC</p>
+        </div>
+      </div>
+      <div class="foot__bottom">
+        <p>© 2026 CLEARGLASS INC. — SENTINEL OPERATIONS LAYER</p>
+        <p>CLASSIFIED // OPERATIONAL — AUTHORIZED ACCESS ONLY</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/console.js" defer></script>
 </body>
 </html>

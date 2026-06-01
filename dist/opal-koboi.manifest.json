@@ -1,0 +1,15 @@
+{
+  "name": "@clearglassinc/opal-koboi",
+  "version": "2.1.0",
+  "description": "ClearGlass Inc. enterprise automation platform for mission planning, workflow orchestration, policy control, audit logging, and operational intelligence.",
+  "homepage": "https://clearglassinc.github.io/opal/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ClearGlassInc/Opal-Koboi.git"
+  },
+  "main": "src/index.js",
+  "bin": {
+    "opal-koboi": "./bin/opal-koboi.js"
+  },
+  "builtAt": "2026-06-01T18:51:13.898Z"
+}

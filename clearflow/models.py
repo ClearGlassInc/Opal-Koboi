@@ -187,6 +187,7 @@ class WorkItem:
     priority: Priority
     success_metric: str
     time_block: Optional[TimeBlock] = None
+    effort_minutes: int = 60
     status: Status = Status.PENDING
     depends_on: list[str] = field(default_factory=list)
     evidence: Optional[str] = None
@@ -206,6 +207,7 @@ class WorkItem:
             "priority": self.priority.label,
             "success_metric": self.success_metric,
             "time_block": str(self.time_block) if self.time_block else None,
+            "effort_minutes": self.effort_minutes,
             "status": self.status.value,
             "depends_on": list(self.depends_on),
             "evidence": self.evidence,

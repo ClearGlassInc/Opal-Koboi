@@ -19,8 +19,10 @@ from datetime import time as dtime
 from typing import Any, Optional
 
 from clearflow.engine.gating import DomainGatekeeper
+from clearflow.engine.graph import CriticalPath, DependencyGraph
 from clearflow.engine.pledge import PledgeLedger
 from clearflow.engine.scheduler import BlockScheduler
+from clearflow.events import EventBus, EventType
 from clearflow.intel.brief import IntelRouter
 from clearflow.models import (
     IntelSignal,
@@ -46,15 +48,23 @@ class AutomationWorkflow:
         scheduler: Optional[BlockScheduler] = None,
         ledger: Optional[PledgeLedger] = None,
         router: Optional[IntelRouter] = None,
+        bus: Optional[EventBus] = None,
     ) -> None:
         self.items: list[WorkItem] = list(items or [])
         self.gatekeeper = gatekeeper or DomainGatekeeper()
         self.scheduler = scheduler or BlockScheduler()
         self.ledger = ledger or PledgeLedger()
         self.router = router or IntelRouter()
+        # The event bus is optional: a bare workflow stays a pure state machine,
+        # while supplying a bus lights up notifiers, history, and the runner.
+        self.bus = bus
         self.signals: list[IntelSignal] = []
         if self.items:
             self.gatekeeper.wire_keystone_gate(self.items)
+
+    def _emit(self, event_type: EventType, **payload: Any) -> None:
+        if self.bus is not None:
+            self.bus.emit(event_type, **payload)
 
     # -- construction -------------------------------------------------------
 
@@ -117,6 +127,9 @@ class AutomationWorkflow:
                 "before starting other domains."
             )
         item.status = Status.IN_PROGRESS
+        self._emit(EventType.ITEM_STARTED, trace_id=item.trace_id,
+                   domain=item.domain, action=item.action,
+                   priority=item.priority.label)
         return item
 
     def complete(self, item: WorkItem, evidence: str) -> list[WorkItem]:
@@ -130,15 +143,31 @@ class AutomationWorkflow:
             raise WorkflowError(
                 "Completion requires evidence against the success metric."
             )
+        was_keystone_landed = self.is_keystone_landed()
         item.status = Status.DONE
         item.evidence = evidence.strip()
         item.completed_at = utcnow()
-        return self.gatekeeper.reconcile(self.items)
+        self._emit(EventType.ITEM_COMPLETED, trace_id=item.trace_id,
+                   domain=item.domain, action=item.action,
+                   priority=item.priority.label)
+        unlocked = self.gatekeeper.reconcile(self.items)
+        # The keystone landing is the headline moment - announce it before the
+        # individual domain unlocks so subscribers see cause then effect.
+        if item.is_keystone and not was_keystone_landed:
+            self._emit(EventType.KEYSTONE_LANDED, trace_id=item.trace_id,
+                       domain=item.domain, action=item.action)
+        for opened in unlocked:
+            self._emit(EventType.DOMAIN_UNLOCKED, trace_id=opened.trace_id,
+                       domain=opened.domain, action=opened.action,
+                       priority=opened.priority.label)
+        return unlocked
 
     def block(self, item: WorkItem, reason: str) -> WorkItem:
         """Park an item as BLOCKED with a reason (does not unlock dependents)."""
         item.status = Status.BLOCKED
         item.evidence = f"BLOCKED: {reason.strip()}"
+        self._emit(EventType.ITEM_BLOCKED, trace_id=item.trace_id,
+                   domain=item.domain, action=item.action, reason=reason.strip())
         return item
 
     # -- intel & pledges ----------------------------------------------------
@@ -146,6 +175,8 @@ class AutomationWorkflow:
     def ingest_brief(self, headlines: list[str]) -> list[IntelSignal]:
         """Route the Critical Intelligence Brief to domains and retain it."""
         self.signals = self.router.route(headlines)
+        self._emit(EventType.BRIEF_INGESTED, count=len(self.signals),
+                   routed=[s.routed_to for s in self.signals])
         return self.signals
 
     def signals_for(self, domain: str) -> list[IntelSignal]:
@@ -153,7 +184,23 @@ class AutomationWorkflow:
 
     def set_commitments(self, texts: list[str]) -> list[Any]:
         """Set today's (capped) commitments via the pledge ledger."""
-        return self.ledger.commit_all(texts)
+        pledges = self.ledger.commit_all(texts)
+        self._emit(EventType.COMMITMENTS_SET, count=len(pledges))
+        return pledges
+
+    # -- dependency analysis ------------------------------------------------
+
+    def graph(self) -> DependencyGraph:
+        """A fresh :class:`DependencyGraph` over the current matrix wiring."""
+        return DependencyGraph(self.items)
+
+    def critical_path(self) -> CriticalPath:
+        """The longest effort-weighted dependency chain - the day's lower bound."""
+        return self.graph().critical_path()
+
+    def execution_order(self) -> list[WorkItem]:
+        """A valid dependency-respecting execution order for the matrix."""
+        return self.graph().topological_order()
 
     # -- reporting ----------------------------------------------------------
 
@@ -161,6 +208,7 @@ class AutomationWorkflow:
         """A compact snapshot of where the day stands."""
         total = len(self.items)
         done = len(self.by_status(Status.DONE))
+        cp = self.critical_path()
         return {
             "total_items": total,
             "done": done,
@@ -168,6 +216,8 @@ class AutomationWorkflow:
             "keystone_landed": self.is_keystone_landed(),
             "unlocked_domains": self.unlocked_domains(),
             "locked": [i.action for i in self.locked_items()],
+            "critical_path": cp.actions(self.items),
+            "critical_path_minutes": cp.total_minutes,
         }
 
     def to_dict(self) -> dict[str, Any]:

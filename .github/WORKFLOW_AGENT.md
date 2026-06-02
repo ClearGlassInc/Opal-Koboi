@@ -59,19 +59,37 @@ traceability**. Never weaken repository security to "make it work."
 Report: **Files inspected → Problems found → Fixes applied → Validation
 performed → Remaining risks → PR summary (if changes were made)**.
 
+## Implemented automation
+
+- **`.github/scripts/audit_workflows.py`** — the deterministic, read-only
+  auditor. Enforces this baseline (top-level permissions, no mutable refs,
+  third-party actions pinned to SHA) and exits non-zero on any ERROR. Run it
+  locally or in CI: `python3 .github/scripts/audit_workflows.py`.
+- **`.github/workflows/workflow-repair-agent.yml`** — the agent workflow:
+  - `audit` job: runs the auditor on a weekly schedule **and** every dispatch.
+  - `repair` job: gated behind manual dispatch + the `autofix` input + the
+    presence of `ANTHROPIC_API_KEY`. Runs `anthropics/claude-code-action`
+    against this policy, then opens a PR via `peter-evans/create-pull-request`.
+    Both third-party actions are pinned to commit SHAs. It never runs
+    unattended and never blocks scheduled CI.
+
+To enable autofix: add the `ANTHROPIC_API_KEY` repository secret, then run the
+workflow from the Actions tab with **autofix = true**.
+
 ## Commit / PR conventions
 
 - Commit message for workflow repairs: `fix(ci): repair GitHub workflows and validation`
 - Open a PR only when the human asks; explain every change and include rollback
-  notes (the previous file content is the rollback).
+  notes (the previous file content / reverting the PR is the rollback).
 
-## Known remaining risk (tracked, not yet applied)
+## Known remaining risk (tracked)
 
-- **SHA pinning.** All actions currently use first-party `actions/*` major-tag
-  references (`@v5`, `@v7`), which are mutable. Hardening to immutable commit
-  SHAs is recommended but must use **verified** SHAs for the intended release —
-  pinning to an unverified SHA would break the workflow, so it is deferred to an
-  environment with network access to resolve and confirm each SHA.
+- **First-party action tags.** The repo's `actions/*` references (checkout,
+  setup-node, setup-python, github-script) use major-version tags (`@v5`,
+  `@v7`), which are mutable but first-party and widely trusted. Third-party
+  actions are pinned to commit SHAs. Hardening the first-party tags to SHAs is
+  optional and must use **verified** SHAs for the intended release — pinning to
+  an unverified SHA would break the workflow.
 
 ## Validating workflow changes locally
 

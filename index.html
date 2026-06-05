@@ -19,6 +19,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="assets/css/console.css" />
+  <link rel="stylesheet" href="assets/css/control-surface.css" />
+
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to console</a>
@@ -33,11 +35,11 @@
     <div class="field__vignette"></div>
   </div>
 
-  <!-- ============================== COMMAND RAIL ============================== -->
-  <header class="cmdbar">
-    <div class="cmdbar__inner">
-      <a class="brand" href="#main" aria-label="ClearGlass Sentinel home">
-        <svg class="brand__mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+  <!-- ===================== CONTROL SURFACE v3.0 — STICKY BAR ===================== -->
+  <header class="cs-bar" data-cs-bar data-state="NOMINAL">
+    <div class="cs-bar__inner">
+      <a class="cs-brand" href="#main" aria-label="ClearGlass Sentinel home">
+        <svg class="cs-brand__mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
           <defs>
             <linearGradient id="bm" x1="0" y1="0" x2="40" y2="40">
               <stop offset="0" stop-color="#34e3ea"/><stop offset=".5" stop-color="#2f6bff"/><stop offset="1" stop-color="#8b5cf6"/>
@@ -48,12 +50,12 @@
           <circle cx="20" cy="20" r="3.4" fill="url(#bm)"/>
         </svg>
         <span>
-          <span class="brand__name">CLEAR<span>GLASS</span></span>
-          <span class="brand__sub">SENTINEL // OPS</span>
+          <span class="cs-brand__name">CLEAR<b>GLASS</b></span>
+          <span class="cs-brand__sub">CONTROL SURFACE v3.0</span>
         </span>
       </a>
 
-      <nav class="nav" data-nav aria-label="Primary">
+      <nav class="cs-nav" data-cs-nav aria-label="Primary">
         <a href="#capabilities">Capabilities</a>
         <a href="#telemetry">Telemetry</a>
         <a href="#systems">Systems</a>
@@ -61,13 +63,21 @@
         <a href="spec.html">Spec</a>
       </nav>
 
-      <div class="cmdbar__status">
-        <span class="cmdbar__clock" data-clock>--:--:-- UTC</span>
-        <span class="chip chip--ok"><span class="chip__dot"></span>Operational</span>
-        <button class="nav-toggle" data-nav-toggle aria-label="Toggle navigation" aria-expanded="false">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
-        </button>
-      </div>
+      <span class="cs-spacer"></span>
+
+      <button class="cs-cmdk" type="button" data-cs-open-palette aria-haspopup="dialog" aria-label="Open command palette">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <span class="cs-cmdk__hint">Search & commands</span>
+        <span class="cs-kbd">⌘K</span>
+      </button>
+
+      <button class="cs-iconbtn cs-status" type="button" data-cs-status data-state="NOMINAL"
+              data-cs-open-drawer aria-haspopup="dialog" aria-label="Open systems status drawer">
+        <span class="cs-dot"></span>
+        <span class="cs-status__label" data-cs-status-label>NOMINAL</span>
+      </button>
+
+      <span class="cs-status__clock" data-cs-clock>--:--:-- UTC</span>
     </div>
   </header>
 
@@ -424,6 +434,67 @@
     </div>
   </footer>
 
+  <!-- ===================== CONTROL SURFACE — COMMAND PALETTE ===================== -->
+  <div class="cs-palette" data-cs-palette role="dialog" aria-modal="true" aria-label="Command palette" hidden>
+    <div class="cs-palette__panel" role="document">
+      <div class="cs-palette__search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input class="cs-palette__input" data-cs-palette-input type="text" role="combobox"
+               aria-expanded="false" aria-controls="cs-cmd-list" aria-autocomplete="list"
+               aria-label="Search destinations and commands"
+               placeholder="Search destinations and commands…" autocomplete="off" spellcheck="false" />
+      </div>
+      <ul class="cs-palette__list" id="cs-cmd-list" data-cs-palette-list role="listbox" aria-label="Commands"></ul>
+      <p class="cs-palette__empty" data-cs-palette-empty hidden>No matching command.</p>
+      <div class="cs-palette__foot">
+        <span><span class="cs-kbd">↑</span><span class="cs-kbd">↓</span> navigate</span>
+        <span><span class="cs-kbd">↵</span> run</span>
+        <span><span class="cs-kbd">esc</span> close</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== CONTROL SURFACE — SYSTEMS DRAWER ===================== -->
+  <div class="cs-scrim" data-cs-scrim hidden></div>
+  <aside class="cs-drawer" data-cs-drawer role="dialog" aria-modal="true" aria-labelledby="cs-drawer-title" hidden>
+    <div class="cs-drawer__head">
+      <span class="cs-dot cs-dot--pulse" aria-hidden="true"></span>
+      <span>
+        <span class="cs-drawer__title" id="cs-drawer-title">Systems Status</span>
+        <span class="cs-drawer__sub">ACTIONS · DEPLOYMENTS · LIVE TELEMETRY</span>
+      </span>
+      <button class="cs-iconbtn cs-drawer__close" type="button" data-cs-drawer-close aria-label="Close systems drawer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="cs-drawer__meta" data-cs-drawer-meta></div>
+    <div class="cs-drawer__body" data-cs-drawer-body></div>
+  </aside>
+
+  <!-- ===================== CONTROL SURFACE — MOBILE BOTTOM RAIL ===================== -->
+  <nav class="cs-rail" data-cs-rail aria-label="Mobile primary">
+    <div class="cs-rail__inner">
+      <a class="cs-rail__btn" href="#main" aria-current="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 11l9-8 9 8M5 9v11h14V9"/></svg>
+        Home
+      </a>
+      <a class="cs-rail__btn" href="#capabilities">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>
+        Caps
+      </a>
+      <button class="cs-rail__btn" type="button" data-cs-open-palette aria-label="Open command palette">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        Command
+      </button>
+      <button class="cs-rail__btn cs-rail__btn--status" type="button" data-cs-rail-status data-state="NOMINAL"
+              data-cs-open-drawer aria-label="Open systems status drawer">
+        <span class="cs-dot" aria-hidden="true"></span>
+        <span data-cs-rail-status-label>Status</span>
+      </button>
+    </div>
+  </nav>
+
   <script src="assets/js/console.js" defer></script>
+  <script src="assets/js/control-surface.js" defer></script>
 </body>
 </html>

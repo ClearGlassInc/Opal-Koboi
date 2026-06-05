@@ -5,9 +5,12 @@ on:
     types: [created]
   workflow_dispatch:
 
+# Default to read-only. Publishing targets registry.npmjs.org via NPM_TOKEN
+# (NODE_AUTH_TOKEN), so the GitHub `packages: write` scope is not required here.
+# If this workflow is ever pointed at GitHub Packages (npm.pkg.github.com),
+# re-add `packages: write` to the publish-npm job only.
 permissions:
   contents: read
-  packages: write
 
 concurrency:
   group: npm-publish-${{ github.ref }}
@@ -17,6 +20,8 @@ jobs:
   build:
     name: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -70,6 +75,8 @@ jobs:
     needs: build
     if: github.event_name == 'release'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5

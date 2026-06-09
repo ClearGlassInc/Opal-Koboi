@@ -4,6 +4,11 @@ on:
   release:
     types: [created]
   workflow_dispatch:
+    inputs:
+      publish:
+        description: "Publish to npm now (requires the NPM_TOKEN secret)"
+        type: boolean
+        default: false
 
 # Default to read-only. Publishing targets registry.npmjs.org via NPM_TOKEN
 # (NODE_AUTH_TOKEN), so the GitHub `packages: write` scope is not required here.
@@ -73,7 +78,10 @@ jobs:
   publish-npm:
     name: publish-npm
     needs: build
-    if: github.event_name == 'release'
+    # Publishes on a GitHub Release, OR on a manual dispatch that explicitly
+    # opts in via the `publish` input. Manual dispatch requires repo write
+    # access to start, and either path still needs the NPM_TOKEN secret.
+    if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.publish) }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -109,8 +117,23 @@ jobs:
             npm install
           fi
 
-      - name: Publish package
+      - name: Guard - require NPM_TOKEN
+        id: npmguard
         if: steps.detect.outputs.has_package == 'true'
+        shell: bash
+        env:
+          HAS_TOKEN: ${{ secrets.NPM_TOKEN != '' }}
+        run: |
+          set -euo pipefail
+          if [ "${HAS_TOKEN}" != "true" ]; then
+            echo "::warning::NPM_TOKEN secret is not set; skipping npm publish (no error)."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish package
+        if: steps.detect.outputs.has_package == 'true' && steps.npmguard.outputs.enabled == 'true'
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

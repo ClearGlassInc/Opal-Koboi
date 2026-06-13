@@ -34,7 +34,7 @@ Pillow>=10.0.0    # Image processing
 
 # Utilities
 python-dateutil>=2.8.0
-pytz>=2023.3
+pytz>=2026.2
 tqdm>=4.65.0
 
 # Optional: Production Enhancements

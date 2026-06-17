@@ -32,16 +32,21 @@ class JobSource(Protocol):
 # ---------------------------------------------------------------------------
 
 _SALARY_RE = re.compile(r"\$?\s*(\d{2,3})(?:,?(\d{3}))?\s*([kK])?")
+# US benefit tokens that look like k-notation salaries ("401k", "403(b)") and
+# would otherwise be misread as $401,000 / $403,000. Scrubbed before parsing.
+_BENEFIT_NOISE_RE = re.compile(r"\b40[123]\s*\(?\s*[kb]\s*\)?", re.IGNORECASE)
 
 
 def parse_salary(text: str) -> tuple[Optional[int], Optional[int]]:
     """Best-effort (min, max) salary extraction from free text.
 
     Handles ``$120k``, ``120,000``, ``$120k-$160k`` and ``120000 - 160000``.
-    Returns ``(None, None)`` when nothing parseable is present.
+    Strips US retirement-plan tokens (``401k``, ``403(b)``) first so they are not
+    misread as salaries. Returns ``(None, None)`` when nothing parseable.
     """
     if not text:
         return (None, None)
+    text = _BENEFIT_NOISE_RE.sub(" ", text)
     values: list[int] = []
     for whole, thousands, k in _SALARY_RE.findall(text):
         if k:

@@ -26,6 +26,17 @@ class TestSalaryParsing(unittest.TestCase):
         # "3 years" should not be read as a salary.
         self.assertEqual(parse_salary("3 years experience"), (None, None))
 
+    def test_ignores_retirement_plan_tokens(self):
+        # "401k" / "403(b)" must not be misread as $401k / $403k salaries.
+        self.assertEqual(parse_salary("Benefits include a 401k match"), (None, None))
+        self.assertEqual(parse_salary("We offer 403(b) and PTO"), (None, None))
+
+    def test_real_salary_survives_benefit_token(self):
+        # A genuine salary alongside a 401k mention is still extracted cleanly.
+        self.assertEqual(
+            parse_salary("$140k-$180k plus 401k match"), (140_000, 180_000)
+        )
+
 
 class TestPostingFromDict(unittest.TestCase):
     def test_infers_remote_from_location(self):

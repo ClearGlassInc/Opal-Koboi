@@ -1,4 +1,4 @@
-# ClearGlassInc
+# ClearGlassInc.
 
 > Precision infrastructure for digital sovereignty, intelligent systems, and decentralized execution.
 

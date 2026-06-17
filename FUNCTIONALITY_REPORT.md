@@ -1,8 +1,8 @@
 # FUNCTIONALITY REPORT
 
 **Repository:** ClearGlassInc/Opal-Koboi  
-**Generated:** 2026-06-14  
-**Node.js:** v22.22.2 | **npm:** 10.9.7 | **Python:** 3.11.15
+**Generated:** 2026-06-10  
+**Node.js:** v22.22.2 | **npm:** 10.9.7 | **Python:** 3.12 (stdlib)
 
 ---
 
@@ -10,12 +10,12 @@
 
 | # | Step | Status | Notes |
 |---|------|--------|-------|
-| 1 | Repository Assessment | ✅ Pass | Node.js + Python hybrid monorepo |
-| 2 | Dependency Validation | ✅ Pass | Zero external JS deps; Python stdlib-only core; pytest installed for test run |
+| 1 | Repository Assessment | ✅ Pass | Node.js ESM + Python hybrid monorepo |
+| 2 | Dependency Validation | ✅ Pass | Zero external JS deps; Python stdlib-only core; 0 vulnerabilities |
 | 3 | Build Verification | ✅ Pass | `npm run build` → `dist/` artifacts generated |
 | 4 | Environment & Config | ✅ Pass | No required env vars; optional API keys documented in README |
-| 5 | Test Execution | ✅ Pass | JS suite + 90 Python tests — all pass |
-| 6 | Lint & Format | ✅ Pass | Package validation passes; no linter configured |
+| 5 | Test Execution | ✅ Pass | JS suite + 90 Python tests — all green |
+| 6 | Lint & Format | ✅ Pass | No linter configured; package validation passes |
 | 7 | Runtime Smoke Test | ✅ Pass | All 5 CLI commands execute cleanly |
 | 8 | Deployment Readiness | ✅ Pass | CI workflow present; Dependabot configured; dist/ excluded from git |
 | 9 | Report | ✅ Complete | See below |
@@ -36,10 +36,10 @@
 
 ### Python — ClearPulse (46 tests)
 - **Location:** `clearpulse/tests/`
-- **Result:** 46 passed in 0.13s
+- **Result:** 46 passed in 0.16s
 - **Coverage:** Windowed facts, access spike detection, PHI scanner/masking, alert routing/dedup, FHIR ingestion, pipeline, entity resolution, graph ring detection, incident aggregation
 
-**Total: 90 Python + JS suite = fully green**
+**Total: 90 Python tests + JS suite = fully green**
 
 ---
 
@@ -74,8 +74,7 @@ npm test                                     # validate + test suite
 npm run build                                # generate dist/ artifacts
 node bin/opal-koboi.js <command> [file.json] # CLI
 
-# Python modules (no install needed — stdlib only; install pytest to run tests)
-pip install pytest
+# Python modules (stdlib only — no install needed)
 python3 -m pytest clearflow/tests/   # 44 tests
 python3 -m pytest clearpulse/tests/  # 46 tests
 
@@ -93,10 +92,10 @@ uvicorn clearpulse.backend.app:app --reload  # ClearPulse API
 |-----------|----------|--------|-------|
 | `src/` — Opal-Koboi core library | Node.js ESM | ✅ | JS suite |
 | `bin/opal-koboi.js` — CLI | Node.js | ✅ | smoke |
-| `clearflow/` — AI workflow engine | Python 3.11 | ✅ | 44 |
-| `clearpulse/` — triage & compliance pipeline | Python 3.11 | ✅ | 46 |
-| `artemis/` — orchestration backend | Python 3.11 | ✅ importable | — |
-| `growth_os/` — growth OS module | Python 3.11 | ✅ importable | — |
+| `clearflow/` — AI workflow engine | Python | ✅ | 44 |
+| `clearpulse/` — triage & compliance pipeline | Python | ✅ | 46 |
+| `artemis/` — orchestration backend | Python | ✅ (no tests) | — |
+| `growth_os/` — growth OS module | Python | ✅ importable | — |
 | `apps/artemis-agent/` — Electron desktop app | TypeScript | ⚠️ | needs npm install |
 
 ---

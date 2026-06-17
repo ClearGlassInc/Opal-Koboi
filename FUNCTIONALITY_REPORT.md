@@ -17,7 +17,7 @@
 | 5 | Test Execution | ✅ Pass | JS suite + 90 Python tests — all green |
 | 6 | Lint & Format | ✅ Pass | No linter configured; package validation passes |
 | 7 | Runtime Smoke Test | ✅ Pass | All 5 CLI commands execute cleanly |
-| 8 | Deployment Readiness | ✅ Pass | CI workflow present; dist/ excluded from git |
+| 8 | Deployment Readiness | ✅ Pass | CI workflow present; Dependabot configured; dist/ excluded from git |
 | 9 | Report | ✅ Complete | See below |
 
 ---
@@ -116,6 +116,8 @@ uvicorn clearpulse.backend.app:app --reload  # ClearPulse API
 3. `npm run build`
 4. `npm run dashboard`
 5. `npm run orchestrate`
+
+Dependabot configured (`.github/dependabot.yml`) for weekly `github-actions` and `pip` updates.
 
 All steps verified passing locally.
 

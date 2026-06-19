@@ -1,7 +1,7 @@
 # FUNCTIONALITY REPORT
 
 **Repository:** ClearGlassInc/Opal-Koboi  
-**Generated:** 2026-06-18  
+**Generated:** 2026-06-19  
 **Node.js:** v22.22.2 | **npm:** 10.9.7 | **Python:** 3.11.15
 
 ---
@@ -10,7 +10,7 @@
 
 | # | Step | Status | Notes |
 |---|------|--------|-------|
-| 1 | Repository Assessment | ✅ Pass | Node.js ESM + Python hybrid monorepo |
+| 1 | Repository Assessment | ✅ Pass | Node.js ESM + Python hybrid monorepo; 8 active components |
 | 2 | Dependency Validation | ✅ Pass | Zero external JS deps; Python stdlib-only core; 0 vulnerabilities |
 | 3 | Build Verification | ✅ Pass | `npm run build` → `dist/` artifacts generated |
 | 4 | Environment & Config | ✅ Pass | No required env vars; optional API keys documented in README |
@@ -29,11 +29,11 @@
 - **Result:** All assertions pass
 - **Coverage:** `clampScore`, `scoreTask`, `classifyPriority`, `createOperationPlan`, `runOperation`, `AuditLedger`, `PolicyEngine`, `WorkflowEngine`, `EnterpriseAutomationPlatform`
 
-### TypeScript — Artemis Agent (15 tests) ← NEW
+### TypeScript — Artemis Agent (15 tests)
 - **Suite:** `apps/artemis-agent/src/artemis.test.ts`
-- **Result:** 15 passed
+- **Result:** 15 passed (vitest v4.1.9)
 - **Coverage:** Provider registry, slash commands, tool registry, gateway registry, install progress
-- **Fixes applied:** Added missing `tsconfig.json`; created first test suite for this component
+- **Note:** `npm install` required in `apps/artemis-agent/` to install vitest + TypeScript devDependencies
 
 ### Python — ClearFlow (44 tests)
 - **Location:** `clearflow/tests/`
@@ -119,17 +119,11 @@ uvicorn clearpulse.backend.app:app --reload  # ClearPulse API
 
 ---
 
-## Fixes Applied This Run
-
-1. **`apps/artemis-agent/tsconfig.json`** — Created missing TypeScript config file. Without it, `npm run lint` (which runs `tsc --noEmit`) printed the help page and exited with code 1.
-2. **`apps/artemis-agent/src/artemis.test.ts`** — Created first test suite for the artemis-agent component. Added 15 tests covering provider registry, slash commands, tool registry, gateway registry, and install progress.
-
----
-
 ## Manual Interventions Required
 
 1. **Python `requirements.txt` (root)** — lists heavy ML deps (TensorFlow, Keras) for the aerospace analytics scripts (`data_collector.py`, `ml_engine.py`, etc.). These are not exercised by the test suite and are standalone scripts; install only if needed.
 2. **Optional FastAPI gateways** — `clearflow/backend/app.py`, `clearpulse/backend/app.py`, and `artemis/backend/app.py` require `pip install fastapi pydantic uvicorn` to run the REST gateway (not needed for tests).
+3. **Artemis-agent devDeps** — `apps/artemis-agent/node_modules/` must be populated with `npm install` before running tests or lint. The root `node_modules/` is separate.
 
 ---
 

@@ -11,7 +11,7 @@ scipy>=1.18.0
 # Machine Learning & AI
 scikit-learn>=1.3.0
 tensorflow>=2.13.0
-keras>=2.13.0
+keras>=3.14.1
 
 # Data Collection
 requests>=2.31.0

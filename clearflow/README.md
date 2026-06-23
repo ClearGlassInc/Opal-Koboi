@@ -40,21 +40,60 @@ P2  Personal Brand  LinkedIn post on AI trend       LOCKED ──┘ keystone la
 | `engine/gating.py` | Logic | `DomainGatekeeper` — wires the keystone gate, reconciles unlocks. |
 | `engine/scheduler.py` | Logic | `BlockScheduler` — resolves *what should I do right now?* |
 | `engine/pledge.py` | Logic | `PledgeLedger` — three daily commitments + next-day review. |
+| `engine/graph.py` | Logic | `DependencyGraph` — topological order, cycle detection, **critical path** by effort. |
 | `intel/brief.py` | Intel | `IntelRouter` — routes brief headlines to the domain they inform. |
-| `workflow.py` | Orchestration | `AutomationWorkflow` — binds the stages, enforces the contract. |
+| `events.py` | Bus | `EventBus` — typed, fault-isolating publish/subscribe + audit log. |
+| `notify.py` | Seam | `Notifier` (console / collecting / webhook) — events → outbound signals. |
+| `store.py` | Persistence | `HistoryStore` — durable day records, **streaks**, pledge **carryover**. |
+| `runner.py` | Async | `DayRunner` — drive the matrix across a virtual `Clock` with `asyncio`. |
+| `workflow.py` | Orchestration | `AutomationWorkflow` — binds the stages, emits events, enforces the contract. |
 | `bot.py` | Front end | `DailyOutcomeBot` — morning briefing, live status, close-out. |
+| `__main__.py` | CLI | `python3 -m clearflow <briefing\|status\|plan\|land\|run\|history>`. |
+| `backend/app.py` | Gateway | Optional FastAPI surface (drive the day over HTTP). |
+
+## Advanced subsystems
+
+- **Event bus** (`events.py`) — every transition (`item.started`,
+  `keystone.landed`, `domain.unlocked`, …) is published as a typed `Event`.
+  Subscriber errors are isolated and captured on `bus.dead_letters`; the log
+  doubles as an ordered audit trail. The keystone-landed event is emitted
+  *before* the domain-unlock events so subscribers see cause then effect.
+- **Dependency graph & critical path** (`engine/graph.py`) — generalises the
+  gate to an arbitrary DAG: Kahn topological ordering (keystone-first tie-break),
+  cycle detection with a recovered cycle for the error, and the longest
+  effort-weighted chain — the day's irreducible lower bound.
+- **Notifier seam** (`notify.py`) — `WebhookNotifier` POSTs event JSON via
+  stdlib `urllib` (Slack-incoming-webhook shape); the natural wiring point for
+  the Zapier / Gmail / Calendar MCP servers in this workspace.
+- **Durable history** (`store.py`) — atomic JSON (`os.replace`) day records,
+  consecutive keystone-landed **streaks**, and **carryover** of unkept pledges,
+  so "Yesterday's Pledge Review" reads real data instead of a stub.
+- **Async runner** (`runner.py`) — a virtual `Clock` advances focus tick by tick;
+  `simulate_day` drives an entire accelerated day unattended, still strictly
+  through the single-outcome gate.
 
 ## Running
 
 ```bash
-# Core engine + tests need only the standard library.
-python3 -m unittest clearflow.tests.test_clearflow -v
+# Core engine + ALL tests need only the standard library.
+python3 -m unittest clearflow.tests.test_clearflow clearflow.tests.test_advanced -v
 
 # The seeded single-outcome day, start to finish (no external services).
 python3 -m clearflow.bot
 
 # A narrated demo that proves the gate (other domains refuse to start early).
 python3 -m clearflow.demo
+
+# The CLI front end.
+python3 -m clearflow briefing          # morning briefing
+python3 -m clearflow plan              # execution order + critical path
+python3 -m clearflow run               # simulate the whole day (async)
+python3 -m clearflow land "shipped & tested"
+python3 -m clearflow history --store .clearflow_history.json --record
+
+# Optional HTTP gateway (needs the web extras).
+pip install -r clearflow/requirements.txt
+uvicorn clearflow.backend.app:app --reload
 ```
 
 ## Driving it from code
@@ -90,11 +129,8 @@ wf.complete(wf.keystone, "tested and shipped")   # unlocks the P1
 
 ## Known extensions (intentionally out of scope for the scaffold)
 
-- Persisting the matrix and pledge ledger across days (so "Yesterday's Pledge
-  Review" reads from real history instead of "no prior data").
-- A notifier seam (Slack/email/calendar) firing when the keystone lands and a
-  domain unlocks — the Zapier/Gmail/Calendar MCP servers in this workspace are
-  the natural wiring points.
+- Bridging the in-process `EventBus` to Redis pub/sub (or a broker) and the
+  `WebhookNotifier` to a live Slack/Zapier endpoint for real fan-out.
 - A FastAPI gateway (`clearflow.backend`) mirroring `clearpulse.backend` so the
   bot can be driven over HTTP from a dashboard.
 - Richer intel routing (embeddings instead of keyword hits) and auto-attaching

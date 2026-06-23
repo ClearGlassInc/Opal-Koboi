@@ -1,6 +1,6 @@
 {
   "name": "@clearglassinc/opal-koboi",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "ClearGlass Inc. enterprise automation platform for mission planning, workflow orchestration, policy control, audit logging, and operational intelligence.",
   "type": "module",
   "license": "MIT",

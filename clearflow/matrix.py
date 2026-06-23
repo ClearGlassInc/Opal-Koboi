@@ -20,7 +20,7 @@ def build_item(row: dict[str, Any]) -> WorkItem:
     """Build one :class:`WorkItem` from a matrix row.
 
     Recognised keys: ``priority``, ``domain``, ``action``, ``time_block``
-    (free text like ``"8-10 AM"``), ``success_metric``.
+    (free text like ``"8-10 AM"``), ``success_metric``, ``effort_minutes``.
     """
     block_text = row.get("time_block") or row.get("time")
     time_block = TimeBlock.parse(block_text) if block_text else None
@@ -30,6 +30,7 @@ def build_item(row: dict[str, Any]) -> WorkItem:
         priority=Priority.parse(row["priority"]),
         success_metric=str(row.get("success_metric", "")).strip(),
         time_block=time_block,
+        effort_minutes=int(row.get("effort_minutes", 60)),
     )
 
 

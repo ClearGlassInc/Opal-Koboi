@@ -4,10 +4,17 @@ on:
   release:
     types: [created]
   workflow_dispatch:
+    inputs:
+      publish:
+        description: "Publish to GitHub Packages now"
+        type: boolean
+        default: false
 
+# Default to read-only at the top level. Publishing targets GitHub Packages
+# (npm.pkg.github.com) using the built-in GITHUB_TOKEN, so only the publish-npm
+# job elevates to `packages: write`. No external npm secret is required.
 permissions:
   contents: read
-  packages: write
 
 concurrency:
   group: npm-publish-${{ github.ref }}
@@ -17,9 +24,11 @@ jobs:
   build:
     name: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Detect Node package
         id: detect
@@ -35,7 +44,7 @@ jobs:
 
       - name: Setup Node.js
         if: steps.detect.outputs.has_package == 'true'
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
@@ -68,11 +77,17 @@ jobs:
   publish-npm:
     name: publish-npm
     needs: build
-    if: github.event_name == 'release'
+    # Publishes on a GitHub Release, OR on a manual dispatch that explicitly
+    # opts in via the `publish` input. Manual dispatch requires repo write
+    # access to start, and either path still needs the NPM_TOKEN secret.
+    if: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.publish) }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Detect Node package
         id: detect
@@ -84,12 +99,13 @@ jobs:
             echo "has_package=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Setup Node.js for npm publish
+      - name: Setup Node.js for GitHub Packages
         if: steps.detect.outputs.has_package == 'true'
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: 22
-          registry-url: https://registry.npmjs.org/
+          registry-url: https://npm.pkg.github.com
+          scope: "@clearglassinc"
           cache: npm
 
       - name: Install dependencies
@@ -102,11 +118,13 @@ jobs:
             npm install
           fi
 
-      - name: Publish package
+      - name: Publish package to GitHub Packages
         if: steps.detect.outputs.has_package == 'true'
+        # GITHUB_TOKEN is always present in Actions; packages: write (above)
+        # authorizes the push. Visibility follows the repository.
         run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Skip publish when package.json is absent
         if: steps.detect.outputs.has_package != 'true'

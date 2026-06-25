@@ -1,7 +1,7 @@
 # FUNCTIONALITY REPORT
 
 **Repository:** ClearGlassInc/Opal-Koboi  
-**Generated:** 2026-06-21  
+**Generated:** 2026-06-25  
 **Node.js:** v22.22.2 | **npm:** 10.9.7 | **Python:** 3.11.15
 
 ---
@@ -37,17 +37,17 @@
 
 ### Python — ClearFlow (44 tests)
 - **Location:** `clearflow/tests/`
-- **Result:** 44 passed in 0.09s
+- **Result:** 44 passed in 0.13s
 - **Coverage:** TimeBlock parsing, Priority sorting, gating, scheduling, pledge ledger, intel routing, workflow reporting, runner simulation
 
 ### Python — ClearPulse (46 tests)
 - **Location:** `clearpulse/tests/`
-- **Result:** 46 passed in 0.16s
+- **Result:** 46 passed in 0.22s
 - **Coverage:** Windowed facts, access spike detection, PHI scanner/masking, alert routing/dedup, FHIR ingestion, pipeline, entity resolution, graph ring detection, incident aggregation
 
 ### Python — JobAgent (33 tests)
 - **Location:** `job_agent/tests/`
-- **Result:** 33 passed in 0.08s
+- **Result:** 33 passed in 0.07s
 - **Coverage:** Salary parsing, job posting ingestion, scoring/ranking, personalization, sourcing dedup, application tracking, follow-up intelligence
 
 **Total: 123 Python tests + JS suite + 15 TS tests = fully green**
@@ -138,7 +138,7 @@ uvicorn clearpulse.backend.app:app --reload  # ClearPulse API
 
 Dependabot configured (`.github/dependabot.yml`) for weekly `github-actions` and `pip` updates.
 
-All steps verified passing locally on 2026-06-23.
+All steps verified passing locally on 2026-06-25.
 
 ---
 

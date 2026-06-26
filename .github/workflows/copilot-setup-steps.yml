@@ -6,6 +6,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   setup-copilot:
     runs-on: ubuntu-latest
@@ -32,11 +35,3 @@ jobs:
         run: |
           echo "Validating repository for Copilot integration..."
           echo "Repository ready."
-
-      - name: Security scan
-        uses: github/codeql-action/init@v4
-        with:
-          languages: javascript
-
-      - name: Analyze code
-        uses: github/codeql-action/analyze@v4

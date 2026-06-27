@@ -80,7 +80,7 @@ jobs:
       - name: Run Claude Code repair agent
         if: steps.guard.outputs.enabled == 'true'
         # anthropics/claude-code-action v1
-        uses: anthropics/claude-code-action@d5726de019ec4498aa667642bc3a80fca83aa102
+        uses: anthropics/claude-code-action@a92e7c70a4da9793dc164451d829089dc057a464
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           prompt: |

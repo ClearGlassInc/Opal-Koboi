@@ -124,6 +124,7 @@ uvicorn clearpulse.backend.app:app --reload  # ClearPulse API
 1. **Python `requirements.txt` (root)** — lists heavy ML deps (TensorFlow, Keras) for the aerospace analytics scripts (`data_collector.py`, `ml_engine.py`, etc.). These are not exercised by the test suite and are standalone scripts; install only if needed.
 2. **Optional FastAPI gateways** — `clearflow/backend/app.py`, `clearpulse/backend/app.py`, and `artemis/backend/app.py` require `pip install fastapi pydantic uvicorn` to run the REST gateway (not needed for tests).
 3. **Artemis-agent devDeps** — `apps/artemis-agent/node_modules/` must be populated with `npm install` before running tests or lint. The root `node_modules/` is separate.
+4. **Open PR backlog** — 8 PRs are open against `main` and unmerged as of 2026-07-01: a duplicate no-op report-refresh PR (#53, opened 2026-06-30) and 7 Dependabot version-bump PRs (#46–#52, opened 2026-06-27). None affect functionality, but they should be triaged (merge or close) to avoid further buildup from the daily verification routine.
 
 ---
 

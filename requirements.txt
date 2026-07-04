@@ -5,7 +5,7 @@
 
 # Core Data Processing
 pandas>=2.0.0
-numpy>=2.4.6
+numpy>=2.5.0
 scipy>=1.18.0
 
 # Machine Learning & AI
@@ -24,7 +24,7 @@ sqlite3  # Built-in with Python
 
 # Reporting & Visualization
 openpyxl>=3.1.0
-matplotlib>=3.7.0
+matplotlib>=3.11.0
 plotly>=5.14.0
 seaborn>=0.12.0
 
@@ -35,7 +35,7 @@ Pillow>=12.2.0    # Image processing
 # Utilities
 python-dateutil>=2.9.0.post0
 pytz>=2026.2
-tqdm>=4.65.0
+tqdm>=4.68.3
 
 # Optional: Production Enhancements
 # psycopg2-binary>=2.9.0  # PostgreSQL support

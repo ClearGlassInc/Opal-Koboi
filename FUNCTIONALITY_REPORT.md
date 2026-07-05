@@ -1,7 +1,7 @@
 # FUNCTIONALITY REPORT
 
 **Repository:** ClearGlassInc/Opal-Koboi  
-**Generated:** 2026-07-04  
+**Generated:** 2026-07-05 (re-verified; originally generated 2026-07-04)  
 **Node.js:** v22.22.2 | **npm:** 10.9.7 | **Python:** 3.11.15
 
 ---
@@ -162,7 +162,21 @@ uvicorn clearpulse.backend.app:app --reload  # ClearPulse API
 1. **Python `requirements.txt` (root)** — lists heavy ML deps (TensorFlow, Keras) for the aerospace analytics scripts (`data_collector.py`, `ml_engine.py`, etc.). These are not exercised by the test suite and are standalone scripts; install only if needed.
 2. **Optional FastAPI gateways** — `clearflow/backend/app.py`, `clearpulse/backend/app.py`, and `artemis/backend/app.py` require `pip install fastapi pydantic uvicorn` to run the REST gateway (not needed for tests).
 3. **Artemis-agent devDeps** — `apps/artemis-agent/node_modules/` must be populated with `npm install` before running tests or lint. The root `node_modules/` is separate.
-4. **Open PR backlog** — 8 PRs are open against `main` and unmerged as of 2026-07-01: a duplicate no-op report-refresh PR (#53, opened 2026-06-30) and 7 Dependabot version-bump PRs (#46–#52, opened 2026-06-27). None affect functionality, but they should be triaged (merge or close) to avoid further buildup from the daily verification routine.
+4. **Open PR backlog** — resolved. All previously-open PRs (#46–#57) have been merged as of 2026-07-05; 0 open PRs remain.
+
+## Re-verification (2026-07-05)
+
+Re-ran the full check with no code changes on `main` since the last pass other than a Dependabot
+GitHub Actions bump (#57, non-functional). Confirmed still green:
+
+- `npm test` (validate + JS suite) — pass
+- `npm run build` (root) — pass
+- `python3 -m pytest clearflow/tests/ clearpulse/tests/ job_agent/tests/` — 123 passed
+- `apps/artemis-agent`: `npm run build`, `npm test` (15 vitest), `npm run lint` (`tsc --noEmit`) — all pass
+- CLI smoke test (`status`, `dashboard`) — pass
+- Working tree remains clean after all installs/builds (`node_modules`, `dist` correctly gitignored)
+
+No regressions found. No manual intervention required beyond the pre-existing documented notes above.
 
 ---
 

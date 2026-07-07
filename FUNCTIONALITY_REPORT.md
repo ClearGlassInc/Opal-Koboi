@@ -180,6 +180,24 @@ No regressions found. No manual intervention required beyond the pre-existing do
 
 ---
 
+## Re-verification (2026-07-07)
+
+Re-ran the full check with no code changes on `main` since the 2026-07-05 pass. Confirmed still green:
+
+- `npm test` (validate + JS suite) — pass
+- `npm run build` (root) — pass, `dist/` regenerated
+- `pip install pytest` + `python3 -m pytest clearflow/tests/ clearpulse/tests/ job_agent/tests/` — 123 passed
+- `apps/artemis-agent`: `npm install`, `npm run build`, `npm test` (15 vitest), `npm run lint` (`tsc --noEmit`) — all pass
+- CLI smoke test (`status`, `dashboard`, `orchestrate`) — pass
+- `artemis.agents.orchestrator`, `artemis.agents.tools`, `artemis.evals.pipeline`, `artemis.policy.guard`, `growth_os.growth_os` — import cleanly
+- `clearflow.backend.app`, `clearpulse.backend.app`, `artemis.backend.app` FastAPI gateways — `/docs` → 200
+- Working tree remains clean after all installs/builds (`node_modules`, `dist` correctly gitignored)
+- 0 open pull requests on the repository
+
+No regressions found. No manual intervention required beyond the pre-existing documented notes above.
+
+---
+
 ## CI Workflow
 
 `.github/workflows/ci.yml` runs on push/PR to `main`:

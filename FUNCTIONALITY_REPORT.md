@@ -1,7 +1,7 @@
 # FUNCTIONALITY REPORT
 
 **Repository:** ClearGlassInc/Opal-Koboi  
-**Generated:** 2026-07-05 (re-verified; originally generated 2026-07-04)  
+**Generated:** 2026-07-09 (re-verified; originally generated 2026-07-04)  
 **Node.js:** v22.22.2 | **npm:** 10.9.7 | **Python:** 3.11.15
 
 ---
@@ -195,6 +195,25 @@ Re-ran the full check with no code changes on `main` since the 2026-07-05 pass. 
 - 0 open pull requests on the repository
 
 No regressions found. No manual intervention required beyond the pre-existing documented notes above.
+
+---
+
+## Re-verification (2026-07-09)
+
+Re-ran the full check with no code changes on `main` since the 2026-07-07 pass. Confirmed still green:
+
+- `npm ci` && `npm test` (validate + JS suite) — pass
+- `npm run build` (root) — pass, `dist/` regenerated
+- `pip install pytest` + `python3 -m pytest clearflow/tests/ clearpulse/tests/ job_agent/tests/` — 123 passed
+- `apps/artemis-agent`: `npm install`, `npm run build`, `npm test` (15 vitest), `npm run lint` (`tsc --noEmit`) — all pass
+- CLI smoke test (`status`, `dashboard`, `orchestrate`) — pass
+- `artemis.agents.orchestrator`, `artemis.agents.tools`, `artemis.evals.pipeline`, `artemis.policy.guard`, `growth_os.growth_os` — import cleanly
+- `clearflow.backend.app`, `clearpulse.backend.app`, `artemis.backend.app` FastAPI modules — import cleanly with `app` object present
+- Working tree remains clean after all installs/builds (`node_modules`, `dist` correctly gitignored)
+
+No regressions found. No manual intervention required beyond the pre-existing documented notes above.
+
+**Note:** PR #61 (2026-07-08 re-verification, identical "all green" result) is still open/unmerged as of this run. Consider merging or closing the backlog of routine re-verification PRs rather than letting them accumulate.
 
 ---
 

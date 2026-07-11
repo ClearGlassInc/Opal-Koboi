@@ -5,13 +5,15 @@
 
 # Core Data Processing
 pandas>=2.0.0
-numpy>=2.5.0
-scipy>=1.18.0
+numpy>=2.4.6
+scipy>=1.17.0
 
 # Machine Learning & AI
 scikit-learn>=1.9.0
 tensorflow>=2.13.0
 keras>=3.15.0
+xgboost>=2.0.0
+prophet>=1.1.5
 
 # Data Collection
 requests>=2.31.0
@@ -20,7 +22,7 @@ lxml>=4.9.0
 
 # Database
 sqlalchemy>=2.0.51
-sqlite3  # Built-in with Python
+# sqlite3 is part of the Python standard library and is not a pip package
 
 # Reporting & Visualization
 openpyxl>=3.1.5

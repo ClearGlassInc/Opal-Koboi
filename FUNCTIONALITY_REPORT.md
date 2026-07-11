@@ -1,7 +1,7 @@
 # FUNCTIONALITY REPORT
 
 **Repository:** ClearGlassInc/Opal-Koboi  
-**Generated:** 2026-07-05 (re-verified; originally generated 2026-07-04)  
+**Generated:** 2026-07-05 (re-verified 2026-07-08; originally generated 2026-07-04)  
 **Node.js:** v22.22.2 | **npm:** 10.9.7 | **Python:** 3.11.15
 
 ---
@@ -193,6 +193,24 @@ Re-ran the full check with no code changes on `main` since the 2026-07-05 pass. 
 - `clearflow.backend.app`, `clearpulse.backend.app`, `artemis.backend.app` FastAPI gateways — `/docs` → 200
 - Working tree remains clean after all installs/builds (`node_modules`, `dist` correctly gitignored)
 - 0 open pull requests on the repository
+
+No regressions found. No manual intervention required beyond the pre-existing documented notes above.
+
+---
+
+## Re-verification (2026-07-08)
+
+Re-ran the full check with no code changes on `main` since the 2026-07-07 pass (the only intervening
+commit, PR #60, was an empty merge). Confirmed still green:
+
+- `npm ci` + `npm test` (validate + JS suite) — pass
+- `npm run build` (root) — pass, `dist/` regenerated
+- `pip install pytest` + `python3 -m pytest clearflow/tests/ clearpulse/tests/ job_agent/tests/` — 123 passed
+- `apps/artemis-agent`: `npm install`, `npm run build` (`tsc`), `npm test` (15 vitest), `npm run lint` (`tsc --noEmit`) — all pass
+- CLI smoke test (`status`, `dashboard`, `orchestrate`) — pass
+- `clearflow.backend.app`, `clearpulse.backend.app`, `artemis.backend.app` FastAPI gateways — `/docs` → 200 (via `pip install fastapi pydantic uvicorn`)
+- Working tree remains clean after all installs/builds (`node_modules`, `dist` correctly gitignored)
+- GitHub MCP access was unavailable this session (token expired), so the open-PR count could not be re-checked; no other step was affected
 
 No regressions found. No manual intervention required beyond the pre-existing documented notes above.
 

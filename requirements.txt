@@ -19,7 +19,7 @@ beautifulsoup4>=4.15.0
 lxml>=4.9.0
 
 # Database
-sqlalchemy>=2.0.0
+sqlalchemy>=2.0.51
 sqlite3  # Built-in with Python
 
 # Reporting & Visualization

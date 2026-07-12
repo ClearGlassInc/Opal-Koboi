@@ -24,6 +24,9 @@ lxml>=4.9.0
 sqlalchemy>=2.0.51
 # sqlite3 is part of the Python standard library and is not a pip package
 
+# Web API (app.py is a Flask application)
+flask>=2.3.0
+
 # Reporting & Visualization
 openpyxl>=3.1.5
 matplotlib>=3.11.0
@@ -43,4 +46,3 @@ tqdm>=4.68.4
 # psycopg2-binary>=2.9.0  # PostgreSQL support
 # redis>=4.5.0            # Caching
 # celery>=5.2.0           # Task queue
-# flask>=2.3.0            # Web dashboard

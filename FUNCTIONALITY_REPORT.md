@@ -216,6 +216,35 @@ No regressions found. No manual intervention required beyond the pre-existing do
 
 ---
 
+## Re-verification (2026-07-12)
+
+Re-ran the full check after PR #69 (pip-uninstallable `requirements.txt` repair) merged to `main`.
+Found and fixed one new issue: **`flask` was missing as a real dependency.**
+
+`app.py` unconditionally does `from flask import Flask, jsonify` at import time — it *is* a Flask
+app (the `/api/health`, `/api/status`, `/api/market` routes) — but `requirements.txt` only listed
+`flask` as a commented-out line under "Optional: Production Enhancements". A clean
+`pip install -r requirements.txt` in a fresh venv left `app.py` unimportable with
+`ModuleNotFoundError: No module named 'flask'`, contradicting the prior pass's claim that all
+modules import cleanly. Fixed by moving `flask>=2.3.0` into the real dependency list (PR #70).
+
+Confirmed green after the fix:
+
+- Fresh venv `pip install -r requirements.txt` — succeeds
+- `app.py`, `data_collector.py`, `database_init.py`, `market_analyzer.py`, `ml_engine.py`,
+  `predictive_engine.py` — all import cleanly
+- `app.py`'s `/api/health` route — 200 via Flask's test client
+- `npm ci` + `npm test` (validate + JS suite) — pass
+- `npm run build` (root) — pass, `dist/` regenerated
+- `python3 -m pytest clearflow/tests/ clearpulse/tests/ job_agent/tests/` — 123 passed
+- `apps/artemis-agent`: `npm install`, `npm run build` (`tsc`), `npm test` (15 vitest), `npm run lint` (`tsc --noEmit`) — all pass
+- CLI smoke test (`status`, `orchestrate`) — pass
+- Working tree remains clean after all installs/builds (`node_modules`, `dist` correctly gitignored)
+
+No other regressions found.
+
+---
+
 ## CI Workflow
 
 `.github/workflows/ci.yml` runs on push/PR to `main`:

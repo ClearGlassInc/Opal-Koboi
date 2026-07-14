@@ -245,6 +245,25 @@ No other regressions found.
 
 ---
 
+## Re-verification (2026-07-14)
+
+Re-ran the full check with no code changes on `main` since the 2026-07-12 pass (PR #70 merge is
+still the tip of `main`). Confirmed still green:
+
+- Fresh venv `pip install -r requirements.txt` — succeeds cleanly (isolating from the container's
+  Debian-managed `blinker` avoids a spurious `Cannot uninstall blinker` error from system pip)
+- `npm run ci` (validate + JS suite + build, root) — pass, `dist/` regenerated
+- `python3 -m pytest clearflow/tests/ clearpulse/tests/ job_agent/tests/` — 123 passed
+- `apps/artemis-agent`: `npm install`, `npm test` (15 vitest), `npm run lint` (`tsc --noEmit`) — all pass
+- CLI smoke test (`status`, `dashboard`) — pass
+- `clearflow.backend.app`, `clearpulse.backend.app`, `artemis.backend.app` FastAPI gateways — import cleanly
+- Working tree remains clean after all installs/builds (`node_modules`, `dist` correctly gitignored)
+- 0 open pull requests on the repository
+
+No regressions found. No manual intervention required beyond the pre-existing documented notes above.
+
+---
+
 ## CI Workflow
 
 `.github/workflows/ci.yml` runs on push/PR to `main`:

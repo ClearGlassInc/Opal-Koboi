@@ -264,6 +264,31 @@ No regressions found. No manual intervention required beyond the pre-existing do
 
 ---
 
+## Re-verification (2026-07-16)
+
+Re-ran the full check with no functional code changes on `main` since the 2026-07-14 pass (only
+docs-only merges #71 `ENGINEERING_GUIDELINES.md` and #72 the 2026-07-14 re-verification record
+landed in between). Confirmed still green:
+
+- `npm ci` + `npm test` (validate + JS suite) — pass
+- `npm run build` (root) — pass, `dist/` regenerated
+- Fresh venv `pip install -r requirements.txt` — succeeds; `python3 -m pytest clearflow/tests/
+  clearpulse/tests/ job_agent/tests/` — 123 passed
+- `apps/artemis-agent`: `npm install`, `npm test` (15 vitest), `npm run lint` (`tsc --noEmit`),
+  `npm run build` (`tsc`) — all pass
+- `app.py` imports cleanly and its `/api/health` route returns 200 via Flask's test client
+- `clearflow.backend.app`, `clearpulse.backend.app`, `artemis.backend.app` FastAPI gateways —
+  import cleanly (`pip install fastapi pydantic uvicorn`)
+- CLI smoke test (`status`, `dashboard`, `orchestrate`) — pass
+- Working tree remains clean after all installs/builds (`node_modules`, `dist` correctly gitignored)
+
+**Note:** PR #73 (the 2026-07-15 re-verification record) is still open and unmerged as of this
+pass — a one-day backlog, not a regression. No other open PRs found.
+
+No regressions found. No manual intervention required beyond the pre-existing documented notes above.
+
+---
+
 ## CI Workflow
 
 `.github/workflows/ci.yml` runs on push/PR to `main`:

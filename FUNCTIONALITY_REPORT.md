@@ -264,26 +264,21 @@ No regressions found. No manual intervention required beyond the pre-existing do
 
 ---
 
-## Re-verification (2026-07-16)
+## Re-verification (2026-07-15)
 
-Re-ran the full check with no functional code changes on `main` since the 2026-07-14 pass (only
-docs-only merges #71 `ENGINEERING_GUIDELINES.md` and #72 the 2026-07-14 re-verification record
-landed in between). Confirmed still green:
+Re-ran the full check after PR #71/#72 (docs-only addition of `ENGINEERING_GUIDELINES.md`, no code
+changes) merged to `main`. Confirmed still green:
 
-- `npm ci` + `npm test` (validate + JS suite) — pass
-- `npm run build` (root) — pass, `dist/` regenerated
-- Fresh venv `pip install -r requirements.txt` — succeeds; `python3 -m pytest clearflow/tests/
-  clearpulse/tests/ job_agent/tests/` — 123 passed
-- `apps/artemis-agent`: `npm install`, `npm test` (15 vitest), `npm run lint` (`tsc --noEmit`),
-  `npm run build` (`tsc`) — all pass
-- `app.py` imports cleanly and its `/api/health` route returns 200 via Flask's test client
-- `clearflow.backend.app`, `clearpulse.backend.app`, `artemis.backend.app` FastAPI gateways —
-  import cleanly (`pip install fastapi pydantic uvicorn`)
-- CLI smoke test (`status`, `dashboard`, `orchestrate`) — pass
+- `npm ci` + `npm run ci` (validate + JS suite + build, root) — pass, `dist/` regenerated
+- Fresh venv `pip install -r requirements.txt` — succeeds cleanly
+- `pip install pytest` + `python3 -m pytest clearflow/tests/ clearpulse/tests/ job_agent/tests/` — 123 passed
+- `apps/artemis-agent`: `npm install`, `npm run build` (`tsc`), `npm test` (15 vitest), `npm run lint` (`tsc --noEmit`) — all pass
+- `app.py`, `data_collector.py`, `database_init.py`, `market_analyzer.py`, `ml_engine.py`,
+  `predictive_engine.py` — all import cleanly in the fresh venv
+- `app.py`'s `/api/health` route — 200 via Flask's test client
+- CLI smoke test (`status`, `dashboard`) — pass
 - Working tree remains clean after all installs/builds (`node_modules`, `dist` correctly gitignored)
-
-**Note:** PR #73 (the 2026-07-15 re-verification record) is still open and unmerged as of this
-pass — a one-day backlog, not a regression. No other open PRs found.
+- 0 open pull requests on the repository
 
 No regressions found. No manual intervention required beyond the pre-existing documented notes above.
 

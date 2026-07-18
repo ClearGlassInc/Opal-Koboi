@@ -284,10 +284,10 @@ No regressions found. No manual intervention required beyond the pre-existing do
 
 ---
 
-## Re-verification (2026-07-18)
+## Re-verification (2026-07-17)
 
-Re-ran the full check with no functional code changes on `main` since the 2026-07-15 pass (PR #74,
-the only intervening merge, is docs-only). Confirmed still green:
+Re-ran the full check with no code changes on `main` since the 2026-07-16 pass (PR #74 merge is
+still the tip of `main`). Confirmed still green:
 
 - `npm ci` + `npm run ci` (validate + JS suite + build, root) — pass, `dist/` regenerated
 - Fresh venv `pip install -r requirements.txt` — succeeds cleanly
@@ -296,23 +296,8 @@ the only intervening merge, is docs-only). Confirmed still green:
 - `app.py`, `data_collector.py`, `database_init.py`, `market_analyzer.py`, `ml_engine.py`,
   `predictive_engine.py` — all import cleanly in the fresh venv
 - `app.py`'s `/api/health` route — 200 via Flask's test client
-- `clearflow.backend.app`, `clearpulse.backend.app`, `artemis.backend.app` FastAPI gateways —
-  import cleanly; `artemis.agents.orchestrator`, `artemis.agents.tools`, `artemis.evals.pipeline`,
-  `artemis.policy.guard`, `growth_os.growth_os` — import cleanly
 - CLI smoke test (`status`, `dashboard`, `orchestrate`) — pass
 - Working tree remains clean after all installs/builds (`node_modules`, `dist` correctly gitignored)
-
-**Documentation note:** PR #74's merge of `main` into the 2026-07-16 branch resolved the
-`FUNCTIONALITY_REPORT.md` conflict in favor of the 2026-07-15 branch's content, so the
-2026-07-16 re-verification entry (originally added in commit `a5052d1`) was dropped from `main`
-without any functional impact — it only affected this changelog file. Not re-adding it
-retroactively here to avoid rewriting history out of order; today's entry supersedes it.
-
-**Open PR backlog:** 8 open PRs — #75 (2026-07-17 re-verification record, unmerged),
-and 7 Dependabot dependency bumps (#76–#82: `reportlab`, `numpy`, `tqdm`, `pyyaml`, `pillow`,
-`actions/setup-node`, `claude-code-action`). All are routine and none block this pass; none were
-merged as part of this run since dependency-version decisions are out of scope for a functionality
-re-verification.
 
 No regressions found. No manual intervention required beyond the pre-existing documented notes above.
 

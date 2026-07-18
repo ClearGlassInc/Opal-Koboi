@@ -6,7 +6,7 @@
 # gateway adds the web stack below. Tests run on the stdlib alone.
 
 # Tunable risk rules (engine falls back to built-in defaults if absent).
-PyYAML>=6.0
+PyYAML>=6.0.3
 
 # Orchestration gateway (clearpulse/backend/app.py) only.
 fastapi>=0.138.1

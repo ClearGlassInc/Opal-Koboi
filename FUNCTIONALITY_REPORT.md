@@ -284,6 +284,25 @@ No regressions found. No manual intervention required beyond the pre-existing do
 
 ---
 
+## Re-verification (2026-07-17)
+
+Re-ran the full check with no code changes on `main` since the 2026-07-16 pass (PR #74 merge is
+still the tip of `main`). Confirmed still green:
+
+- `npm ci` + `npm run ci` (validate + JS suite + build, root) — pass, `dist/` regenerated
+- Fresh venv `pip install -r requirements.txt` — succeeds cleanly
+- `pip install pytest` + `python3 -m pytest clearflow/tests/ clearpulse/tests/ job_agent/tests/` — 123 passed
+- `apps/artemis-agent`: `npm install`, `npm run build` (`tsc`), `npm test` (15 vitest), `npm run lint` (`tsc --noEmit`) — all pass
+- `app.py`, `data_collector.py`, `database_init.py`, `market_analyzer.py`, `ml_engine.py`,
+  `predictive_engine.py` — all import cleanly in the fresh venv
+- `app.py`'s `/api/health` route — 200 via Flask's test client
+- CLI smoke test (`status`, `dashboard`, `orchestrate`) — pass
+- Working tree remains clean after all installs/builds (`node_modules`, `dist` correctly gitignored)
+
+No regressions found. No manual intervention required beyond the pre-existing documented notes above.
+
+---
+
 ## CI Workflow
 
 `.github/workflows/ci.yml` runs on push/PR to `main`:

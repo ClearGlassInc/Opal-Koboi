@@ -1,7 +1,7 @@
 # FUNCTIONALITY REPORT
 
 **Repository:** ClearGlassInc/Opal-Koboi  
-**Generated:** 2026-07-05 (re-verified 2026-07-18; originally generated 2026-07-04)  
+**Generated:** 2026-07-05 (re-verified 2026-07-21; originally generated 2026-07-04)  
 **Node.js:** v22.22.2 | **npm:** 10.9.7 | **Python:** 3.11.15
 
 ---
@@ -300,6 +300,50 @@ still the tip of `main`). Confirmed still green:
 - Working tree remains clean after all installs/builds (`node_modules`, `dist` correctly gitignored)
 
 No regressions found. No manual intervention required beyond the pre-existing documented notes above.
+
+---
+
+## Re-verification (2026-07-21)
+
+Re-ran the full check after PRs #76–#83 (Dependabot bumps: GitHub Actions `setup-node@v7`,
+`claude-code-action`, and pip `numpy`, `Pillow`, `tqdm`, `reportlab`, `PyYAML`) merged to `main`.
+Found and fixed one new regression:
+
+**`requirements.txt` — `numpy>=2.5.1` is unsatisfiable on Python 3.11.**
+
+Dependabot PR #81 bumped the root `numpy` minimum pin to `2.5.1`, but numpy `2.5.1`+ requires
+Python `>=3.12`. This repo's own tooling (`.github/workflows/workflow-repair-agent.yml`) and this
+environment both run Python 3.11, so a fresh `pip install -r requirements.txt` failed outright with
+`No matching distribution found for numpy>=2.5.1` — no numpy release satisfying that pin supports
+3.11. The CI workflow (`ci.yml`) doesn't install Python deps at all, so this wasn't caught
+automatically. Fixed by reverting the pin to `numpy>=2.4.6` (PR), the highest version still
+compatible with Python 3.11 — matches every other unbounded/compatible pin in the file.
+
+Also found `apps/artemis-agent`'s transitive `js-yaml` (via a fresh `npm install`) flagged with a
+high-severity advisory (GHSA-52cp-r559-cp3m, quadratic CPU consumption on YAML merge keys).
+Resolved cleanly with `npm audit fix` (no breaking version bump); `package-lock.json` updated.
+
+Confirmed green after both fixes:
+
+- Fresh venv `pip install -r requirements.txt` (numpy pin fixed) — succeeds
+- `pip install -r clearpulse/requirements.txt` (PyYAML `>=6.0.3` bump) — succeeds
+- `npm ci` + `npm run ci` (validate + JS suite + build, root) — pass, `dist/` regenerated
+- `python3 -m pytest clearflow/tests/ clearpulse/tests/ job_agent/tests/` — 123 passed
+- `apps/artemis-agent`: `npm install`, `npm audit fix` (0 vulnerabilities), `npm run build` (`tsc`),
+  `npm test` (15 vitest), `npm run lint` (`tsc --noEmit`) — all pass
+- `app.py`, `data_collector.py`, `database_init.py`, `market_analyzer.py`, `ml_engine.py`,
+  `predictive_engine.py` — all import cleanly in the fresh venv
+- `app.py`'s `/api/health` route — 200 via Flask's test client
+- `clearflow.backend.app`, `clearpulse.backend.app`, `artemis.backend.app` FastAPI gateways,
+  `artemis.agents.orchestrator`, `artemis.agents.tools`, `artemis.evals.pipeline`,
+  `artemis.policy.guard`, `growth_os.growth_os` — all import cleanly
+- CLI smoke test (`status`, `dashboard`, `plan`, `run`, `orchestrate`) — pass
+- Working tree remains clean of build artifacts after all installs/builds (`node_modules`, `dist`
+  correctly gitignored)
+- 0 open pull requests on the repository
+
+No other regressions found. No manual intervention required beyond the pre-existing documented
+notes above.
 
 ---
 

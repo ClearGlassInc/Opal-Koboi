@@ -401,6 +401,35 @@ above.
 
 ---
 
+## Re-verification (2026-07-24)
+
+Re-ran the full check with no code changes on `main` since the 2026-07-23 pass (PR #86, the docs-only
+re-verification writeup, is still the tip of `main`). Confirmed still green:
+
+- Fresh venv `pip install -r requirements.txt` — succeeds (numpy resolves to `2.4.6`, respecting the
+  existing Python-3.11-safe pin; `flask 3.1.3` installed)
+- `pip install -r clearpulse/requirements.txt` — succeeds
+- `npm ci` + `npm run ci` (validate + JS suite + build, root) — pass, `dist/` regenerated
+- `python3 -m pytest clearflow/tests/ clearpulse/tests/ job_agent/tests/` — 123 passed
+- `apps/artemis-agent`: `npm install` (0 vulnerabilities), `npm run build` (`tsc`), `npm test`
+  (15 vitest), `npm run lint` (`tsc --noEmit`) — all pass
+- `app.py`, `data_collector.py`, `database_init.py`, `market_analyzer.py`, `ml_engine.py`,
+  `predictive_engine.py` — all import cleanly in the fresh venv
+- `app.py`'s `/api/health` route — 200 via Flask's test client
+- `clearflow.backend.app`, `clearpulse.backend.app`, `artemis.backend.app` FastAPI gateways —
+  import cleanly as FastAPI app objects
+- `artemis.agents.orchestrator`, `artemis.agents.tools`, `artemis.evals.pipeline`,
+  `artemis.policy.guard`, `growth_os.growth_os` — all import cleanly
+- CLI smoke test (`status`, `dashboard`, `orchestrate`) — pass
+- Working tree remains clean after all installs/builds (`node_modules`, `dist`, `__pycache__`
+  correctly gitignored)
+- 0 open pull requests on the repository
+
+No regressions found. No manual intervention required beyond the pre-existing documented notes
+above.
+
+---
+
 ## CI Workflow
 
 `.github/workflows/ci.yml` runs on push/PR to `main`:

@@ -4,7 +4,7 @@
 # © 2025-2030 Clearglassinc. All Rights Reserved.
 
 # Core Data Processing
-pandas>=2.0.0
+pandas>=3.0.5
 numpy>=2.4.6
 scipy>=1.17.0
 

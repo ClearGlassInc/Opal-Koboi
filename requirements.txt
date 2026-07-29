@@ -16,7 +16,7 @@ xgboost>=3.3.0
 prophet>=1.1.5
 
 # Data Collection
-requests>=2.31.0
+requests>=2.34.2
 beautifulsoup4>=4.15.0
 lxml>=4.9.0
 

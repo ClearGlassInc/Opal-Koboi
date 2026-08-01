@@ -131,3 +131,49 @@ class WebhookNotifier(Notifier):
             self.sent += 1
         except Exception as exc:  # noqa: BLE001 - delivery is best-effort
             self.failures.append(f"{type(exc).__name__}: {exc}")
+
+
+class DigestNotifier(Notifier):
+    """Accumulates the day's events into one email-ready digest.
+
+    Unlike the streaming notifiers above, this one is a *batcher*: it captures
+    every lifecycle event (not just the interrupt-worthy subset) and renders a
+    single subject + body at close-out. Anything that can send text - the Gmail
+    connector, a Zapier email action, ``sendmail`` - can consume the result, so
+    this is the seam between the in-process bus and mail/automation providers.
+    """
+
+    def __init__(self, *, subject_prefix: str = "[ClearFlow]", **kw) -> None:
+        # Capture the full event stream by default; the digest is the record.
+        kw.setdefault("forward", frozenset(EventType))
+        super().__init__(**kw)
+        self.subject_prefix = subject_prefix
+        self.entries: list[tuple[Event, str]] = []
+
+    def deliver(self, event: Event, message: str) -> None:
+        self.entries.append((event, message))
+
+    @property
+    def keystone_landed(self) -> bool:
+        return any(e.type == EventType.KEYSTONE_LANDED for e, _ in self.entries)
+
+    def render(self) -> dict[str, str]:
+        """Render ``{"subject": ..., "body": ...}`` for a mail/automation hook."""
+        landed = self.keystone_landed
+        unlocked = [e.payload.get("domain", "?") for e, _ in self.entries
+                    if e.type == EventType.DOMAIN_UNLOCKED]
+        done = sum(1 for e, _ in self.entries
+                   if e.type == EventType.ITEM_COMPLETED)
+        subject = (f"{self.subject_prefix} Keystone landed - "
+                   f"{done} done, unlocked: {', '.join(unlocked) or 'none'}"
+                   if landed else
+                   f"{self.subject_prefix} Day report - keystone still open "
+                   f"({done} done)")
+        lines = ["ClearFlow daily digest", "=" * 40]
+        for event, message in self.entries:
+            stamp = event.at.strftime("%H:%M:%S")
+            lines.append(f"{stamp}  {event.type.value:<18} {message}")
+        lines.append("=" * 40)
+        lines.append(f"keystone landed: {landed} | items completed: {done} | "
+                     f"domains unlocked: {', '.join(unlocked) or 'none'}")
+        return {"subject": subject, "body": "\n".join(lines)}

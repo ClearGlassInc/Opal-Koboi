@@ -19,7 +19,7 @@ from clearflow.engine.graph import CycleError, DependencyGraph
 from clearflow.events import EventBus, EventType
 from clearflow.matrix import build_matrix, todays_matrix
 from clearflow.models import Priority, Status, WorkItem
-from clearflow.notify import CollectingNotifier, render
+from clearflow.notify import CollectingNotifier, DigestNotifier, render
 from clearflow.runner import Clock, DayRunner, eager_autopilot, simulate_day
 from clearflow.store import DayRecord, HistoryStore
 from clearflow.workflow import AutomationWorkflow
@@ -137,6 +137,39 @@ class NotifierTests(unittest.TestCase):
         bus = EventBus()
         evt = bus.emit(EventType.DOMAIN_UNLOCKED, domain="Cyber", action="Review")
         self.assertIn("Cyber", render(evt))
+
+
+class DigestNotifierTests(unittest.TestCase):
+    def _run_day(self):
+        bus = EventBus()
+        digest = DigestNotifier().attach(bus)
+        wf = _wf(bus)
+        wf.start(wf.keystone)
+        wf.complete(wf.keystone, "shipped")
+        return digest, wf
+
+    def test_digest_captures_full_stream(self):
+        digest, _ = self._run_day()
+        types = {e.type for e, _ in digest.entries}
+        # Batcher sees the whole lifecycle, including non-interrupt events.
+        self.assertIn(EventType.ITEM_STARTED, types)
+        self.assertIn(EventType.KEYSTONE_LANDED, types)
+        self.assertIn(EventType.DOMAIN_UNLOCKED, types)
+
+    def test_render_subject_reflects_keystone(self):
+        digest, _ = self._run_day()
+        out = digest.render()
+        self.assertIn("Keystone landed", out["subject"])
+        self.assertIn("Cybersecurity", out["subject"])
+        self.assertIn("keystone landed: True", out["body"])
+
+    def test_render_subject_when_keystone_open(self):
+        bus = EventBus()
+        digest = DigestNotifier().attach(bus)
+        wf = _wf(bus)
+        wf.start(wf.keystone)  # started but never completed
+        out = digest.render()
+        self.assertIn("keystone still open", out["subject"])
 
 
 # ---------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 # FUNCTIONALITY REPORT
 
 **Repository:** ClearGlassInc/Opal-Koboi  
-**Generated:** 2026-07-05 (re-verified 2026-07-23; originally generated 2026-07-04)  
+**Generated:** 2026-07-05 (re-verified 2026-08-01; originally generated 2026-07-04)  
 **Node.js:** v22.22.2 | **npm:** 10.9.7 | **Python:** 3.11.15
 
 ---
@@ -55,10 +55,10 @@ was unbuilt product surface).
 - **Coverage:** Provider registry, slash commands, tool registry, gateway registry, install progress
 - **Note:** `npm install` required in `apps/artemis-agent/` to install vitest + TypeScript devDependencies
 
-### Python — ClearFlow (44 tests)
+### Python — ClearFlow (47 tests)
 - **Location:** `clearflow/tests/`
-- **Result:** 44 passed in 0.13s
-- **Coverage:** TimeBlock parsing, Priority sorting, gating, scheduling, pledge ledger, intel routing, workflow reporting, runner simulation
+- **Result:** 47 passed in 0.13s
+- **Coverage:** TimeBlock parsing, Priority sorting, gating, scheduling, pledge ledger, intel routing, workflow reporting, runner simulation, `DigestNotifier` email-digest seam
 
 ### Python — ClearPulse (46 tests)
 - **Location:** `clearpulse/tests/`
@@ -70,7 +70,7 @@ was unbuilt product surface).
 - **Result:** 33 passed in 0.07s
 - **Coverage:** Salary parsing, job posting ingestion, scoring/ranking, personalization, sourcing dedup, application tracking, follow-up intelligence
 
-**Total: 123 Python tests + JS suite + 15 TS tests = fully green**
+**Total: 126 Python tests + JS suite + 15 TS tests = fully green**
 
 ---
 
@@ -430,46 +430,44 @@ above.
 
 ---
 
-## Re-verification (2026-08-02)
+## Re-verification (2026-08-01)
 
-Re-ran the full check against `main` (PR #101, the idempotent-publish CI fix, is still the tip;
-PR #102 with today's fixes below was open but unmerged at the time of this pass). Found and fixed
-the same two regressions already diagnosed in PR #102, applied independently here since that PR
-had not yet merged:
+Re-ran the full check after PRs #87–#101 (DigestNotifier email seam + self-arming public npmjs
+publish workflow, idempotent-publish CI fix, and a run of Dependabot pip/GitHub Actions bumps)
+merged to `main` since the 2026-07-24 pass. Found and fixed one new regression:
 
-**`requirements.txt` — `xgboost>=3.3.0` is unsatisfiable.** xgboost has never published a `3.3.0`
-release to PyPI (latest is `3.2.0`), so a fresh `pip install -r requirements.txt` failed outright
-with `No matching distribution found for xgboost>=3.3.0` — the same failure mode as the
-`numpy>=2.5.1` regression fixed on 2026-07-21. Reverted the pin to `xgboost>=3.2.0`.
+**`requirements.txt` — `xgboost>=3.3.0` is unsatisfiable; no such release exists on PyPI.**
 
-**`apps/artemis-agent`'s transitive `postcss`** flagged with a high-severity advisory
-(GHSA-r28c-9q8g-f849, path traversal in source-map auto-loading), picked up via a fresh
-`npm install`. Resolved cleanly with `npm audit fix` (no breaking version bump); `package-lock.json`
-updated.
+Dependabot PR #91 bumped the root `xgboost` minimum pin to `3.3.0`, but xgboost has never published
+a `3.3.0` version to PyPI — the latest available release is `3.2.0`. A fresh
+`pip install -r requirements.txt` failed outright with `No matching distribution found for
+xgboost>=3.3.0`, the same failure mode as the `numpy>=2.5.1` regression fixed on 2026-07-21. Fixed
+by reverting the pin to `xgboost>=3.2.0`, the newest version that actually exists.
+
+Also found `apps/artemis-agent`'s transitive `postcss` (via a fresh `npm install`) flagged with a
+high-severity advisory (GHSA-r28c-9q8g-f849, path traversal in source-map auto-loading). Resolved
+cleanly with `npm audit fix` (no breaking version bump); `package-lock.json` updated.
 
 Confirmed green after both fixes:
 
 - Fresh venv `pip install -r requirements.txt` (xgboost pin fixed) — succeeds
 - `pip install -r clearpulse/requirements.txt` — succeeds
 - `npm ci` + `npm run ci` (validate + JS suite + build, root) — pass, `dist/` regenerated
-- `python3 -m pytest clearflow/tests/ clearpulse/tests/ job_agent/tests/` — 126 passed
+- `python3 -m pytest clearflow/tests/ clearpulse/tests/ job_agent/tests/` — 126 passed (up from 123;
+  +3 new tests for `clearflow/notify.py`'s `DigestNotifier`, added in PR #100)
 - `apps/artemis-agent`: `npm install`, `npm audit fix` (0 vulnerabilities), `npm run build` (`tsc`),
   `npm test` (15 vitest), `npm run lint` (`tsc --noEmit`) — all pass
 - `app.py`, `data_collector.py`, `database_init.py`, `market_analyzer.py`, `ml_engine.py`,
   `predictive_engine.py` — all import cleanly in the fresh venv
 - `app.py`'s `/api/health` route — 200 via Flask's test client
 - `clearflow.backend.app`, `clearpulse.backend.app`, `artemis.backend.app` FastAPI gateways —
-  import cleanly as FastAPI app objects
+  start cleanly under `uvicorn` with no crash
 - `artemis.agents.orchestrator`, `artemis.agents.tools`, `artemis.evals.pipeline`,
   `artemis.policy.guard`, `growth_os.growth_os` — all import cleanly
-- CLI smoke test (`status`, `dashboard`, `plan`, `run`, `orchestrate`) — pass
-- Working tree remains clean after all installs/builds (`node_modules`, `dist`, `__pycache__`
-  correctly gitignored)
-
-**Note:** PR #102 (opened 2026-08-01) independently fixes the identical `xgboost`/`postcss` pair
-on a separate branch and was still open and unmerged as of this pass. This pass's fixes duplicate
-that PR's diff by necessity (the underlying bugs are the same); merge whichever lands first and
-close the other to avoid carrying two branches with the same change.
+- CLI smoke test (`status`, `dashboard`, `orchestrate`) — pass
+- Working tree clean of build artifacts after all installs/builds (`node_modules`, `dist`,
+  `__pycache__` correctly gitignored)
+- 0 open pull requests on the repository
 
 No other regressions found. No manual intervention required beyond the pre-existing documented
 notes above.

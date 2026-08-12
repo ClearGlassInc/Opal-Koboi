@@ -1,8 +1,32 @@
 # FUNCTIONALITY REPORT
 
 **Repository:** ClearGlassInc/Opal-Koboi  
-**Generated:** 2026-07-05 (re-verified 2026-08-01; originally generated 2026-07-04)  
+**Generated:** 2026-07-05 (re-verified 2026-08-12; previously re-verified 2026-08-01; originally generated 2026-07-04)  
 **Node.js:** v22.22.2 | **npm:** 10.9.7 | **Python:** 3.11.15
+
+---
+
+## Re-verification (2026-08-12)
+
+Full automated pass over the repository — no code changes were required; every step below was
+already green and remains green.
+
+- `npm ci && npm test && npm run build && npm run dashboard && npm run orchestrate` (the exact
+  sequence run by `.github/workflows/ci.yml`) — all pass.
+- Python test suites — `clearflow` (47), `clearpulse` (46), `job_agent` (33) — all 126 pass via
+  `python3 -m unittest discover`.
+- Root aerospace Python modules (`data_collector.py`, `market_analyzer.py`, `ml_engine.py`,
+  `predictive_engine.py`, `database_init.py`) import cleanly with `numpy`/`pandas`/`flask`/
+  `requests`/`sqlalchemy` installed; the optional `sklearn`/`tensorflow`/`xgboost`/`prophet` stack
+  remains absent and degrades gracefully as designed (`ml_engine.py` logs a warning and continues).
+  `database_init.py` creates the SQLite schema successfully; `app.py`'s `/api/health` endpoint
+  returns `200 {"status":"ok",...}`.
+- `apps/artemis-agent`: `npm install`, `npm test` (15/15 via vitest), and `npm run lint`
+  (`tsc --noEmit`) all pass. `npm audit` on the freshly installed (floating `"latest"`)
+  dependencies flags 4 transitive advisories — moderate in `electron`, high in `js-yaml`,
+  `nanoid`, and `undici` — all in `node_modules` (not committed, not pinned in `package.json`).
+  No source change was made for these; consider pinning versions and running
+  `npm audit fix` in that app the next time its dependencies are touched.
 
 ---
 

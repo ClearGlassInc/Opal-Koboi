@@ -43,6 +43,7 @@
     "run": "node bin/opal-koboi.js run examples/mission.json",
     "orchestrate": "node bin/opal-koboi.js orchestrate examples/workflow.json",
     "dashboard": "node bin/opal-koboi.js dashboard examples/mission.json",
+    "content:deploy": "node bin/opal-koboi.js deploy-content examples/trust-infrastructure-campaign.json output/trust-infrastructure",
     "validate": "node scripts/validate-package.mjs",
     "test": "npm run validate && node test/opal-koboi.test.mjs",
     "build": "node scripts/build-package.mjs",

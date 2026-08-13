@@ -1,8 +1,48 @@
 # FUNCTIONALITY REPORT
 
 **Repository:** ClearGlassInc/Opal-Koboi  
-**Generated:** 2026-07-05 (re-verified 2026-08-12; previously re-verified 2026-08-01; originally generated 2026-07-04)  
+**Generated:** 2026-07-05 (re-verified 2026-08-13; previously re-verified 2026-08-12, 2026-08-01; originally generated 2026-07-04)  
 **Node.js:** v22.22.2 | **npm:** 10.9.7 | **Python:** 3.11.15
+
+---
+
+## Re-verification (2026-08-13)
+
+Re-ran the full check. Found and fixed one new regression:
+
+**`requirements.txt` — `xgboost>=3.4.0` is unsatisfiable; no such release exists on PyPI.**
+
+A Dependabot-style bump had pushed the root `xgboost` minimum pin to `3.4.0`, but xgboost's latest
+published release on PyPI is `3.2.0` — the same failure mode as the `numpy>=2.5.1` (2026-07-21) and
+`xgboost>=3.3.0` (2026-08-01) regressions fixed previously. A fresh `pip install -r requirements.txt`
+failed outright with `No matching distribution found for xgboost>=3.4.0`. Fixed by reverting the pin
+to `xgboost>=3.2.0`, the newest version that actually exists.
+
+Also found `apps/artemis-agent`'s freshly installed dependencies flagged with 4 vulnerabilities (1
+moderate, 3 high — `electron`, `js-yaml`, `nanoid`, `undici`, matching the advisories noted in the
+2026-08-12 pass). Unlike that pass, `npm audit fix` this time resolved all 4 cleanly with no breaking
+version bump; `package-lock.json` updated accordingly.
+
+Confirmed green after both fixes:
+
+- Fresh venv `pip install -r requirements.txt` (xgboost pin fixed) — succeeds
+- `pip install -r clearflow/requirements.txt`, `clearpulse/requirements.txt`, `job_agent/requirements.txt` — succeed
+- `npm ci` + `npm run ci` (validate + JS suite + build, root) — pass, `dist/` regenerated
+- `python3 -m pytest clearflow/tests/ clearpulse/tests/ job_agent/tests/` — 126 passed
+- `apps/artemis-agent`: `npm install`, `npm audit fix` (0 vulnerabilities), `npm run build` (`tsc`),
+  `npm test` (15 vitest), `npm run lint` (`tsc --noEmit`) — all pass
+- `app.py`, `data_collector.py`, `database_init.py`, `market_analyzer.py`, `ml_engine.py`,
+  `predictive_engine.py` — all import cleanly in the fresh venv
+- `app.py`'s `/api/health` route — 200 via Flask's test client
+- `clearflow.backend.app`, `clearpulse.backend.app`, `artemis.backend.app` FastAPI gateways — start
+  cleanly under `uvicorn` with no crash
+- `artemis.agents.orchestrator`, `artemis.agents.tools`, `artemis.evals.pipeline`,
+  `artemis.policy.guard`, `growth_os.growth_os` — all import cleanly
+- CLI smoke test (`status`, `dashboard`, `plan`, `run`, `orchestrate`) — pass
+- Working tree clean of build artifacts after all installs/builds (`node_modules`, `dist`,
+  `__pycache__` correctly gitignored)
+
+No other regressions found.
 
 ---
 

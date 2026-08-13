@@ -137,3 +137,4 @@ export const defaultMission = Object.freeze({
 });
 
 export { AuditLedger, PolicyEngine, WorkflowEngine, EnterpriseAutomationPlatform } from './platform.js';
+export { buildDeploymentBundle, normalizeCampaign, slugify } from './content-deployment.js';

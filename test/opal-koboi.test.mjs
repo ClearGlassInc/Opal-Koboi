@@ -4,10 +4,13 @@ import {
   EnterpriseAutomationPlatform,
   PolicyEngine,
   WorkflowEngine,
+  buildDeploymentBundle,
   classifyPriority,
   createOperationPlan,
+  normalizeCampaign,
   runOperation,
-  scoreTask
+  scoreTask,
+  slugify
 } from '../src/index.js';
 
 const task = {
@@ -61,5 +64,42 @@ const platform = new EnterpriseAutomationPlatform();
 const dashboard = platform.dashboard({ mission: 'Dashboard mission', tasks: [task] });
 assert.equal(dashboard.platform, 'Opal-Koboi');
 assert.equal(dashboard.health, 'green');
+
+const campaignInput = {
+  title: 'Verified Trust Test',
+  brand: 'ClearGlass Inc.',
+  posts: [
+    {
+      title: 'Trust Is Infrastructure',
+      body: 'Verification replaces assumption.',
+      channels: ['linkedin', 'x']
+    }
+  ],
+  whitepaper: {
+    title: 'Public Trust Architecture',
+    sections: [
+      {
+        heading: 'Executive Summary',
+        body: 'Truth must be verifiable and governance must be auditable.'
+      }
+    ]
+  }
+};
+
+const normalizedCampaign = normalizeCampaign(campaignInput);
+assert.equal(normalizedCampaign.id, 'verified-trust-test');
+assert.equal(slugify('Identity = Sovereignty'), 'identity-sovereignty');
+
+const deployment = buildDeploymentBundle(campaignInput, {
+  approved: false,
+  generatedAt: '2026-08-13T17:11:00.000Z'
+});
+assert.equal(deployment.summary.status, 'draft-awaiting-human-approval');
+assert.equal(deployment.summary.fileCount, 8);
+assert.equal(deployment.summary.postCount, 1);
+assert.equal(deployment.files['deployment-manifest.json'].includes('draft-awaiting-human-approval'), true);
+assert.equal(deployment.files['notion/content-calendar.csv'].includes('Trust Is Infrastructure'), true);
+assert.equal(deployment.files['pdf/whitepaper.html'].includes('Public Trust Architecture'), true);
+assert.equal(deployment.files['audit/deployment-audit.json'].includes('"automaticPublishing": false'), true);
 
 console.log('Opal-Koboi enterprise platform tests passed.');

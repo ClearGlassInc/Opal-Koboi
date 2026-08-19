@@ -1,8 +1,39 @@
 # FUNCTIONALITY REPORT
 
 **Repository:** ClearGlassInc/Opal-Koboi  
-**Generated:** 2026-07-05 (re-verified 2026-08-13; previously re-verified 2026-08-12, 2026-08-01; originally generated 2026-07-04)  
-**Node.js:** v22.22.2 | **npm:** 10.9.7 | **Python:** 3.11.15
+**Generated:** 2026-07-05 (re-verified 2026-08-19; previously re-verified 2026-08-13, 2026-08-12, 2026-08-01; originally generated 2026-07-04)  
+**Node.js:** v22.22.2 | **npm:** 10.9.7 | **Python:** 3.11.15 (CI-matching venv: 3.13)
+
+---
+
+## Re-verification (2026-08-19)
+
+Full automated pass over the repository — no code changes were required; every step below was
+already green and remains green.
+
+- `npm ci && npm test && npm run build && npm run dashboard` (root package) — all pass.
+- `apps/artemis-agent`: `npm install` (0 vulnerabilities), `npm run lint` (`tsc --noEmit`),
+  `npm test` (15/15 vitest), `npm run build` (`tsc -p tsconfig.json`), `npm audit` — all clean,
+  0 vulnerabilities this pass (previous transient advisories in floating `"latest"` deps are gone).
+- Python test suites — `clearflow` (47), `clearpulse` (46), `job_agent` (33) — all 126 pass via
+  `pytest`, matching the CircleCI job matrix in `.circleci/config.yml`.
+- Root `requirements.txt` — the current `xgboost>=3.4.0` pin (bumped by Dependabot after the
+  2026-08-13 fix reverted it to `>=3.2.0`) is **not** a repeat of that regression: xgboost 3.4.0/3.4.1
+  are real PyPI releases, just `Requires-Python >=3.12`. Installed cleanly with all other pinned
+  deps (`tensorflow`, `keras`, `prophet`, `scikit-learn`, etc.) into a fresh Python 3.13 venv,
+  matching the `python313` executor CircleCI actually runs against. (This host's default `python3`
+  is 3.11.15, where the same install correctly fails on Python-version grounds only — not a repo bug.)
+- `clearflow/requirements.txt`, `clearpulse/requirements.txt`, `job_agent/requirements.txt` — all
+  install cleanly (`fastapi`, `pydantic`, `uvicorn`, `PyYAML`, `anthropic`).
+- `app.py`'s `/api/health` route — 200 via Flask's test client.
+- `clearflow.backend.app`, `clearpulse.backend.app`, `artemis.backend.app` FastAPI gateways, and
+  `artemis.agents.orchestrator`, `artemis.agents.tools`, `artemis.evals.pipeline`,
+  `artemis.policy.guard`, `growth_os.growth_os` — all import cleanly.
+- `app.py`, `data_collector.py`, `database_init.py`, `market_analyzer.py`, `ml_engine.py`,
+  `predictive_engine.py` — all syntax-valid (`py_compile`) and `app.py` imports/runs cleanly.
+- Working tree clean before and after — no fixes were needed this pass.
+
+No regressions found.
 
 ---
 

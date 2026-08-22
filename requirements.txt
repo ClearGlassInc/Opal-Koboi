@@ -21,7 +21,7 @@ beautifulsoup4>=4.15.0
 lxml>=6.1.1
 
 # Database
-sqlalchemy>=2.0.51
+sqlalchemy>=2.0.52
 # sqlite3 is part of the Python standard library and is not a pip package
 
 # Web API (app.py is a Flask application)

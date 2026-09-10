@@ -6,7 +6,7 @@
 # Core Data Processing
 pandas>=3.0.5
 numpy>=2.4.6
-scipy>=1.17.0
+scipy>=1.18.1
 
 # Machine Learning & AI
 scikit-learn>=1.9.0

@@ -1,8 +1,55 @@
 # FUNCTIONALITY REPORT
 
 **Repository:** ClearGlassInc/Opal-Koboi  
-**Generated:** 2026-07-05 (re-verified 2026-09-10; previously re-verified 2026-08-19, 2026-08-13, 2026-08-12, 2026-08-01; originally generated 2026-07-04)  
+**Generated:** 2026-07-05 (re-verified 2026-09-12; previously re-verified 2026-09-10, 2026-08-19, 2026-08-13, 2026-08-12, 2026-08-01; originally generated 2026-07-04)  
 **Node.js:** v22.22.2 | **npm:** 10.9.7 | **Python:** 3.11.15 (CI-matching venv: 3.13)
+
+---
+
+## Re-verification (2026-09-12)
+
+Full automated pass over the repository since the 2026-09-10 pass (one intervening commit,
+`3b83a41`, added a new `ontario_strike/` directory of standalone local-only SRE automation scripts
+— no dependency or CI changes). Found and fixed one new regression:
+
+**`ontario_strike/azure_slo_burn.py` — crashes on `--help` (and any invocation) with `ValueError:
+unsupported format character 'b'`.**
+
+The `--burn` argument's help string contained an unescaped literal `%` ("... classic 2% budget in
+1h)"). `argparse`'s `HelpFormatter` performs `%`-style substitution on help text (for placeholders
+like `%(default)s`), so the raw `%` followed by ` b` was parsed as an invalid format specifier,
+crashing `format_help()` — meaning even `python3 azure_slo_burn.py --help` raised an unhandled
+`ValueError` instead of printing usage. None of the other 4 new `ontario_strike/` scripts have this
+problem. Fixed by escaping the literal percent sign as `%%`, which `argparse` renders back as a
+single `%` in the printed help.
+
+Confirmed green after the fix:
+
+- `ontario_strike/azure_slo_burn.py --help` — prints usage cleanly; a functional invocation
+  (`--window 1h --slo 99.9 --burn 2.0 --errors 12 --requests 10000`) returns the expected
+  `PAGE ...` verdict with exit code 2.
+- `ontario_strike/{cloud_idle_finops,gha_queue_doctor,k8s_rollout_brake,terraform_plan_guard}.py` —
+  all `py_compile` clean, `--help` prints usage, and a schema-correct sample invocation of each
+  runs end-to-end and returns the expected JSON/exit code (no committed tests exist for these
+  standalone scripts, so this pass exercised them by hand).
+- `npm ci && npm run ci` (validate + JS suite + build, root) — pass, `dist/` regenerated.
+- `apps/artemis-agent`: `npm install` (0 vulnerabilities), `npm run build` (`tsc -p tsconfig.json`),
+  `npm test` (15/15 vitest), `npm run lint` (`tsc --noEmit`) — all pass.
+- Python test suites — `clearflow` (47), `clearpulse` (46), `job_agent` (33) — all 126 pass via
+  `pytest` in a fresh Python 3.13 venv, matching the CircleCI job matrix.
+- Root `requirements.txt`, `clearflow/requirements.txt`, `clearpulse/requirements.txt`,
+  `job_agent/requirements.txt` — all install cleanly into a fresh Python 3.13 venv.
+- `app.py`, `data_collector.py`, `database_init.py`, `market_analyzer.py`, `ml_engine.py`,
+  `predictive_engine.py` — all syntax-valid (`py_compile`) and import cleanly.
+- `app.py`'s `/api/health` route — 200 via Flask's test client.
+- `clearflow.backend.app`, `clearpulse.backend.app`, `artemis.backend.app` FastAPI gateways, and
+  `artemis.agents.orchestrator`, `artemis.agents.tools`, `artemis.evals.pipeline`,
+  `artemis.policy.guard`, `growth_os.growth_os` — all import cleanly.
+- CLI smoke test (`status`, `dashboard`, `plan`, `run`, `orchestrate`) — pass.
+- Working tree clean before and after (beyond the one committed fix) — no other regressions found.
+- 6 open pull requests on the repository, all routine automated dependency bumps
+  (`pydantic`, `numpy`, `anthropic`, `uvicorn`, `lxml`, and a GitHub Action version) — none merged
+  or altered as part of this pass, out of scope for a functionality re-verification.
 
 ---
 

@@ -28,7 +28,7 @@ def main() -> int:
     parser.add_argument("--window", default="1h", choices=sorted(HOURS))
     parser.add_argument("--errors", type=float, required=True)
     parser.add_argument("--requests", type=float, required=True)
-    parser.add_argument("--burn", type=float, default=14.4, help="page threshold (1h/14.4 is classic 2% budget in 1h)")
+    parser.add_argument("--burn", type=float, default=14.4, help="page threshold (1h/14.4 is classic 2%% budget in 1h)")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
     window_h = HOURS[args.window]

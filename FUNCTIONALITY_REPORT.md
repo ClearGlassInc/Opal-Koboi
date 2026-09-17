@@ -1,8 +1,44 @@
 # FUNCTIONALITY REPORT
 
 **Repository:** ClearGlassInc/Opal-Koboi  
-**Generated:** 2026-07-05 (re-verified 2026-09-12; previously re-verified 2026-09-10, 2026-08-19, 2026-08-13, 2026-08-12, 2026-08-01; originally generated 2026-07-04)  
+**Generated:** 2026-07-05 (re-verified 2026-09-17, 2026-09-12; previously re-verified 2026-09-10, 2026-08-19, 2026-08-13, 2026-08-12, 2026-08-01; originally generated 2026-07-04)  
 **Node.js:** v22.22.2 | **npm:** 10.9.7 | **Python:** 3.11.15 (CI-matching venv: 3.13)
+
+---
+
+## Re-verification (2026-09-17)
+
+Full automated pass over the repository since the 2026-09-12 pass. Nothing changed code-wise: `git
+log` shows only a no-op merge commit (`40c0dc7`, merging PR #140 which contained no new commits)
+on top of `2557c7a` (the 2026-09-12 `%%`-escape fix), so this pass is a pure re-confirmation, not a
+re-fix. No regressions found; no code changes were required.
+
+- `npm ci && npm run ci` (validate + JS suite + build, root) — pass, `dist/` regenerated.
+- `apps/artemis-agent`: `npm install` (0 vulnerabilities), `npm run build` (`tsc -p tsconfig.json`),
+  `npm test` (15/15 vitest), `npm run lint` (`tsc --noEmit`) — all pass.
+- Python test suites — `clearflow` (47), `clearpulse` (46), `job_agent` (33) — all 126 pass via
+  `pytest` in a fresh Python 3.13 venv, matching the CircleCI job matrix.
+- Root `requirements.txt` — installs cleanly into a fresh Python 3.13 venv; `numpy` now resolves to
+  `2.5.3` and `xgboost` to `3.4.1` (both real PyPI releases satisfying the existing unbounded pins,
+  a routine resolution drift from natural upstream releases — not a regression, and nothing in the
+  pinned floor needed changing). `clearflow/requirements.txt`, `clearpulse/requirements.txt`,
+  `job_agent/requirements.txt` — all install cleanly.
+- `app.py`, `data_collector.py`, `database_init.py`, `market_analyzer.py`, `ml_engine.py`,
+  `predictive_engine.py` — all syntax-valid (`py_compile`) and import cleanly.
+- `app.py`'s `/api/health` route — 200 via Flask's test client.
+- `clearflow.backend.app`, `clearpulse.backend.app`, `artemis.backend.app` FastAPI gateways, and
+  `artemis.agents.orchestrator`, `artemis.agents.tools`, `artemis.evals.pipeline`,
+  `artemis.policy.guard`, `growth_os.growth_os` — all import cleanly.
+- `ontario_strike/{azure_slo_burn,cloud_idle_finops,gha_queue_doctor,k8s_rollout_brake,
+  terraform_plan_guard}.py` — all `py_compile` clean; all `--help` cleanly (confirming the
+  2026-09-12 `%%`-escape fix in `azure_slo_burn.py` still holds); a schema-correct sample invocation
+  of each runs end-to-end with the expected exit code/output (e.g. `azure_slo_burn.py --window 1h
+  --slo 99.9 --burn 2.0 --errors 12 --requests 10000` still returns `PAGE ...` with exit code 2).
+- CLI smoke test (`status`, `dashboard`, `plan`, `run`, `orchestrate`) — pass.
+- Working tree clean before and after — no fixes needed this pass.
+- 6 open pull requests (#134-#139), all routine automated Dependabot version bumps (`pydantic`,
+  `numpy`, `anthropic`, `uvicorn`, `lxml`, and a GitHub Action version bump) — confirmed still open,
+  none merged or altered as part of this pass, out of scope for a functionality re-verification.
 
 ---
 

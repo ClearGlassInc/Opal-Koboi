@@ -1,8 +1,72 @@
 # FUNCTIONALITY REPORT
 
 **Repository:** ClearGlassInc/Opal-Koboi  
-**Generated:** 2026-07-05 (re-verified 2026-09-23, 2026-09-17, 2026-09-12; previously re-verified 2026-09-10, 2026-08-19, 2026-08-13, 2026-08-12, 2026-08-01; originally generated 2026-07-04)  
-**Node.js:** v22.22.2 | **npm:** 10.9.7 | **Python:** 3.11.15 (CI-matching venv: 3.13)
+**Generated:** 2026-07-05 (re-verified 2026-10-01, 2026-09-23, 2026-09-17, 2026-09-12; previously re-verified 2026-09-10, 2026-08-19, 2026-08-13, 2026-08-12, 2026-08-01; originally generated 2026-07-04)  
+**Node.js:** v22.22.0 | **npm:** 10.9.4 | **Python:** 3.11.15 (CI-matching venv: 3.13)
+
+---
+
+## Re-verification (2026-10-01)
+
+Full automated pass over the repository since the 2026-09-23 pass. No code changed on `main` since
+`aedfe59` (the merge that closed out the 2026-09-23 pass), but new upstream security advisories
+landed against two locked transitive/runtime dependencies of `apps/artemis-agent`, so this pass
+includes one lockfile-only fix.
+
+**`apps/artemis-agent` — `npm install` reported 2 high-severity advisories (was 0 on 2026-09-23).**
+
+- `electron` 43.4.0 is inside the newly-advised `43.0.0-alpha.1 - 43.4.1` range (GHSA-gr2m-v5gq-v685,
+  GHSA-j84w-jfhq-vhvj, GHSA-9qh4-3jw8-366w, GHSA-qmv3-fv6v-rmhq: sandbox inheritance, cross-origin
+  reads via protocol handlers, `<webview>` Node integration in workers, preload code-cache poisoning).
+- `undici` 7.29.0 (pulled in via `electron` → `@electron/get`) is inside the newly-advised
+  `7.0.0 - 7.29.0` range (10 advisories, including a TLS certificate-validation bypass in
+  `BalancedPool`, response splitting, and several DoS paths).
+
+`npm audit fix --force` would have jumped `electron` to 44.5.1 (a new major). Instead the lockfile
+was moved to the patched releases on the same lines — `electron` 43.4.0 → 43.7.7 and `undici`
+7.29.0 → 7.30.0 — a 6-line `package-lock.json` change with `package.json` untouched, following the
+same lockfile-only pattern as the 2026-09-10 fix (`cf9224d`).
+
+Confirmed green after the fix:
+
+- `apps/artemis-agent`: clean `rm -rf node_modules && npm ci` (lockfile consistent with
+  `package.json`), `npm run build` (`tsc -p tsconfig.json`), `npm test` (15/15 vitest),
+  `npm run lint` (`tsc --noEmit`), `npm audit` — 0 vulnerabilities.
+- `npm ci && npm run ci` (validate + JS suite + build, root) — pass, 0 vulnerabilities.
+- Python test suites — `clearflow` (47), `clearpulse` (46), `job_agent` (33) — all 126 pass via
+  `pytest` in a fresh Python 3.13.14 venv, matching the CircleCI job matrix.
+- Root `requirements.txt`, `clearflow/requirements.txt`, `clearpulse/requirements.txt`,
+  `job_agent/requirements.txt` — all install together into one fresh Python 3.13 venv;
+  `uv pip check` reports all 93 installed packages compatible. `pip-audit` over the frozen venv
+  (93 packages) — no known vulnerabilities.
+- `app.py`, `data_collector.py`, `database_init.py`, `market_analyzer.py`, `ml_engine.py`,
+  `predictive_engine.py`, `ontario_strike/*.py` — all `py_compile` clean and import cleanly.
+  `ruff check --select E9,F63,F7,F82` (syntax errors / undefined names) over the whole repo — clean.
+- `clearflow.backend.app`, `clearpulse.backend.app`, `artemis.backend.app` FastAPI gateways, and
+  `artemis.agents.orchestrator`, `artemis.agents.tools`, `artemis.evals.pipeline`,
+  `artemis.policy.guard`, `growth_os.growth_os` — all import cleanly.
+- Live runtime smoke test (real processes on real ports, ~10 s, then `SIGTERM`): `python app.py`
+  → `GET /api/health` 200; `uvicorn clearflow.backend.app:app` → `GET /healthz` 200;
+  `uvicorn clearpulse.backend.app:app` → `GET /healthz` 200; `uvicorn artemis.backend.app:app`
+  → `GET /openapi.json` 200 (it exposes no health route) and `POST /v1/actions/check` with an
+  empty body → 422 (expected request validation). No tracebacks, no port conflicts, clean
+  "Application shutdown complete" from all uvicorn workers.
+- `ontario_strike/*.py --help` — all 5 print usage; `azure_slo_burn.py --window 1h --slo 99.9
+  --burn 2.0 --errors 12 --requests 10000` still returns `PAGE ...` with exit code 2.
+- CLI smoke test (`status`, `dashboard`, `plan`, `run`, `orchestrate`) — pass.
+- `database_init.py` run twice against a fresh SQLite file — exit 0 both times (idempotent,
+  `CREATE TABLE IF NOT EXISTS` throughout).
+
+**Manual review item (not a regression, not auto-changed):** `database_schema.sql` is a one-shot
+SQL Server 2022 bootstrap script (`CREATE DATABASE AerospaceIntel` + 16 `CREATE TABLE`, procs, a
+view, a function and a trigger) that `INSTALLATION_GUIDE.md` says to run by hand in SSMS. No code
+executes it, but it is not re-runnable: a second run fails on the existing database/objects. If it
+is ever used as a repeatable migration, wrap each object in `IF OBJECT_ID(...) IS NULL` /
+`CREATE OR ALTER` guards and test against a real SQL Server instance.
+
+- 6 open pull requests (#135-#139, #144), all routine automated Dependabot version bumps
+  (`pydantic`, `numpy`, `anthropic`, `uvicorn`, `lxml`, and `anthropics/claude-code-action`
+  1.0.214 → 1.0.233, which supersedes #142) — none merged or altered as part of this pass.
 
 ---
 

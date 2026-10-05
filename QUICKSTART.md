@@ -107,7 +107,6 @@ This is a commercial product available for enterprise licensing.
 **Source Code License:** Full source access with customization rights
 
 Contact: sales@clearglassinc.com
-Phone: 1-800-CLEARGLASS
 
 ═══════════════════════════════════════════════════════════════════
 

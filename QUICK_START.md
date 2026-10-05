@@ -351,24 +351,12 @@ Or contact support: support@clearglassinc.com
 - **Installation Guide**: `.\docs\INSTALLATION.md`
 - **API Reference**: `.\docs\APIReference.md`
 
-### 2. Watch Video Tutorials
+### 2. Get Help
 
-Available at: https://docs.clearglassinc.com/tutorials
-
-Topics:
-- System overview (10 min)
-- Data collection (15 min)
-- Analysis interpretation (20 min)
-- Report customization (15 min)
-- Advanced features (30 min)
-
-### 3. Join Community
-
-- **Forum**: https://community.clearglassinc.com
-- **Slack**: clearglassinc.slack.com
+- **Issues**: https://github.com/ClearGlassInc/Opal-Koboi/issues
 - **Email**: support@clearglassinc.com
 
-### 4. Schedule Training (Enterprise customers)
+### 3. Schedule Training (Enterprise customers)
 
 Email: training@clearglassinc.com
 
@@ -475,13 +463,9 @@ If you can do all these, you're ready for production use!
 - Installation Guide: `.\docs\INSTALLATION.md`
 
 **Community**:
-- Forum: https://community.clearglassinc.com
-- Slack: clearglassinc.slack.com
 
 **Direct Support**:
 - Email: support@clearglassinc.com
-- Phone: +1 (555) 123-4567 (Enterprise customers)
-- Portal: https://support.clearglassinc.com
 
 **Response Times**:
 - Critical: 4 hours

@@ -14,12 +14,13 @@ import sys
 HOURS = {"5m": 5 / 60, "1h": 1.0, "6h": 6.0, "24h": 24.0, "3d": 72.0}
 
 
-def burn_rate(errors: float, requests: float, slo: float, window_h: float, period_h: float = 30 * 24) -> float:
+def burn_rate(errors: float, requests: float, slo: float) -> float:
+    """Observed error ratio divided by the SLO's allowed error ratio (1.0 = on budget)."""
     if requests <= 0:
         return 0.0
     error_ratio = errors / requests
     allowed = max(1e-12, (100.0 - slo) / 100.0)
-    return (error_ratio / allowed) * (period_h / window_h)
+    return error_ratio / allowed
 
 
 def main() -> int:
@@ -31,8 +32,7 @@ def main() -> int:
     parser.add_argument("--burn", type=float, default=14.4, help="page threshold (1h/14.4 is classic 2%% budget in 1h)")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
-    window_h = HOURS[args.window]
-    rate = burn_rate(args.errors, args.requests, args.slo, window_h)
+    rate = burn_rate(args.errors, args.requests, args.slo)
     error_ratio = args.errors / args.requests if args.requests else 0.0
     payload = {
         "slo": args.slo,

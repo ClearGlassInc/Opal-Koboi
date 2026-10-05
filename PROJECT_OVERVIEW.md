@@ -185,7 +185,6 @@ Grades: A+ (90-100) | A (85-89) | B (70-84) | C (60-69)
 - Feature benefits
 - Pricing packages
 - ROI calculator
-- Testimonials
 - Purchase process
 
 **Quick Start (300+ lines)**

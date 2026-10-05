@@ -793,16 +793,12 @@ foreach ($company in $companies) {
 
 ### Community
 
-- **Forum**: https://community.clearglassinc.com
-- **Slack**: clearglassinc.slack.com
 - **GitHub**: https://github.com/clearglassinc
 
 ### Support Contact
 
 **Clearglassinc Support Team**
 - Email: support@clearglassinc.com
-- Phone: +1 (555) 123-4567
-- Portal: https://support.clearglassinc.com
 - Hours: Monday-Friday, 9AM-6PM EST
 
 ---

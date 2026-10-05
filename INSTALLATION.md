@@ -469,9 +469,7 @@ Test-NetConnection -ComputerName "api.crunchbase.com" -Port 443
 - Response Time: 24 hours (Business hours)
 
 **Community:**
-- Forum: https://community.clearglassinc.com
 - GitHub: https://github.com/clearglassinc/aerospace-intel
-- Slack: clearglassinc.slack.com
 
 ### Reporting Bugs
 

@@ -793,8 +793,6 @@ foreach ($company in $companies) {
 
 ### Community
 
-- **Forum**: https://community.clearglassinc.com
-- **Slack**: clearglassinc.slack.com
 - **GitHub**: https://github.com/clearglassinc
 
 ### Support Contact

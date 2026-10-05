@@ -9,7 +9,7 @@
 
 | Product | What it does | Proof it works |
 | --- | --- | --- |
-| **ClearFlow** — AI automation engine | Drives **one keystone outcome per day** and gates every other workstream behind it. Critical-path planning, dependency gating, async execution, event bus, durable history. | 47 automated tests green · runs a full day to 100% completion unattended |
+| **ClearFlow** — AI automation engine | Drives **one keystone outcome per day** and gates every other workstream behind it. Critical-path planning, dependency gating, async execution, event bus, durable history. | 47 automated tests green · simulated day run reaches 100% completion (synthetic tasks auto-completed) |
 | **ClearPulse** — forensic compliance pipeline | Real-time triage of clinical/operational events → risk-scored, correlated, sealed alerts. Tamper-evident audit ledger + incident graph. | 46 tests green · demo run on synthetic data flags billing fraud, an insider snoop (3σ), and unencrypted PHI in milliseconds |
 | **Control Surface v3.0** | Operator UI: command palette, live status telemetry (NOMINAL/SYNCING/DEGRADED/FAILURE), systems drawer. Keyboard-first, ARIA-correct. | Zero-dependency, ships with the portfolio |
 
@@ -41,6 +41,6 @@ autonomous agents who need oversight, not just output.
 
 ## Get it
 
-- **Install:** clone https://github.com/ClearGlassInc/Opal-Koboi and run `npm ci && npm start` (not yet published to the public npm registry)
+- **Run it:** clone https://github.com/ClearGlassInc/Opal-Koboi, then `python3 -m clearflow run` (ClearFlow) and `python3 -m clearpulse.demo` (ClearPulse). Not yet published to the public npm or PyPI registries.
 - **Source:** https://github.com/ClearGlassInc/Opal-Koboi
 - **Live console:** https://clearglassinc.github.io/opal/

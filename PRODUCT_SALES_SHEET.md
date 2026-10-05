@@ -310,7 +310,6 @@ Generates investor-grade reports in multiple formats:
 **Professional Edition:**
 - Written documentation
 - Email support
-- Community forum access
 
 **Enterprise Edition:**
 - Live onboarding session (2 hours)

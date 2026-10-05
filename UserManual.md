@@ -801,8 +801,6 @@ foreach ($company in $companies) {
 
 **Clearglassinc Support Team**
 - Email: support@clearglassinc.com
-- Phone: +1 (555) 123-4567
-- Portal: https://support.clearglassinc.com
 - Hours: Monday-Friday, 9AM-6PM EST
 
 ---

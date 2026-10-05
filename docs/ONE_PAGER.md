@@ -9,8 +9,8 @@
 
 | Product | What it does | Proof it works |
 | --- | --- | --- |
-| **ClearFlow** — AI automation engine | Drives **one keystone outcome per day** and gates every other workstream behind it. Critical-path planning, dependency gating, async execution, event bus, durable history. | 44 automated tests green · runs a full day to 100% completion unattended |
-| **ClearPulse** — forensic compliance pipeline | Real-time triage of clinical/operational events → risk-scored, correlated, sealed alerts. Tamper-evident audit ledger + incident graph. | 46 tests green · live run flagged billing fraud, an insider snoop (3σ), and unencrypted PHI in milliseconds |
+| **ClearFlow** — AI automation engine | Drives **one keystone outcome per day** and gates every other workstream behind it. Critical-path planning, dependency gating, async execution, event bus, durable history. | 47 automated tests green · runs a full day to 100% completion unattended |
+| **ClearPulse** — forensic compliance pipeline | Real-time triage of clinical/operational events → risk-scored, correlated, sealed alerts. Tamper-evident audit ledger + incident graph. | 46 tests green · demo run on synthetic data flags billing fraud, an insider snoop (3σ), and unencrypted PHI in milliseconds |
 | **Control Surface v3.0** | Operator UI: command palette, live status telemetry (NOMINAL/SYNCING/DEGRADED/FAILURE), systems drawer. Keyboard-first, ARIA-correct. | Zero-dependency, ships with the portfolio |
 
 ## Why it's different
@@ -30,7 +30,7 @@ autonomous agents who need oversight, not just output.
 
 | Tier | For | Price (suggested) | Includes |
 | --- | --- | --- | --- |
-| **Open Core** | Builders, evaluation | Free (MIT, on npm) | ClearFlow + ClearPulse engines, CLI, docs |
+| **Open Core** | Builders, evaluation | Free (MIT, source on GitHub) | ClearFlow + ClearPulse engines, CLI, docs |
 | **Team** | Single ops team | **$490 / mo** | Hosted API gateway, Control Surface, webhook notifiers, email support |
 | **Enterprise** | Regulated org | **From $3,500 / mo** | SSO, on-prem/VPC deploy, audit-ledger retention SLAs, the Workflow Repair Agent, priority support |
 | **Design partner** | First 3 logos | Custom | Co-built integration + case study in exchange for a reference |
@@ -41,6 +41,6 @@ autonomous agents who need oversight, not just output.
 
 ## Get it
 
-- **Install:** `npm i @clearglassinc/opal-koboi`
+- **Install:** clone https://github.com/ClearGlassInc/Opal-Koboi and run `npm ci && npm start` (not yet published to the public npm registry)
 - **Source:** https://github.com/ClearGlassInc/Opal-Koboi
 - **Live console:** https://clearglassinc.github.io/opal/

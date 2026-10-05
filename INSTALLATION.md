@@ -466,8 +466,6 @@ Test-NetConnection -ComputerName "api.crunchbase.com" -Port 443
 
 **Clearglassinc Support:**
 - Email: support@clearglassinc.com
-- Phone: +1 (555) 123-4567
-- Portal: https://support.clearglassinc.com
 - Response Time: 24 hours (Business hours)
 
 **Community:**

@@ -167,7 +167,7 @@ Includes:
 [![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/clearglassinc/aerospace-intel)
 [![License](https://img.shields.io/badge/license-Commercial-red.svg)](LICENSE.txt)
 [![PowerShell](https://img.shields.io/badge/PowerShell-7.0+-blue.svg)](https://github.com/PowerShell/PowerShell)
-[![Status](https://img.shields.io/badge/status-Production-green.svg)](https://clearglassinc.com)
+[![Status](https://img.shields.io/badge/status-prototype-orange.svg)](#-overview)
 
 [Features](#features) • [Installation](#installation) • [Usage](#usage) • [Documentation](#documentation) • [Support](#support)
 
@@ -176,6 +176,11 @@ Includes:
 ---
 
 ## 🚀 Overview
+
+> **Prototype status.** In the current code the Clearglassinc Score sub-scores are generated with
+> `Get-Random` and the forecast functions return fixed sample values (`AerospaceIntel.ps1`,
+> `Calculate-ClearglassincScore` and `Predict-*`). Treat all scores and forecasts as illustrative
+> sample output, not as research or investment advice.
 
 **Clearglassinc Aerospace Intelligence System** is the industry's most comprehensive market research and predictive analytics platform for aerospace and defense companies. Built for investors, analysts, and strategic decision-makers who demand enterprise-grade intelligence.
 
@@ -507,9 +512,7 @@ clearglassinc-aerospace-intel/
 ### Getting Help
 **Clearglassinc Support Team**
 - 📧 Email: support@clearglassinc.com
-- 📞 Phone: +1 (555) 123-4567
-- 🌐 Portal: https://support.clearglassinc.com
-- 💬 Slack: clearglassinc.slack.com
+- 🐛 Issues: https://github.com/ClearGlassInc/Opal-Koboi/issues
 
 **Response Times:**
 - Critical Issues: 4 hours
@@ -518,8 +521,7 @@ clearglassinc-aerospace-intel/
 
 ### Community
 
-- **Forum**: https://community.clearglassinc.com
-- **GitHub**: https://github.com/clearglassinc/aerospace-intel
+- **GitHub**: https://github.com/ClearGlassInc/Opal-Koboi
 - **LinkedIn**: https://linkedin.com/company/clearglassinc
 
 ---
@@ -561,27 +563,9 @@ See [LICENSE.txt](LICENSE.txt) for full terms.
 
 ---
 
-## 🌟 Success Stories
-
-> *"Clearglassinc helped us identify a $50M investment opportunity in the small-sat market that our traditional research missed. The predictive analytics were spot-on."*  
-> — **Sarah Chen, Partner at Aerospace Ventures**
-
-> *"We reduced our competitive intelligence costs by 60% while getting deeper insights. The ROI was immediate."*  
-> — **Michael Rodriguez, VP Strategy at TechSpace Systems**
-
-> *"The most comprehensive aerospace intelligence platform we've seen. Worth every penny."*  
-> — **Dr. James Wilson, Senior Analyst at Defense Research Institute**
-
----
-
 ## 📞 Contact
 
 **Clearglassinc**
-
-🏢 **Headquarters**  
-123 Innovation Drive  
-Tech City, TC 12345  
-United States
 
 📧 **Email**  
 - Sales: sales@clearglassinc.com
@@ -590,8 +574,6 @@ United States
 
 🌐 **Web**  
 - Website: https://www.clearglassinc.com
-- Documentation: https://docs.clearglassinc.com
-- Status: https://status.clearglassinc.com
 
 ---
 
@@ -601,7 +583,7 @@ United States
 
 Copyright © 2025-2030 Clearglassinc. All rights reserved.
 
-[Website](https://clearglassinc.com) • [Documentation](https://docs.clearglassinc.com) • [Support](https://support.clearglassinc.com)
+[Website](https://clearglassinc.com) • [Issues](https://github.com/ClearGlassInc/Opal-Koboi/issues)
 
 </div>
 

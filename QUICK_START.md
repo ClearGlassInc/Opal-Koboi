@@ -480,8 +480,6 @@ If you can do all these, you're ready for production use!
 
 **Direct Support**:
 - Email: support@clearglassinc.com
-- Phone: +1 (555) 123-4567 (Enterprise customers)
-- Portal: https://support.clearglassinc.com
 
 **Response Times**:
 - Critical: 4 hours

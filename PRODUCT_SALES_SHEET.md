@@ -3,6 +3,11 @@
 
 ### ENTERPRISE MARKET RESEARCH & PREDICTIVE ANALYTICS
 
+> **Status (2026-10-05): prototype, no online purchase path.** The score and forecast functions
+> in `AerospaceIntel.ps1` currently return randomized or fixed sample values, and no checkout or
+> payment page is live. Editions and prices below are draft list prices, not an active offer.
+> Contact sales@clearglassinc.com before relying on any capability described here.
+
 ---
 
 ## 🎯 PRODUCT OVERVIEW
@@ -173,10 +178,8 @@ Generates investor-grade reports in multiple formats:
 ### Proprietary Technology
 
 🔬 **Clearglassinc Score Algorithm**
-- Peer-reviewed methodology
-- 5 years of R&D investment
-- Validated against 1,000+ companies
-- 87% prediction accuracy
+- Weighted 0-100 score across five components (see the README)
+- Prototype: sub-scores are currently randomized sample values and have not been validated
 
 🤖 **AI/ML Models**
 - Custom-trained on aerospace data
@@ -305,7 +308,6 @@ Generates investor-grade reports in multiple formats:
 ### Included Training
 
 **Professional Edition:**
-- Video tutorials (10+ hours)
 - Written documentation
 - Email support
 - Community forum access
@@ -343,8 +345,6 @@ Generates investor-grade reports in multiple formats:
 
 ✅ **GDPR**: Data privacy controls  
 ✅ **CCPA**: California Consumer Privacy Act  
-✅ **SOC 2**: Security audit (Cloud edition)  
-✅ **Export Control**: ITAR/EAR compliant  
 
 ---
 
@@ -352,32 +352,7 @@ Generates investor-grade reports in multiple formats:
 
 ### Customer Results
 
-**Investment Firm (VC)**
-- **Challenge**: Due diligence taking 2-3 weeks per company
-- **Solution**: Clearglassinc Enterprise Edition
-- **Results**: 
-  - 70% reduction in research time
-  - 2x increase in deal flow
-  - $50M winning investment identified
-  - ROI: 800% in first year
-
-**Aerospace Manufacturer**
-- **Challenge**: Missing competitive intelligence
-- **Solution**: Clearglassinc Professional + Monitoring
-- **Results**:
-  - Real-time competitor tracking
-  - Early detection of 3 market threats
-  - Strategic pivot prevented $10M loss
-  - 60% cost reduction vs. consultants
-
-**Government Agency**
-- **Challenge**: Manual vendor assessment process
-- **Solution**: Clearglassinc Custom Enterprise
-- **Results**:
-  - 90% faster vendor evaluations
-  - Better vendor selection outcomes
-  - Improved budget allocation
-  - Enhanced national security insights
+No customer deployments have been recorded yet. Results will be published here only with the customer's written consent.
 
 ---
 
@@ -419,7 +394,6 @@ Generates investor-grade reports in multiple formats:
 ### Sales Inquiries
 
 **Email**: sales@clearglassinc.com  
-**Phone**: +1 (555) 123-4567  
 **Website**: https://www.clearglassinc.com/sales  
 
 **Sales Hours**: Monday-Friday, 9AM-6PM EST
@@ -432,24 +406,10 @@ Generates investor-grade reports in multiple formats:
 
 ### Purchase Options
 
-1. **Online**: https://buy.clearglassinc.com
-2. **Phone**: Call sales team
-3. **Quote**: Request custom quote for Enterprise
+1. **Email**: sales@clearglassinc.com
+2. **Quote**: Request custom quote for Enterprise
 
 **Payment Methods**: Credit Card, Wire Transfer, Purchase Order
-
----
-
-## 🌟 CUSTOMER TESTIMONIALS
-
-> *"Clearglassinc transformed our due diligence process. We've increased our deal flow by 2x while maintaining better quality standards. The predictive analytics have been remarkably accurate."*  
-> — **Sarah Chen, Partner, Aerospace Ventures**
-
-> *"As a consultant, this tool is invaluable. I can deliver Fortune 500-quality reports to mid-market clients at a fraction of the cost. It's paid for itself 10x over."*  
-> — **Michael Rodriguez, Principal, Tech Strategy Group**
-
-> *"The competitive intelligence capabilities are unmatched. We now have real-time visibility into our competitors' moves, which has been critical for our strategic planning."*  
-> — **Dr. Emily Watson, VP Strategy, Advanced Propulsion Systems**
 
 ---
 
@@ -458,9 +418,8 @@ Generates investor-grade reports in multiple formats:
 ### Documentation
 
 - Installation Guide
-- User Manual (150+ pages)
+- User Manual
 - API Reference
-- Video Tutorials (10+ hours)
 - Best Practices Guide
 
 ### Support
@@ -561,7 +520,6 @@ Before you buy, ensure you have:
 - Troubleshooting guide
 
 🎓 **Training Materials**
-- Video tutorials
 - Quick start guide
 - Best practices
 - Use case examples
@@ -586,11 +544,10 @@ Before you buy, ensure you have:
 
 ### First-Mover Advantage
 
-Companies using Clearglassinc report:
-- 2-3x faster decision-making
-- 40-60% cost reduction
-- Better investment outcomes
-- Enhanced competitive position
+Design goals for the system (not yet measured with customers):
+- Faster decision-making
+- Lower research cost than manual analysis
+- A consistent, repeatable scoring method
 
 **Don't let your competitors get ahead.**
 
@@ -604,9 +561,7 @@ Companies using Clearglassinc report:
 **Enterprise Edition**: $14,999 one-time  
 **Cloud Edition**: $999/month  
 
-**Contact**: sales@clearglassinc.com  
-**Phone**: +1 (555) 123-4567  
-**Buy Online**: https://buy.clearglassinc.com
+**Contact**: sales@clearglassinc.com
 
 ### Or Request a Demo
 

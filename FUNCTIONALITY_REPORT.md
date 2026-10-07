@@ -1,10 +1,18 @@
 # FUNCTIONALITY REPORT
 
 **Repository:** ClearGlassInc/Opal-Koboi  
-**Generated:** 2026-07-05 (re-verified 2026-10-01, 2026-09-23, 2026-09-17, 2026-09-12; previously re-verified 2026-09-10, 2026-08-19, 2026-08-13, 2026-08-12, 2026-08-01; originally generated 2026-07-04)  
+**Generated:** 2026-07-05 (re-verified 2026-10-07, 2026-10-01, 2026-09-23, 2026-09-17, 2026-09-12; previously re-verified 2026-09-10, 2026-08-19, 2026-08-13, 2026-08-12, 2026-08-01; originally generated 2026-07-04)  
 **Node.js:** v22.22.0 | **npm:** 10.9.4 | **Python:** 3.11.15 (CI-matching venv: 3.13)
 
 ---
+
+## Re-verification (2026-10-07)
+
+No code changes since the 2026-10-01 pass. `apps/artemis-agent` `npm audit` reported 1 new high advisory
+(`source-map-js` 1.0.0 - 1.2.1, GHSA-68fv-2mgg-jv7q, event-loop DoS); fixed with a lockfile-only
+`npm audit fix` (`package.json` untouched). Confirmed green afterwards: clean `npm ci`, build, lint,
+vitest 15/15, `npm audit` 0 vulnerabilities; root `npm run ci` pass (0 vulnerabilities); Python suites
+126/126 pass; CLI smoke test (`node bin/opal-koboi.js status`) starts and exits cleanly.
 
 ## Re-verification (2026-10-01)
 

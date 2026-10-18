@@ -23,8 +23,80 @@
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
   <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ClearGlass minimal navigation bar for spec.html */
+    .cg-nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      padding: 0 28px; height: 54px;
+      background: rgba(6, 10, 18, 0.94);
+      border-bottom: 1px solid rgba(120, 180, 220, 0.14);
+      -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+      font-family: 'Inter', system-ui, sans-serif;
+    }
+    .cg-nav__brand {
+      display: flex; align-items: center; gap: 9px;
+      font-weight: 700; font-size: 0.88rem; letter-spacing: 0.06em;
+      color: #eaf3ff; text-decoration: none; flex: none;
+    }
+    .cg-nav__brand b { color: #34e3ea; }
+    .cg-nav__mark { width: 22px; height: 22px; flex: none; }
+    .cg-nav__sub {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.56rem; letter-spacing: 0.28em; color: rgba(120,180,220,0.6);
+      text-transform: uppercase; display: block; margin-top: 3px;
+    }
+    .cg-nav__right { display: flex; align-items: center; gap: 14px; }
+    .cg-nav__badge {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase;
+      color: rgba(52,227,234,0.7); padding: 4px 10px;
+      border: 1px solid rgba(52,227,234,0.22); border-radius: 999px;
+    }
+    .cg-nav__back {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(120, 180, 220, 0.55); text-decoration: none;
+      padding: 6px 12px; border-radius: 7px;
+      border: 1px solid rgba(120,180,220,0.14);
+      transition: color 150ms ease, border-color 150ms ease, background 150ms ease;
+    }
+    .cg-nav__back:hover {
+      color: #34e3ea; border-color: rgba(52,227,234,0.38);
+      background: rgba(52,227,234,0.05);
+    }
+    /* Ensure body padding accounts for sticky nav */
+    body { padding-top: 0; }
+  </style>
 </head>
 <body>
+<nav class="cg-nav" aria-label="ClearGlass primary">
+  <a class="cg-nav__brand" href="index.html" aria-label="ClearGlass SENTINEL home">
+    <svg class="cg-nav__mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="cg-bm" x1="0" y1="0" x2="40" y2="40">
+          <stop offset="0" stop-color="#34e3ea"/>
+          <stop offset=".5" stop-color="#2f6bff"/>
+          <stop offset="1" stop-color="#8b5cf6"/>
+        </linearGradient>
+      </defs>
+      <path d="M20 2 L35 11 V29 L20 38 L5 29 V11 Z" stroke="url(#cg-bm)" stroke-width="1.6" fill="rgba(52,227,234,.06)"/>
+      <path d="M20 9 L29 14.5 V25.5 L20 31 L11 25.5 V14.5 Z" stroke="url(#cg-bm)" stroke-width="1.2" opacity=".7"/>
+      <circle cx="20" cy="20" r="3.4" fill="url(#cg-bm)"/>
+    </svg>
+    <span>
+      CLEAR<b>GLASS</b>
+      <span class="cg-nav__sub">Spec · Guardian Command Nexus</span>
+    </span>
+  </a>
+  <div class="cg-nav__right">
+    <span class="cg-nav__badge">SPEC-1</span>
+    <a class="cg-nav__back" href="index.html">← SENTINEL Console</a>
+  </div>
+</nav>
 <header id="title-block-header">
 <h1 class="title">CLEARGLASS Guardian Command Nexus Specification</h1>
 </header>

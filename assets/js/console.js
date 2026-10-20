@@ -9,6 +9,15 @@
   const $  = (s, c = document) => c.querySelector(s);
   const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
 
+  /* ─── PageVisibility: pause CSS animations on heavy elements ─── */
+  const PAUSEABLE = ".field__scan, .radar__sweep, .glass--pulse";
+  const setAnimPause = (paused) => {
+    document.querySelectorAll(PAUSEABLE).forEach((el) => {
+      el.style.animationPlayState = paused ? "paused" : "";
+    });
+  };
+  document.addEventListener("visibilitychange", () => setAnimPause(document.hidden));
+
   /* ---------------------------------------------- 1. Click impact ripple */
   // Layered, depth-aware ripple originating from the pointer.
   document.addEventListener("pointerdown", (e) => {
@@ -50,15 +59,20 @@
       el.addEventListener("pointerleave", reset);
     });
 
-    /* background bloom parallax tied to pointer (very subtle) */
+    /* background bloom parallax tied to pointer (very subtle, rAF-debounced) */
     const blooms = $$(".field__bloom");
     if (blooms.length) {
+      let bloomRaf = null, bx = 0, by = 0;
       window.addEventListener("pointermove", (e) => {
-        const cx = (e.clientX / window.innerWidth - 0.5);
-        const cy = (e.clientY / window.innerHeight - 0.5);
-        blooms.forEach((b, i) => {
-          const depth = (i + 1) * 10;
-          b.style.transform = `translate(${cx * depth}px, ${cy * depth}px)`;
+        bx = e.clientX / window.innerWidth - 0.5;
+        by = e.clientY / window.innerHeight - 0.5;
+        if (bloomRaf) return;
+        bloomRaf = requestAnimationFrame(() => {
+          bloomRaf = null;
+          blooms.forEach((b, i) => {
+            const depth = (i + 1) * 10;
+            b.style.transform = `translate(${(bx * depth).toFixed(2)}px, ${(by * depth).toFixed(2)}px)`;
+          });
         });
       }, { passive: true });
     }
@@ -109,6 +123,31 @@
       }, { threshold: 0.6 });
       counters.forEach((el) => cio.observe(el));
     }
+  }
+
+  /* -------------- 4b. Sparkline path-length + metric reveal class ------- */
+  // Pre-measure each sparkline path length so CSS can animate stroke-dashoffset.
+  // Also adds .is-in to the parent .metric tile (for the data-pulse keyframe).
+  $$(".metric__spark path").forEach((path) => {
+    try {
+      const len = Math.ceil(path.getTotalLength());
+      path.style.setProperty("--spark-len", len);
+      path.style.strokeDasharray = len;
+      path.style.strokeDashoffset = len;
+    } catch (e) { /* SVG not yet in DOM — skip */ }
+  });
+  if (!reduceMotion && "IntersectionObserver" in window) {
+    const sparkIO = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (en.isIntersecting) {
+          en.target.classList.add("is-in");
+          sparkIO.unobserve(en.target);
+        }
+      });
+    }, { threshold: 0.3 });
+    $$(".metric").forEach((m) => sparkIO.observe(m));
+  } else {
+    $$(".metric").forEach((m) => m.classList.add("is-in"));
   }
 
   /* ------------------------------------- 5. Telemetry bars fill on view */

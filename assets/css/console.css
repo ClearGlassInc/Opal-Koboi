@@ -584,8 +584,18 @@ h1,h2,h3,h4 { font-family: var(--font-display); color: var(--text-hi); line-heig
 .metric__delta.up   { color: var(--green); }
 .metric__delta.down { color: var(--danger); }
 /* sparkline baseline */
-.metric__spark { position: absolute; left: 0; right: 0; bottom: 0; height: 36px; opacity: .55; }
-.metric__spark path { fill: none; stroke: var(--cyan); stroke-width: 1.6; }
+.metric__spark { position: absolute; left: 0; right: 0; bottom: 0; height: 36px; opacity: .55; overflow: visible; }
+.metric__spark path {
+  fill: none; stroke: var(--cyan); stroke-width: 1.6;
+  stroke-dasharray: var(--spark-len, 400);
+  stroke-dashoffset: var(--spark-len, 400);
+}
+/* is-in added by IntersectionObserver in console.js */
+.metric.is-in .metric__spark path {
+  animation: spark-draw .9s var(--ease-out) .2s forwards;
+}
+/* data pulse on first reveal */
+.metric.is-in { animation: data-pulse .8s var(--ease-out) .1s both; }
 
 /* feature panels (capabilities) */
 .modules { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
@@ -645,6 +655,12 @@ h1,h2,h3,h4 { font-family: var(--font-display); color: var(--text-hi); line-heig
 @keyframes chip-ping { 0% { transform: scale(.6); opacity: .8; } 100% { transform: scale(2.2); opacity: 0; } }
 @keyframes blip { 0%,100% { opacity: 0; transform: scale(.5); } 12% { opacity: 1; transform: scale(1); } 60% { opacity: 0; } }
 @keyframes log-in { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: none; } }
+/* Sparkline draw — path must have stroke-dasharray set by JS */
+@keyframes spark-draw { from { stroke-dashoffset: var(--spark-len, 400); } to { stroke-dashoffset: 0; } }
+/* Metric tile in-view signal accent */
+@keyframes metric-signal { 0%,100% { opacity: 0; } 50% { opacity: 1; } }
+/* Data pulse — short-lived glow on metric entry */
+@keyframes data-pulse { 0% { box-shadow: 0 0 0 0 rgba(52,227,234,.55); } 70% { box-shadow: 0 0 0 8px rgba(52,227,234,0); } 100% { box-shadow: 0 0 0 0 rgba(52,227,234,0); } }
 
 /* Sparkline path draw-in: JS sets stroke-dashoffset=len as initial state,
    then adds .is-drawn to trigger this animation when the card scrolls into view. */

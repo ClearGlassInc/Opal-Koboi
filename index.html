@@ -43,6 +43,7 @@
     <div class="field__bloom field__bloom--2"></div>
     <div class="field__bloom field__bloom--3"></div>
     <div class="field__scan"></div>
+    <div class="field__scan-h"></div>
     <div class="field__vignette"></div>
   </div>
 
@@ -406,8 +407,15 @@
         <div class="foot__col" style="max-width:320px">
           <a class="brand" href="#main" style="margin-bottom:14px">
             <svg class="brand__mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-              <path d="M20 2 L35 11 V29 L20 38 L5 29 V11 Z" stroke="url(#brand-grad)" stroke-width="1.6" fill="rgba(52,227,234,.06)"/>
-              <circle cx="20" cy="20" r="3.4" fill="url(#brand-grad)"/>
+              <defs>
+                <linearGradient id="bm-foot" x1="0" y1="0" x2="40" y2="40">
+                  <stop offset="0" stop-color="#34e3ea"/>
+                  <stop offset=".5" stop-color="#2f6bff"/>
+                  <stop offset="1" stop-color="#8b5cf6"/>
+                </linearGradient>
+              </defs>
+              <path d="M20 2 L35 11 V29 L20 38 L5 29 V11 Z" stroke="url(#bm-foot)" stroke-width="1.6" fill="rgba(52,227,234,.06)"/>
+              <circle cx="20" cy="20" r="3.4" fill="url(#bm-foot)"/>
             </svg>
             <span class="brand__name">CLEAR<span>GLASS</span></span>
           </a>

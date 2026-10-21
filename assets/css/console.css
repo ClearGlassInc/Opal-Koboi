@@ -584,8 +584,18 @@ h1,h2,h3,h4 { font-family: var(--font-display); color: var(--text-hi); line-heig
 .metric__delta.up   { color: var(--green); }
 .metric__delta.down { color: var(--danger); }
 /* sparkline baseline */
-.metric__spark { position: absolute; left: 0; right: 0; bottom: 0; height: 36px; opacity: .55; }
-.metric__spark path { fill: none; stroke: var(--cyan); stroke-width: 1.6; }
+.metric__spark { position: absolute; left: 0; right: 0; bottom: 0; height: 36px; opacity: .55; overflow: visible; }
+.metric__spark path {
+  fill: none; stroke: var(--cyan); stroke-width: 1.6;
+  stroke-dasharray: var(--spark-len, 400);
+  stroke-dashoffset: var(--spark-len, 400);
+}
+/* is-in added by IntersectionObserver in console.js */
+.metric.is-in .metric__spark path {
+  animation: spark-draw .9s var(--ease-out) .2s forwards;
+}
+/* data pulse on first reveal */
+.metric.is-in { animation: data-pulse .8s var(--ease-out) .1s both; }
 
 /* feature panels (capabilities) */
 .modules { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
@@ -645,6 +655,45 @@ h1,h2,h3,h4 { font-family: var(--font-display); color: var(--text-hi); line-heig
 @keyframes chip-ping { 0% { transform: scale(.6); opacity: .8; } 100% { transform: scale(2.2); opacity: 0; } }
 @keyframes blip { 0%,100% { opacity: 0; transform: scale(.5); } 12% { opacity: 1; transform: scale(1); } 60% { opacity: 0; } }
 @keyframes log-in { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: none; } }
+/* Sparkline draw — path must have stroke-dasharray set by JS */
+@keyframes spark-draw { from { stroke-dashoffset: var(--spark-len, 400); } to { stroke-dashoffset: 0; } }
+/* Metric tile in-view signal accent */
+@keyframes metric-signal { 0%,100% { opacity: 0; } 50% { opacity: 1; } }
+/* Data pulse — short-lived glow on metric entry */
+@keyframes data-pulse { 0% { box-shadow: 0 0 0 0 rgba(52,227,234,.55); } 70% { box-shadow: 0 0 0 8px rgba(52,227,234,0); } 100% { box-shadow: 0 0 0 0 rgba(52,227,234,0); } }
+
+/* Sparkline path draw-in: JS sets stroke-dashoffset=len as initial state,
+   then adds .is-drawn to trigger this animation when the card scrolls into view. */
+@keyframes spark-draw { to { stroke-dashoffset: 0; } }
+@keyframes spark-glow { 0%,100% { opacity: .5; } 50% { opacity: .88; } }
+.metric__spark path.is-drawn {
+  animation: spark-draw .95s var(--ease-out) forwards, spark-glow 3.2s .95s ease-in-out infinite;
+}
+
+/* Ambient horizontal scan across the background field */
+@keyframes field-scan-h {
+  0%   { left: -280px; }
+  100% { left: 110%; }
+}
+.field__scan-h {
+  position: absolute; top: 0; bottom: 0; width: 280px;
+  background: linear-gradient(90deg, transparent, rgba(52,227,234,.022) 50%, transparent);
+  animation: field-scan-h 26s linear infinite;
+  animation-delay: -14s;
+}
+
+/* Metric card hover scan — a single-pixel horizontal beam that sweeps down */
+@keyframes metric-scan {
+  0%   { transform: translateY(-2px); opacity: .72; }
+  100% { transform: translateY(180px); opacity: 0; }
+}
+.metric::after {
+  content: ""; position: absolute; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(52,227,234,.5), transparent);
+  top: 0; pointer-events: none; opacity: 0;
+  transform: translateY(-2px); will-change: transform, opacity;
+}
+.metric:hover::after { animation: metric-scan 1.4s var(--ease-out) forwards; }
 
 /* Sparkline path draw — triggered by adding .spark-draw class via JS */
 @keyframes spark-draw {
@@ -743,9 +792,8 @@ h1,h2,h3,h4 { font-family: var(--font-display); color: var(--text-hi); line-heig
   }
   [data-reveal] { opacity: 1; transform: none; }
   .btn:hover { transform: none; }
-  .field__scan, .radar__sweep, .glass--pulse { animation: none; }
-  .field__bloom--1, .field__bloom--2, .field__bloom--3 { animation: none; }
-  .card__sweep, .card:hover .card__sweep { animation: none !important; opacity: 0; }
-  .hud__bar::after { animation: none; }
-  .metric__spark path, .metric__spark.spark-draw path { animation: none; stroke-dashoffset: 0; }
+  .field__scan, .field__scan-h, .radar__sweep, .glass--pulse { animation: none; }
+  /* Ensure sparklines display fully drawn if JS hasn't had a chance to initialize */
+  .metric__spark path { stroke-dashoffset: 0 !important; stroke-dasharray: none !important; }
+  .metric::after { display: none; }
 }

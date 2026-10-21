@@ -9,6 +9,15 @@
   const $  = (s, c = document) => c.querySelector(s);
   const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
 
+  /* ─── PageVisibility: pause CSS animations on heavy elements ─── */
+  const PAUSEABLE = ".field__scan, .radar__sweep, .glass--pulse";
+  const setAnimPause = (paused) => {
+    document.querySelectorAll(PAUSEABLE).forEach((el) => {
+      el.style.animationPlayState = paused ? "paused" : "";
+    });
+  };
+  document.addEventListener("visibilitychange", () => setAnimPause(document.hidden));
+
   /* ---------------------------------------------- 1. Click impact ripple */
   // Layered, depth-aware ripple originating from the pointer.
   document.addEventListener("pointerdown", (e) => {
@@ -50,15 +59,20 @@
       el.addEventListener("pointerleave", reset);
     });
 
-    /* background bloom parallax tied to pointer (very subtle) */
+    /* background bloom parallax tied to pointer (very subtle, rAF-debounced) */
     const blooms = $$(".field__bloom");
     if (blooms.length) {
+      let bloomRaf = null, bx = 0, by = 0;
       window.addEventListener("pointermove", (e) => {
-        const cx = (e.clientX / window.innerWidth - 0.5);
-        const cy = (e.clientY / window.innerHeight - 0.5);
-        blooms.forEach((b, i) => {
-          const depth = (i + 1) * 10;
-          b.style.transform = `translate(${cx * depth}px, ${cy * depth}px)`;
+        bx = e.clientX / window.innerWidth - 0.5;
+        by = e.clientY / window.innerHeight - 0.5;
+        if (bloomRaf) return;
+        bloomRaf = requestAnimationFrame(() => {
+          bloomRaf = null;
+          blooms.forEach((b, i) => {
+            const depth = (i + 1) * 10;
+            b.style.transform = `translate(${(bx * depth).toFixed(2)}px, ${(by * depth).toFixed(2)}px)`;
+          });
         });
       }, { passive: true });
     }
@@ -111,6 +125,31 @@
     }
   }
 
+  /* -------------- 4b. Sparkline path-length + metric reveal class ------- */
+  // Pre-measure each sparkline path length so CSS can animate stroke-dashoffset.
+  // Also adds .is-in to the parent .metric tile (for the data-pulse keyframe).
+  $$(".metric__spark path").forEach((path) => {
+    try {
+      const len = Math.ceil(path.getTotalLength());
+      path.style.setProperty("--spark-len", len);
+      path.style.strokeDasharray = len;
+      path.style.strokeDashoffset = len;
+    } catch (e) { /* SVG not yet in DOM — skip */ }
+  });
+  if (!reduceMotion && "IntersectionObserver" in window) {
+    const sparkIO = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (en.isIntersecting) {
+          en.target.classList.add("is-in");
+          sparkIO.unobserve(en.target);
+        }
+      });
+    }, { threshold: 0.3 });
+    $$(".metric").forEach((m) => sparkIO.observe(m));
+  } else {
+    $$(".metric").forEach((m) => m.classList.add("is-in"));
+  }
+
   /* ------------------------------------- 5. Telemetry bars fill on view */
   const bars = $$(".bar > span[data-fill]");
   const cioBars = ("IntersectionObserver" in window) ? new IntersectionObserver((entries) => {
@@ -138,7 +177,6 @@
   /* --------------------------------------------- 7. Live system log feed */
   const logEl = $("[data-log]");
   if (logEl) {
-    const tags = ["info", "ok", "warn", "sys"];
     const events = [
       ["sys",  "Kernel handshake verified — <b>SENTINEL-7</b> online"],
       ["ok",   "Threat surface scan complete — <b>0 critical</b>"],
@@ -169,14 +207,17 @@
       logEl.prepend(line);
       while (logEl.children.length > MAX_LINES) logEl.lastElementChild.remove();
     };
-    // seed
+    // seed initial entries
     events.slice(0, MAX_LINES).reverse().forEach(([t, m]) => push(t, m));
     if (!reduceMotion) {
       let i = 0;
-      setInterval(() => {
-        const [t, m] = events[i % events.length]; i++;
-        push(t, m);
-      }, 3200);
+      let logTimer = null;
+      const pushNext = () => { const [t, m] = events[i % events.length]; i++; push(t, m); };
+      const startLog = () => { if (!logTimer) logTimer = setInterval(pushNext, 3200); };
+      const stopLog  = () => { clearInterval(logTimer); logTimer = null; };
+      startLog();
+      // Pause the feed while the tab is hidden — saves CPU in background tabs.
+      document.addEventListener("visibilitychange", () => document.hidden ? stopLog() : startLog());
     }
   }
 
@@ -263,5 +304,31 @@
       }, 1900);
     });
   });
+
+  /* ----------------------- 10. Sparkline SVG path draw-in on scroll */
+  // Observes each .metric__spark SVG; when it enters the viewport the child
+  // <path> gets stroke-dashoffset animated from its total length → 0 (fully drawn).
+  // Without JS, sparklines show as normal static lines (safe fallback).
+  const sparkSvgs = $$(".metric__spark");
+  if (sparkSvgs.length && !reduceMotion && "IntersectionObserver" in window) {
+    sparkSvgs.forEach((svg) => {
+      const path = svg.querySelector("path");
+      if (!path) return;
+      try {
+        const len = Math.ceil(path.getTotalLength());
+        path.style.strokeDasharray = len;
+        path.style.strokeDashoffset = len;
+      } catch (_) { /* no-op if element not yet laid out */ }
+    });
+    const sparkIO = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (!en.isIntersecting) return;
+        const path = en.target.querySelector("path");
+        if (path) path.classList.add("is-drawn");
+        sparkIO.unobserve(en.target);
+      });
+    }, { threshold: 0.5 });
+    sparkSvgs.forEach((svg) => sparkIO.observe(svg));
+  }
 
 })();

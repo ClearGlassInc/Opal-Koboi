@@ -2063,6 +2063,15 @@
         });
 
         el.mapCanvas.addEventListener('click', handleMapClick);
+
+        // Pause the simulation ticker when the tab is hidden to save CPU.
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) {
+            stopTicker();
+          } else if (state.running) {
+            startTicker();
+          }
+        });
       }
 
       function handleMapClick(event) {

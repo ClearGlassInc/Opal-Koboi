@@ -466,14 +466,10 @@ Test-NetConnection -ComputerName "api.crunchbase.com" -Port 443
 
 **Clearglassinc Support:**
 - Email: support@clearglassinc.com
-- Phone: +1 (555) 123-4567
-- Portal: https://support.clearglassinc.com
 - Response Time: 24 hours (Business hours)
 
 **Community:**
-- Forum: https://community.clearglassinc.com
 - GitHub: https://github.com/clearglassinc/aerospace-intel
-- Slack: clearglassinc.slack.com
 
 ### Reporting Bugs
 

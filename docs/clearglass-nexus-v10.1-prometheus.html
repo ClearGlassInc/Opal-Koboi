@@ -252,6 +252,11 @@
     function loadData(key, def = null) {
         try { return JSON.parse(localStorage.getItem(key)) ?? def; } catch { return def; }
     }
+    function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+    // The API key is used for the current request only; purge any copy saved by earlier versions.
+    localStorage.removeItem('claudeKey');
 
     const tabNames = [
         'Dashboard', 'Monte Carlo', 'Kanban', 'RFP Push', 'Win/Loss', 'Live Feeds',
@@ -421,7 +426,7 @@
         deals.forEach((deal, idx) => {
             const div = document.createElement('div');
             div.className = 'feed-card';
-            div.innerHTML = `<strong>${deal.name}</strong> - ${deal.type} - $${deal.amount} <button class="btn btn-danger" data-idx="${idx}">X</button>`;
+            div.innerHTML = `<strong>${escapeHtml(deal.name)}</strong> - ${escapeHtml(deal.type)} - $${escapeHtml(deal.amount)} <button class="btn btn-danger" data-idx="${idx}">X</button>`;
             div.querySelector('button')?.addEventListener('click', () => {
                 deals.splice(idx,1);
                 saveData('deals', deals);
@@ -474,7 +479,7 @@
         let feedsHtml = '';
         for (let feed of feedDefs) {
             const content = await fetchFeed(feed);
-            feedsHtml += `<div class="feed-card"><div class="feed-title">${feed.name}</div><div class="feed-content">${content}</div></div>`;
+            feedsHtml += `<div class="feed-card"><div class="feed-title">${escapeHtml(feed.name)}</div><div class="feed-content">${escapeHtml(content)}</div></div>`;
         }
         grid.innerHTML = feedsHtml;
     }
@@ -485,7 +490,6 @@
     document.getElementById('sendClaude').onclick = async () => {
         const key = document.getElementById('apiKeyInput').value.trim();
         if (!key) { showToast('Enter API key', true); return; }
-        saveData('claudeKey', key);
         const prompt = document.getElementById('claudePrompt').value;
         if (!prompt) { showToast('Enter prompt', true); return; }
         try {
@@ -505,9 +509,9 @@
             if (!response.ok) throw new Error(`API error: ${response.status}`);
             const data = await response.json();
             const reply = data.content[0].text;
-            document.getElementById('claudeResponse').innerHTML = `<strong>Claude:</strong> ${reply}`;
+            document.getElementById('claudeResponse').innerHTML = `<strong>Claude:</strong> ${escapeHtml(reply)}`;
         } catch (err) {
-            document.getElementById('claudeResponse').innerHTML = `<span style="color:#f66">Error: ${err.message}</span>`;
+            document.getElementById('claudeResponse').innerHTML = `<span style="color:#f66">Error: ${escapeHtml(err.message)}</span>`;
             showToast('Claude request failed', true);
         }
     };

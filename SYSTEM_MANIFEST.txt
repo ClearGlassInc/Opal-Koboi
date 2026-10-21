@@ -205,7 +205,6 @@ This is a COMMERCIAL PRODUCT available for enterprise licensing.
 📞 CONTACT SALES
 
    Email:    sales@clearglassinc.com
-   Phone:    1-800-CLEARGLASS
    Website:  https://www.clearglassinc.com
 
 ═══════════════════════════════════════════════════════════════════════════
@@ -242,7 +241,7 @@ This is a COMMERCIAL PRODUCT available for enterprise licensing.
 ✅ Comprehensive error handling
 ✅ Extensive logging and monitoring
 ✅ Security best practices (encryption, RBAC, audit trails)
-✅ GDPR, SOC 2, CCPA compliant design
+✅ GDPR- and CCPA-aware design (no SOC 2 audit performed)
 ✅ Well-documented and maintainable
 ✅ Modular and extensible architecture
 ✅ Performance optimized

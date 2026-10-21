@@ -11,11 +11,11 @@ own accounts.
 >
 > This week I shipped a workflow engine with one rule: advance exactly **one** keystone outcome per day, and gate everything else behind it. No 14-item backlog cosplaying as a strategy. One outcome → it unlocks the rest.
 >
-> I paired it with a forensic pipeline that, in a live run, flagged a billing collision, an insider snoop (3σ over baseline), and unencrypted PHI — in milliseconds, each traceable back to the exact event that triggered it.
+> I paired it with a forensic pipeline that, in a demo run on synthetic data, flags a billing collision, an insider snoop (3σ over baseline), and unencrypted PHI — in milliseconds, each traceable back to the exact event that triggered it.
 >
 > The lesson from building it: agents don't need to be smarter. They need to be **decisive and auditable.** Constraint is the feature.
 >
-> It's live on npm today: `npm i @clearglassinc/opal-koboi`
+> Source is on GitHub today: https://github.com/ClearGlassInc/Opal-Koboi
 >
 > What's the one outcome your systems should be defending today? 👇
 >
@@ -31,7 +31,7 @@ own accounts.
 
 **3/** The audit side is the part regulated teams care about. Every accepted alert is sealed into a hash-chained ledger + clustered into an incident. Any score reconstructs back to the facts that produced it. "We think it's fine" → "here's the chain."
 
-**4/** All of it runs on the standard library — no heavyweight runtime to babysit. Web/API/UI are optional seams. 90 automated tests, green. Open core (MIT) on npm; hosted + enterprise tiers for teams that need SSO, on-prem, and retention SLAs.
+**4/** All of it runs on the standard library — no heavyweight runtime to babysit. Web/API/UI are optional seams. 93 automated tests, green. Open core (MIT) on GitHub; hosted + enterprise tiers for teams that need SSO, on-prem, and retention SLAs.
 
 **5/** If you run autonomous agents and your oversight story is "we read the logs sometimes," let's talk. Building 3 design-partner integrations in exchange for case studies. DM me.
 
@@ -39,6 +39,6 @@ own accounts.
 
 ## X / short form
 
-> Shipped an AI automation engine with one rule: one keystone outcome a day, everything else gated behind it. Plus a forensic pipeline that caught fraud + an insider snoop + unencrypted PHI in a live run — all auditable to the source event.
+> Shipped an AI automation engine with one rule: one keystone outcome a day, everything else gated behind it. Plus a forensic pipeline that flags fraud + an insider snoop + unencrypted PHI in a synthetic-data demo — all auditable to the source event.
 >
-> Constraint is the feature. `npm i @clearglassinc/opal-koboi`
+> Constraint is the feature. https://github.com/ClearGlassInc/Opal-Koboi

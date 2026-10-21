@@ -177,7 +177,6 @@
   /* --------------------------------------------- 7. Live system log feed */
   const logEl = $("[data-log]");
   if (logEl) {
-    const tags = ["info", "ok", "warn", "sys"];
     const events = [
       ["sys",  "Kernel handshake verified — <b>SENTINEL-7</b> online"],
       ["ok",   "Threat surface scan complete — <b>0 critical</b>"],
@@ -208,14 +207,17 @@
       logEl.prepend(line);
       while (logEl.children.length > MAX_LINES) logEl.lastElementChild.remove();
     };
-    // seed
+    // seed initial entries
     events.slice(0, MAX_LINES).reverse().forEach(([t, m]) => push(t, m));
     if (!reduceMotion) {
       let i = 0;
-      setInterval(() => {
-        const [t, m] = events[i % events.length]; i++;
-        push(t, m);
-      }, 3200);
+      let logTimer = null;
+      const pushNext = () => { const [t, m] = events[i % events.length]; i++; push(t, m); };
+      const startLog = () => { if (!logTimer) logTimer = setInterval(pushNext, 3200); };
+      const stopLog  = () => { clearInterval(logTimer); logTimer = null; };
+      startLog();
+      // Pause the feed while the tab is hidden — saves CPU in background tabs.
+      document.addEventListener("visibilitychange", () => document.hidden ? stopLog() : startLog());
     }
   }
 
@@ -246,5 +248,31 @@
       }, 1900);
     });
   });
+
+  /* ----------------------- 10. Sparkline SVG path draw-in on scroll */
+  // Observes each .metric__spark SVG; when it enters the viewport the child
+  // <path> gets stroke-dashoffset animated from its total length → 0 (fully drawn).
+  // Without JS, sparklines show as normal static lines (safe fallback).
+  const sparkSvgs = $$(".metric__spark");
+  if (sparkSvgs.length && !reduceMotion && "IntersectionObserver" in window) {
+    sparkSvgs.forEach((svg) => {
+      const path = svg.querySelector("path");
+      if (!path) return;
+      try {
+        const len = Math.ceil(path.getTotalLength());
+        path.style.strokeDasharray = len;
+        path.style.strokeDashoffset = len;
+      } catch (_) { /* no-op if element not yet laid out */ }
+    });
+    const sparkIO = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (!en.isIntersecting) return;
+        const path = en.target.querySelector("path");
+        if (path) path.classList.add("is-drawn");
+        sparkIO.unobserve(en.target);
+      });
+    }, { threshold: 0.5 });
+    sparkSvgs.forEach((svg) => sparkIO.observe(svg));
+  }
 
 })();

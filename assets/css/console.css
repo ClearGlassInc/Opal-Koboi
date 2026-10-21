@@ -543,7 +543,7 @@ h1,h2,h3,h4 { font-family: var(--font-display); color: var(--text-hi); line-heig
 .telemetry__row .label-mono { font-size: .62rem; }
 .bar { height: 6px; border-radius: 99px; background: rgba(255,255,255,.05); overflow: hidden; }
 .bar > span {
-  display: block; height: 100%; border-radius: inherit;
+  display: block; height: 100%; border-radius: inherit; width: 0;
   background: linear-gradient(90deg, var(--blue-electric), var(--cyan));
   box-shadow: 0 0 12px rgba(52,227,234,.5);
   transform-origin: left; transition: width 1.2s var(--ease-out);
@@ -694,6 +694,73 @@ h1,h2,h3,h4 { font-family: var(--font-display); color: var(--text-hi); line-heig
   transform: translateY(-2px); will-change: transform, opacity;
 }
 .metric:hover::after { animation: metric-scan 1.4s var(--ease-out) forwards; }
+
+/* Sparkline path draw — triggered by adding .spark-draw class via JS */
+@keyframes spark-draw {
+  from { stroke-dashoffset: var(--spark-len, 300); }
+  to   { stroke-dashoffset: 0; }
+}
+.metric__spark path {
+  stroke-dasharray: var(--spark-len, 300);
+  stroke-dashoffset: var(--spark-len, 300);
+}
+.metric__spark.spark-draw path {
+  animation: spark-draw 1.4s var(--ease-out) forwards;
+}
+
+/* Ambient bloom drift — slow, barely perceptible positional drift */
+@keyframes bloom-drift-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(18px, -22px) scale(1.04); }
+  66%       { transform: translate(-12px, 14px) scale(.97); }
+}
+@keyframes bloom-drift-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  40%       { transform: translate(-20px, 18px) scale(1.05); }
+  70%       { transform: translate(14px, -10px) scale(.98); }
+}
+@keyframes bloom-drift-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25%       { transform: translate(10px, 24px) scale(1.03); }
+  75%       { transform: translate(-16px, -18px) scale(.96); }
+}
+.field__bloom--1 { animation: bloom-drift-1 28s ease-in-out infinite; }
+.field__bloom--2 { animation: bloom-drift-2 34s ease-in-out infinite; }
+.field__bloom--3 { animation: bloom-drift-3 40s ease-in-out infinite; }
+
+/* Signal-pulse sweep across a card on hover — uses a data-signal div
+   injected by JS so it doesn't conflict with .glass::before refraction */
+@keyframes signal-sweep {
+  0%   { transform: translateX(-120%) skewX(-18deg); opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: .8; }
+  100% { transform: translateX(120%) skewX(-18deg); opacity: 0; }
+}
+.card__sweep {
+  position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 2;
+  background: linear-gradient(115deg, transparent 30%, rgba(52,227,234,.12) 50%, transparent 70%);
+  transform: translateX(-120%) skewX(-18deg);
+  opacity: 0;
+  overflow: hidden;
+}
+.card:hover .card__sweep {
+  animation: signal-sweep .72s var(--ease-out) forwards;
+}
+
+/* Data-flow indicator on HUD bar */
+@keyframes data-tick {
+  0%, 90%, 100% { opacity: 0; transform: scaleX(0); }
+  10%, 80%      { opacity: 1; transform: scaleX(1); }
+}
+.hud__bar::after {
+  content: "";
+  position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan) 40%, var(--blue-electric) 60%, transparent);
+  transform-origin: left;
+  animation: data-tick 4s var(--ease-out) infinite;
+  pointer-events: none;
+}
+.hud__bar { position: relative; overflow: visible; }
 
 /* ------------------------------------------- 15. RESPONSIVE & REDUCED MOTION */
 @media (max-width: 900px) {

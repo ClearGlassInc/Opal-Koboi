@@ -180,7 +180,53 @@
     }
   }
 
-  /* --------------------------------------------- 8. Mobile nav toggle */
+  /* ------------------------------ 8. Sparkline stroke-draw on scroll */
+  const sparks = $$(".metric__spark");
+  if (sparks.length && !reduceMotion) {
+    sparks.forEach((svg) => {
+      const path = svg.querySelector("path");
+      if (!path) return;
+      // Measure the actual path length and store it as a CSS custom prop so
+      // the keyframe animation knows how far to travel.
+      const len = path.getTotalLength ? Math.ceil(path.getTotalLength()) : 300;
+      svg.style.setProperty("--spark-len", `${len}px`);
+      path.style.strokeDasharray = `${len}px`;
+      path.style.strokeDashoffset = `${len}px`;
+    });
+    if ("IntersectionObserver" in window) {
+      const sparkIO = new IntersectionObserver((entries) => {
+        entries.forEach((en) => {
+          if (en.isIntersecting) {
+            en.target.classList.add("spark-draw");
+            sparkIO.unobserve(en.target);
+          }
+        });
+      }, { threshold: 0.5 });
+      sparks.forEach((svg) => sparkIO.observe(svg));
+    } else {
+      sparks.forEach((svg) => svg.classList.add("spark-draw"));
+    }
+  } else if (reduceMotion) {
+    sparks.forEach((svg) => {
+      const path = svg.querySelector("path");
+      if (path) { path.style.strokeDashoffset = "0"; }
+    });
+  }
+
+  /* -------------- 9. Visibility-aware animation pausing (performance) */
+  // Pause expensive continuous CSS animations when the tab is hidden.
+  // Uses animation-play-state so state is preserved and resumes cleanly.
+  const setPause = (paused) => {
+    const val = paused ? "paused" : "running";
+    $$(".field__scan, .field__bloom--1, .field__bloom--2, .field__bloom--3, .radar__sweep").forEach((el) => {
+      el.style.animationPlayState = val;
+    });
+  };
+  document.addEventListener("visibilitychange", () => {
+    setPause(document.hidden);
+  });
+
+  /* ---------------------------------------------- 10. Mobile nav toggle */
   const toggle = $("[data-nav-toggle]");
   const nav = $("[data-nav]");
   if (toggle && nav) {
@@ -194,7 +240,17 @@
     }));
   }
 
-  /* --------------------------- 9. Command button demo loading state */
+  /* ------------ 12. Inject card signal-sweep layer (hover energy pulse) */
+  if (!reduceMotion) {
+    $$(".card.glass--ticks").forEach((card) => {
+      const sweep = document.createElement("div");
+      sweep.className = "card__sweep";
+      sweep.setAttribute("aria-hidden", "true");
+      card.appendChild(sweep);
+    });
+  }
+
+  /* -------------------------- 11. Command button demo loading state */
   $$("[data-loading-demo]").forEach((btn) => {
     btn.addEventListener("click", () => {
       if (btn.classList.contains("is-loading")) return;

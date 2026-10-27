@@ -147,7 +147,6 @@
       margin-right: .5em;
     }
   </style>
-  <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -198,6 +197,31 @@
   </style>
 </head>
 <body>
+
+  <!-- Shared gradient defs accessible to all inline SVGs on this page -->
+  <svg style="display:none" aria-hidden="true">
+    <defs>
+      <linearGradient id="spec-grad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#34e3ea"/>
+        <stop offset=".5" stop-color="#2f6bff"/>
+        <stop offset="1" stop-color="#8b5cf6"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Background field — same visual layer as index.html -->
+  <div class="field" aria-hidden="true">
+    <div class="field__grid"></div>
+    <div class="field__bloom field__bloom--1"></div>
+    <div class="field__bloom field__bloom--2"></div>
+    <div class="field__bloom field__bloom--3"></div>
+    <div class="field__scan"></div>
+    <div class="field__scan-h"></div>
+    <div class="field__vignette"></div>
+  </div>
+
 <nav class="cg-nav" aria-label="ClearGlass primary">
   <a class="cg-nav__brand" href="index.html" aria-label="ClearGlass SENTINEL home">
     <svg class="cg-nav__mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
@@ -222,6 +246,10 @@
     <a class="cg-nav__back" href="index.html">← SENTINEL Console</a>
   </div>
 </nav>
+
+  <main id="main" class="shell">
+    <div class="container spec-doc">
+
 <header id="title-block-header">
 <h1 class="title">CLEARGLASS Guardian Command Nexus Specification</h1>
 </header>
@@ -911,8 +939,8 @@ integrations.</li>
         <div class="foot__col" style="max-width:320px">
           <a class="brand" href="index.html" style="margin-bottom:14px">
             <svg class="brand__mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-              <path d="M20 2 L35 11 V29 L20 38 L5 29 V11 Z" stroke="url(#bm-spec)" stroke-width="1.6" fill="rgba(52,227,234,.06)"/>
-              <circle cx="20" cy="20" r="3.4" fill="url(#bm-spec)"/>
+              <path d="M20 2 L35 11 V29 L20 38 L5 29 V11 Z" stroke="url(#spec-grad)" stroke-width="1.6" fill="rgba(52,227,234,.06)"/>
+              <circle cx="20" cy="20" r="3.4" fill="url(#spec-grad)"/>
             </svg>
             <span class="brand__name">CLEAR<span>GLASS</span></span>
           </a>

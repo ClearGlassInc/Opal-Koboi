@@ -1,590 +1,145 @@
 <!-- CLEARGLASS-BRAND:START -->
 <p align="center">
-  <a href="https://www.clearglassinc.com/">
-    <img src="https://raw.githubusercontent.com/ClearGlasslabs/ClearGlassInc./brand-assets/clearglass-seal.jpg" alt="ClearGlass Inc." width="360" />
+  <a href="https://clearglassinc.com">
+    <img src="./Logo.png" alt="ClearGlass Inc. logo" width="120">
   </a>
+</p>
+
+<h1 align="center">ClearGlass Inc. · Opal-Koboi</h1>
+
+<p align="center">
+  <strong>Transparency Is Infrastructure.</strong><br>
+  Mission planning, policy-aware workflow orchestration, and auditable automation.
+</p>
+
+<p align="center">
+  <a href="https://clearglassinc.com">Website</a> ·
+  <a href="./docs/RUNBOOK.md">Runbook</a> ·
+  <a href="https://github.com/ClearGlassInc/Opal-Koboi/actions/workflows/ci.yml">CI checks</a> ·
+  <a href="https://github.com/ClearGlassInc/Opal-Koboi/issues">Issues</a>
 </p>
 <!-- CLEARGLASS-BRAND:END -->
 
-# ClearGlassInc.
+> **Engineering status:** This is a multi-component development repository, not a claim that every system is hosted or production-ready. The Node.js CLI supports local planning and workflow demonstrations. The SENTINEL control surface uses simulated/demo telemetry. Architecture documents and product proposals describe scope, not verified deployments.
 
-> Precision infrastructure for digital sovereignty, intelligent systems, and decentralized execution.
+**Navigate:** [Quick start](#quick-start) · [Repository map](#repository-map) · [Architecture](#architecture) · [Safety](#safety-and-operating-boundaries) · [Documentation](#documentation) · [Licensing](#licensing)
 
-ClearGlassInc is a research and development initiative focused on advanced software systems, automation, cryptocurrency infrastructure, AI integration, and scalable digital products engineered for long-term leverage and financial independence.
+## At a glance
 
----
+| Area | Available in the repository |
+| --- | --- |
+| **Plan** | Score and prioritize mission tasks from JSON inputs |
+| **Orchestrate** | Run local workflow steps with policy and approval-gate checks |
+| **Audit** | Capture workflow events through the in-memory audit ledger |
+| **Prepare content** | Generate local Markdown drafts, CSV calendars, manifests, audit files, and print-ready HTML |
+| **Explore** | Review the static SENTINEL interface, separate research modules, and supporting documentation |
 
-## Vision
+These are descriptions of code paths, not guarantees of external integrations, durable storage, or live autonomous execution.
 
-ClearGlassInc exists to build systems that increase autonomy, intelligence, operational efficiency, and ownership.
+## Quick start
 
-The objective is not temporary trends.
-
-The objective is infrastructure.
-
-We engineer frameworks that merge:
-
-- Artificial Intelligence
-- Automation
-- Blockchain Systems
-- Digital Asset Infrastructure
-- High-performance Software
-- Strategic Information Systems
-- Licensing Models
-- Scalable Revenue Architecture
-
----
-
-## Core Philosophy
-
-- Forward is the only direction.
-- Precision over noise.
-- Systems over chaos.
-- Ownership over dependency.
-- Execution over theory.
-
-ClearGlassInc operates with a long-term mindset focused on resilient architecture and strategic technological positioning.
-
----
-
-# Primary Areas
-
-## AI Systems
-
-Development of intelligent automation systems using:
-
-- LLM integrations
-- Autonomous workflows
-- Multi-agent orchestration
-- Predictive analysis
-- Data intelligence pipelines
-
----
-
-## Cryptocurrency Infrastructure
-
-Research and deployment involving:
-
-- Trading systems
-- Blockchain integrations
-- Smart contracts
-- Wallet infrastructure
-- On-chain analytics
-- Tokenized ecosystems
-- Decentralized finance frameworks
-
----
-
-## Software Engineering
-
-Production-grade development focused on:
-
-- Backend systems
-- API architecture
-- Cloud deployment
-- Secure infrastructure
-- Performance optimization
-- Scalable distributed systems
-
----
-
-## Automation
-
-Automation frameworks designed to reduce friction and maximize leverage.
-
-Includes:
-
-- Business automation
-- AI-assisted execution
-- Infrastructure scripting
-- Workflow orchestration
-- Monitoring systems
-- Autonomous operational tooling
-
----
-
-# Technology Stack
-
-## Languages
-
-- Python
-- JavaScript
-- TypeScript
-- Solidity
-- Go
-- Bash
-
-## Infrastructure
-
-- Docker
-- Linux
-- GitHub Actions
-- Kubernetes
-- Cloudflare
-- PostgreSQL
-- Redis
-
-## AI / ML
-
-- OpenAI APIs
-- Local LLM deployment
-- Vector databases
-- Embedding pipelines
-- Retrieval systems
-
-## Blockchain
-
-- Ethereum
-- Solana
-- LayerZero
-- Smart contracts
-- Web3 integrations
-
----
-
-# Repository Structure
+**Prerequisites:** Node.js 20+ and npm. The GitHub CI configuration uses Node.js 22.
 
 ```bash
-.
-├── ai/
-├── automation/
-├── blockchain/
-├── infrastructure/
-├── scripts/
-├── research/
-├── products/
-├── docs/
-└── README.md
-# CLEARGLASSINC
-## Aerospace Intelligence System v2.0
-
-<div align="center">
-
-![Clearglassinc Logo](https://via.placeholder.com/400x120/667eea/ffffff?text=CLEARGLASSINC)
-
-**Enterprise Market Research & Predictive Analytics Platform**
-
-[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/clearglassinc/aerospace-intel)
-[![License](https://img.shields.io/badge/license-Commercial-red.svg)](LICENSE.txt)
-[![PowerShell](https://img.shields.io/badge/PowerShell-7.0+-blue.svg)](https://github.com/PowerShell/PowerShell)
-[![Status](https://img.shields.io/badge/status-prototype-orange.svg)](#-overview)
-
-[Features](#features) • [Installation](#installation) • [Usage](#usage) • [Documentation](#documentation) • [Support](#support)
-
-</div>
-
----
-
-## 🚀 Overview
-
-> **Prototype status.** In the current code the Clearglassinc Score sub-scores are generated with
-> `Get-Random` and the forecast functions return fixed sample values (`AerospaceIntel.ps1`,
-> `Calculate-ClearglassincScore` and `Predict-*`). Treat all scores and forecasts as illustrative
-> sample output, not as research or investment advice.
-
-**Clearglassinc Aerospace Intelligence System** is the industry's most comprehensive market research and predictive analytics platform for aerospace and defense companies. Built for investors, analysts, and strategic decision-makers who demand enterprise-grade intelligence.
-
-### Why Clearglassinc?
-
-✅ **Multi-Source Data Aggregation** - Combine LinkedIn, Crunchbase, news APIs, SEC filings, and more  
-✅ **AI-Powered Analysis** - Proprietary algorithms deliver insights humans might miss  
-✅ **Predictive Modeling** - Forecast market trends up to 24 months with high confidence  
-✅ **Real-Time Monitoring** - Track competitors and market changes 24/7  
-✅ **Professional Reports** - Generate investor-grade reports in HTML, PDF, Excel  
-✅ **Scalable Architecture** - Process hundreds of companies simultaneously  
-✅ **Commercial Support** - Enterprise-grade support and SLAs  
-
----
-
-## 📊 Features
-
-### Data Collection
-
-- **LinkedIn Integration**: Company profiles, employee data, growth metrics
-- **Crunchbase**: Funding rounds, investors, valuations
-- **News APIs**: 15,000+ publications, real-time sentiment analysis
-- **SEC EDGAR**: Financial filings for public companies
-- **Web Scraping**: Company websites, technical details
-- **Social Media**: Twitter, Reddit, industry forums
-
-### Analysis Engine
-
-- **Competitive Intelligence**: Market positioning, competitor mapping
-- **Financial Analysis**: Funding, revenue, profitability projections
-- **Technology Assessment**: Innovation pipeline, patent analysis
-- **Risk Evaluation**: Technical, market, financial, regulatory risks
-- **Growth Potential**: Market opportunities, expansion vectors
-
-### Predictive Analytics
-
-- **Market Forecasting**: Sector-specific growth predictions
-- **Company Performance**: Revenue and valuation forecasts
-- **Investment Trends**: Funding activity predictions
-- **Technology Adoption**: Emerging tech trend analysis
-- **Competitive Dynamics**: Market share evolution
-
-### Proprietary Clearglassinc Score
-
-Each company receives a comprehensive score (0-100) based on:
-
-| Component | Weight | Description |
-|-----------|--------|-------------|
-| Market Position | 25% | Market share, brand strength, competitive advantage |
-| Financial Health | 20% | Revenue, profitability, funding status |
-| Innovation | 25% | Patents, R&D, technology leadership |
-| Growth Potential | 20% | Market opportunities, expansion plans |
-| Risk Assessment | 10% | Technical, financial, regulatory risks |
-
-**Grades**: A+ (90-100) | A (85-89) | B (70-84) | C (60-69)
-
----
-
-## 💻 Installation
-
-### System Requirements
-
-- **OS**: Windows 10/11, Windows Server 2019+, Linux, macOS
-- **PowerShell**: 7.0 or higher
-- **RAM**: 8GB+ recommended
-- **Storage**: 10GB free space
-
-### Quick Start
-
-```powershell
-# 1. Extract files
-Expand-Archive -Path "Clearglassinc-AerospaceIntel-v2.0.zip" -DestinationPath "C:\Clearglassinc\"
-
-# 2. Navigate to directory
-cd C:\Clearglassinc\clearglassinc-aerospace-intel
-
-# 3. Set API keys (optional but recommended)
-[System.Environment]::SetEnvironmentVariable('CLEARGLASSINC_API_KEY', 'your-license-key', 'User')
-[System.Environment]::SetEnvironmentVariable('LINKEDIN_API_KEY', 'your-key', 'User')
-[System.Environment]::SetEnvironmentVariable('CRUNCHBASE_API_KEY', 'your-key', 'User')
-
-# 4. Run first command
-.\src\AerospaceIntel.ps1 -Mode Scrape -Company "Firefly Aerospace"
+git clone https://github.com/ClearGlassInc/Opal-Koboi.git
+cd Opal-Koboi
+npm ci
+npm test
+npm run build
+npm run dashboard
+npm run orchestrate
 ```
 
-📖 **Full installation guide**: [docs/INSTALLATION.md](docs/INSTALLATION.md)
+### Operator commands
 
----
+| Command | Purpose |
+| --- | --- |
+| `npm run status` | Show the local CLI runtime summary |
+| `npm run plan` | Score and prioritize the example mission |
+| `npm run dashboard` | Render the example mission dashboard summary in the terminal |
+| `npm run orchestrate` | Execute the example workflow through the local engine |
+| `npm run content:deploy` | Write reviewable content drafts and accompanying audit metadata locally |
+| `npm run ci` | Run the npm test and build sequence |
 
-## 🎯 Usage
+The bundled examples are [`examples/mission.json`](./examples/mission.json), [`examples/workflow.json`](./examples/workflow.json), and [`examples/trust-infrastructure-campaign.json`](./examples/trust-infrastructure-campaign.json).
 
-### Basic Commands
+> **Publishing boundary:** `deploy-content` creates local files. Even its `--approve` option changes local approval metadata only; it does **not** post to social networks, send messages, or publish anything externally. See [Content Deployment](./docs/CONTENT_DEPLOYMENT.md).
 
-```powershell
-# Scrape company data
-.\src\AerospaceIntel.ps1 -Mode Scrape -Company "SpaceX"
+## Repository map
 
-# Analyze company
-.\src\AerospaceIntel.ps1 -Mode Analyze -Company "SpaceX"
+| Component | Source | Scope |
+| --- | --- | --- |
+| **Opal-Koboi CLI** | [`bin/`](./bin/), [`src/`](./src/), [`examples/`](./examples/) | Mission scoring, local workflow execution, policy evaluation, draft generation |
+| **SENTINEL control surface** | [`index.html`](./index.html), [`spec.html`](./spec.html), [`assets/`](./assets/) | Static interface and simulated operating signals |
+| **ClearFlow** | [`clearflow/`](./clearflow/) | Local workflow/automation research module |
+| **ClearPulse** | [`clearpulse/`](./clearpulse/) | Triage/compliance demonstration using synthetic inputs and documented service seams |
+| **ARTEMIS** | [`artemis/`](./artemis/), [`apps/artemis-agent/`](./apps/artemis-agent/) | Agent research code, local components, and implementation documentation |
+| **Aerospace research tools** | [`AerospaceIntel.ps1`](./AerospaceIntel.ps1), [`PROJECT_OVERVIEW.md`](./PROJECT_OVERVIEW.md) | Separate legacy PowerShell/research materials; independently assess readiness and license terms |
 
-# Run predictions
-.\src\AerospaceIntel.ps1 -Mode Predict -Timeframe 90
+Component scope and implementation maturity vary. Consult component documentation and tests before relying on a feature operationally.
 
-# Generate report
-.\src\AerospaceIntel.ps1 -Mode Report -Company "SpaceX" -OutputFormat "HTML"
+## Architecture
 
-# Monitor company (continuous)
-.\src\AerospaceIntel.ps1 -Mode Monitor -Company "SpaceX"
+```mermaid
+flowchart TD
+    M["Mission and workflow JSON"] --> CLI["Opal-Koboi CLI"]
+    CLI --> P["Task scoring and planning"]
+    CLI --> W["Workflow and policy engine"]
+    W --> A["In-memory audit events"]
+    CLI --> C["Content bundle generator"]
+    C --> O["Local drafts · CSV · HTML · manifests"]
+    S["SENTINEL static interface"] --- D["Demo / simulated telemetry"]
 ```
 
-### Operating Modes
+<details>
+<summary><strong>Technical implementation notes</strong></summary>
 
-| Mode | Description | Example |
-|------|-------------|---------|
-| **Scrape** | Collect data from multiple sources | Market research, database building |
-| **Analyze** | Comprehensive company analysis | Investment due diligence |
-| **Predict** | Run predictive modeling | Strategic planning |
-| **Monitor** | Real-time continuous tracking | Competitive intelligence |
-| **Report** | Generate professional reports | Client deliverables |
+- `src/index.js` implements task normalization, scoring, and operation planning.
+- `src/platform.js` provides the policy engine, workflow steps, and an **in-memory** audit ledger. Do not treat this ledger as durable, tamper-proof storage.
+- `src/content-deployment.js` produces local review artifacts with an explicit human-approval state.
+- `bin/opal-koboi.js` exposes the CLI commands. Its `run` pathway is a local simulation, not an authorization to operate external services.
+- `index.html`, `spec.html`, and `assets/` are presentation surfaces; displayed signals are not proof of live back-end data.
 
-### Real-World Example
+</details>
 
-**Investment Due Diligence Workflow:**
+## Safety and operating boundaries
 
-```powershell
-# Step 1: Collect comprehensive data
-.\src\AerospaceIntel.ps1 -Mode Scrape -Company "Target Company"
+- **Human approval:** Do not connect real-world actions, credentials, payments, or publication to these demonstrations without explicit approval and separate validation.
+- **Evidence first:** Report observed tests and deployments rather than relying on brochure claims or simulated metrics.
+- **Secret handling:** Keep credentials out of source control; use appropriate environment- or secret-management facilities.
+- **Data separation:** Synthetic demos are not validated clinical, financial, defense, or investment outputs.
+- **CI:** The workflow definition is [`.github/workflows/ci.yml`](./.github/workflows/ci.yml). Check the [latest run](https://github.com/ClearGlassInc/Opal-Koboi/actions/workflows/ci.yml) for its actual status; a README cannot certify a passing build.
 
-# Step 2: Deep analysis
-.\src\AerospaceIntel.ps1 -Mode Analyze -Company "Target Company"
+## Documentation
 
-# Step 3: Market forecasting
-.\src\AerospaceIntel.ps1 -Mode Predict -Timeframe 365
+| Read | Why |
+| --- | --- |
+| [Platform runbook](./docs/RUNBOOK.md) | Local commands and expected command behavior |
+| [Content deployment](./docs/CONTENT_DEPLOYMENT.md) | Draft generation and manual-publication safeguards |
+| [Engineering guidelines](./ENGINEERING_GUIDELINES.md) | Repository development rules and test expectations |
+| [ClearPulse guide](./clearpulse/README.md) | Triage pipeline scope and known limitations |
+| [ARTEMIS agent guide](./apps/artemis-agent/README.md) | Desktop-agent workspace and current code layout |
+| [Security review](./docs/SECURITY_REVIEW.md) | Historical supply-chain findings; revalidate before relying on present status |
 
-# Step 4: Generate investor report
-.\src\AerospaceIntel.ps1 -Mode Report -Company "Target Company" `
-    -OutputFormat "PDF" -EnablePredictiveAnalytics
-```
+<details>
+<summary><strong>Verification checklist for contributors</strong></summary>
 
-📖 **Full user manual**: [docs/UserManual.md](docs/UserManual.md)
+1. Work on a scoped feature branch; preserve unrelated changes.
+2. Run `npm ci && npm test && npm run build`, then `npm run dashboard && npm run orchestrate`.
+3. For changes in Python or desktop subprojects, run their respective component tests.
+4. Review diff and security implications; do not bypass failures or approval gates.
+5. Record commit, checks, limitations, and rollback path in the pull request.
 
----
+</details>
 
-## 📚 Documentation
+## Licensing
 
-| Document | Description |
-|----------|-------------|
-| [**Installation Guide**](docs/INSTALLATION.md) | System requirements, setup, configuration |
-| [**User Manual**](docs/UserManual.md) | Features, commands, best practices |
-| [**API Reference**](docs/APIReference.md) | Technical documentation for developers |
-| [**Troubleshooting**](docs/Troubleshooting.md) | Common issues and solutions |
-
----
-
-## 🏢 Use Cases
-
-### Investment Firms
-
-- **Due Diligence**: Comprehensive company analysis before investment
-- **Portfolio Monitoring**: Track portfolio companies and competitors
-- **Market Research**: Identify emerging opportunities
-
-### Aerospace Companies
-
-- **Competitive Intelligence**: Monitor competitors in real-time
-- **Market Analysis**: Understand industry dynamics
-- **Strategic Planning**: Data-driven decision making
-
-### Consultants
-
-- **Client Deliverables**: Professional intelligence reports
-- **Industry Analysis**: Comprehensive market landscapes
-- **Custom Research**: Tailored investigations
-
-### Government Agencies
-
-- **Market Assessment**: Aerospace industry landscape
-- **Vendor Analysis**: Evaluate potential contractors
-- **Technology Trends**: Track innovation and capabilities
+The root Node.js package identifies [`LICENSE`](./LICENSE) as **MIT**. This repository also contains a separate [`LICENSE.txt`](./LICENSE.txt) that sets out **commercial terms for legacy Aerospace Intelligence System materials**. These files should not be treated as interchangeable. Confirm the applicable rights for any component or asset before reuse or distribution.
 
 ---
 
-## 💡 Sample Output
-
-### Clearglassinc Analysis Report
-
-```
-╔══════════════════════════════════════════════════════════════╗
-║                                                              ║
-║   ██████╗██╗     ███████╗ █████╗ ██████╗  ██████╗ ██╗      ║
-║  ██╔════╝██║     ██╔════╝██╔══██╗██╔══██╗██╔════╝ ██║      ║
-║  ██║     ██║     █████╗  ███████║██████╔╝██║  ███╗██║      ║
-║  ██║     ██║     ██╔══╝  ██╔══██║██╔══██╗██║   ██║██║      ║
-║  ╚██████╗███████╗███████╗██║  ██║██║  ██║╚██████╔╝███████╗ ║
-║   ╚═════╝╚══════╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝ ║
-║                                                              ║
-║          AEROSPACE INTELLIGENCE REPORT                      ║
-║          Firefly Aerospace Analysis                         ║
-║                                                              ║
-╚══════════════════════════════════════════════════════════════╝
-
-CLEARGLASSINC SCORE: 83.7 (Grade: A-)
-
-├─ Market Position: 82.5
-├─ Financial Health: 76.2
-├─ Innovation: 91.3
-├─ Growth Potential: 88.7
-└─ Risk Level: 35.8 (Lower is better)
-
-COMPETITIVE POSITION:
-Market Share: 3-5% (Small-medium launch market)
-Key Competitors: SpaceX, Rocket Lab, Astra, Relativity Space
-
-STRATEGIC RECOMMENDATIONS:
-✓ Accelerate Alpha launch vehicle development
-✓ Pursue satellite constellation partnerships
-✓ Diversify revenue through government contracts
-✓ Invest in reusable technology R&D
-✓ Expand international market presence
-
-PREDICTIVE INSIGHTS (90-day forecast):
-- Launch market growth: +12.5% (High confidence: 87%)
-- Funding opportunity: Strong (Q2-Q3 window)
-- Technology adoption: Reusable tech at 65% industry adoption
-```
-
----
-
-## 🔧 Configuration
-
-### Environment Variables
-
-```powershell
-# Required (with purchase)
-CLEARGLASSINC_API_KEY=your-license-key
-
-# Optional (enhanced features)
-LINKEDIN_API_KEY=your-key
-CRUNCHBASE_API_KEY=your-key
-NEWS_API_KEY=your-key
-OPENAI_API_KEY=your-key
-```
-
-### Configuration File
-
-Edit `config/config.psd1` to customize:
-
-- API integrations
-- Data collection settings
-- Database configuration
-- Analysis parameters
-- Reporting options
-- Cloud integration
-
----
-
-## 🌐 Architecture
-
-```
-clearglassinc-aerospace-intel/
-│
-├── src/
-│   └── AerospaceIntel.ps1          # Main system
-│
-├── modules/
-│   ├── DataScraper.ps1             # Data collection
-│   ├── CompanyAnalyzer.ps1         # Analysis engine
-│   ├── PredictiveEngine.ps1        # AI/ML predictions
-│   ├── ReportGenerator.ps1         # Report creation
-│   └── CloudIntegration.ps1        # Cloud features
-│
-├── config/
-│   └── config.psd1                 # Configuration
-│
-├── data/
-│   ├── cache/                      # Scraped data
-│   ├── reports/                    # Generated reports
-│   └── logs/                       # System logs
-│
-├── models/
-│   └── aerospace_predictor.pkl     # Predictive models
-│
-└── docs/
-    ├── INSTALLATION.md
-    ├── UserManual.md
-    └── APIReference.md
-```
-
----
-
-## 🔐 Security & Compliance
-
-- **API Key Protection**: Environment variables, never hardcoded
-- **Data Encryption**: Optional cache and database encryption
-- **GDPR Compliant**: Configurable data retention and anonymization
-- **Rate Limiting**: Respects all API rate limits
-- **Audit Logging**: Complete activity logs
-
----
-
-## 📦 Pricing & Licensing
-
-### Commercial License
-
-**Clearglassinc Aerospace Intelligence System v2.0**
-
-- **License Type**: Commercial, per-seat
-- **Perpetual License**: Lifetime access
-- **Support**: 12 months included, renewable
-- **Updates**: All minor updates included
-
-**Contact for pricing**: sales@clearglassinc.com
-
-### What's Included
-
-✅ Full source code access  
-✅ Unlimited usage rights  
-✅ Commercial deployment  
-✅ Enterprise support (24-hour SLA)  
-✅ Regular updates and patches  
-✅ Training materials  
-✅ API documentation  
-✅ Custom integration support  
-
----
-
-## 🤝 Support
-
-### Getting Help
-**Clearglassinc Support Team**
-- 📧 Email: support@clearglassinc.com
-- 🐛 Issues: https://github.com/ClearGlassInc/Opal-Koboi/issues
-
-**Response Times:**
-- Critical Issues: 4 hours
-- High Priority: 24 hours
-- Normal Priority: 48 hours
-
-### Community
-
-- **GitHub**: https://github.com/ClearGlassInc/Opal-Koboi
-- **LinkedIn**: https://linkedin.com/company/clearglassinc
-
----
-
-## 🚀 Roadmap
-
-### Version 2.1 (Q2 2025)
-
-- [ ] Advanced AI chatbot interface
-- [ ] Automated alert system
-- [ ] Mobile app (iOS/Android)
-- [ ] Enhanced visualization dashboard
-
-### Version 2.2 (Q3 2025)
-
-- [ ] Real-time data streaming
-- [ ] Blockchain data verification
-- [ ] Multi-language support
-- [ ] Advanced NLP capabilities
-
-### Version 3.0 (Q4 2025)
-
-- [ ] Quantum-resistant encryption
-- [ ] Edge computing support
-- [ ] AR/VR data visualization
-- [ ] Autonomous research agents
-
----
-
-## 📄 License
-
-**Clearglassinc Aerospace Intelligence System v2.0**
-
-Copyright © 2025-2030 Clearglassinc. All rights reserved.
-
-This software is licensed, not sold. Unauthorized copying, modification, distribution, or reverse engineering is strictly prohibited.
-
-See [LICENSE.txt](LICENSE.txt) for full terms.
-
----
-
-## 📞 Contact
-
-**Clearglassinc**
-
-📧 **Email**  
-- Sales: sales@clearglassinc.com
-- Support: support@clearglassinc.com
-- General: info@clearglassinc.com
-
-🌐 **Web**  
-- Website: https://www.clearglassinc.com
-
----
-
-<div align="center">
-
-**Made with ❤️ by Clearglassinc**
-
-Copyright © 2025-2030 Clearglassinc. All rights reserved.
-
-[Website](https://clearglassinc.com) • [Issues](https://github.com/ClearGlassInc/Opal-Koboi/issues)
-
-</div>
-
-<!-- ci-touch: 2026-05-24 fresh workflow trigger -->
+<p align="center">
+  <strong>ClearGlass Inc.</strong><br>
+  See clearly. Operate securely.<br>
+  <a href="https://clearglassinc.com">clearglassinc.com</a>
+</p>

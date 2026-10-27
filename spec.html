@@ -137,6 +137,26 @@
     .spec-back:hover { color: var(--cyan-soft); gap: .7em; }
     .spec-back::before { content: "←"; }
 
+    /* ── Scroll elevation for the spec nav ── */
+    .cg-nav.is-stuck { box-shadow: 0 18px 40px -30px rgba(0,0,0,.9); border-bottom-color: rgba(52,227,234,0.18); }
+
+    /* ── Command palette trigger in spec nav ── */
+    .cg-cmdk {
+      display: inline-flex; align-items: center; gap: 7px;
+      height: 32px; padding: 0 10px;
+      border-radius: 7px;
+      background: rgba(18, 28, 46, 0.42);
+      border: 1px solid rgba(120, 180, 220, 0.16);
+      color: rgba(120, 180, 220, 0.55);
+      cursor: pointer;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.68rem; letter-spacing: 0.1em;
+      transition: color 150ms ease, border-color 150ms ease, background 150ms ease;
+    }
+    .cg-cmdk svg { width: 13px; height: 13px; flex: none; }
+    .cg-cmdk:hover { color: #34e3ea; border-color: rgba(52,227,234,0.38); background: rgba(52,227,234,0.05); }
+    @media (max-width: 600px) { .cg-cmdk__hint { display: none; } }
+
     /* Section divider accent */
     .spec-doc h2::before {
       content: "//";
@@ -243,12 +263,16 @@
   </a>
   <div class="cg-nav__right">
     <span class="cg-nav__badge">SPEC-1</span>
+    <button class="cg-cmdk" type="button" data-cs-open-palette aria-label="Open command palette (⌘K)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <span class="cg-cmdk__hint">⌘K</span>
+    </button>
     <a class="cg-nav__back" href="index.html">← SENTINEL Console</a>
   </div>
 </nav>
 
   <main id="main" class="shell">
-    <div class="container spec-doc">
+    <div class="container spec-doc" data-reveal>
 
 <header id="title-block-header">
 <h1 class="title">CLEARGLASS Guardian Command Nexus Specification</h1>
@@ -1036,5 +1060,15 @@ integrations.</li>
 
   <script src="assets/js/console.js" defer></script>
   <script src="assets/js/control-surface.js" defer></script>
+  <script>
+    /* Scroll elevation for spec nav — lightweight, no dependency */
+    (function () {
+      var nav = document.querySelector('.cg-nav');
+      if (!nav) return;
+      var onScroll = function () { nav.classList.toggle('is-stuck', window.scrollY > 8); };
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    })();
+  </script>
 </body>
 </html>

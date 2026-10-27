@@ -786,3 +786,24 @@ h1,h2,h3,h4 { font-family: var(--font-display); color: var(--text-hi); line-heig
   .metric__spark path { stroke-dashoffset: 0 !important; stroke-dasharray: none !important; }
   .metric::after { display: none; }
 }
+
+/* ── Performance adaptive: data-perf="low" applied by JS on limited hardware ── */
+/* Dims and slows ambient background animations to save battery/CPU.             */
+/* The page remains fully functional and readable.                               */
+[data-perf="low"] .field__bloom {
+  animation-duration: 60s !important;
+  opacity: .25 !important;
+}
+[data-perf="low"] .field__scan,
+[data-perf="low"] .field__scan-h {
+  opacity: .4 !important;
+  animation-duration: 22s !important;
+}
+[data-perf="low"] .radar__sweep {
+  animation-duration: 8s !important;
+}
+[data-perf="low"] .glass--pulse {
+  background-size: 100% 100%, 100% 100% !important;
+  animation: none !important;
+  border: 1px solid var(--glass-stroke-hi);
+}

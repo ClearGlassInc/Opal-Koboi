@@ -9,7 +9,24 @@
   const $  = (s, c = document) => c.querySelector(s);
   const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
 
-  /* ─── PageVisibility: handled below in section 9 ─── */
+  /* ─── Performance adaptive: apply data-perf="low" on limited hardware ─── */
+  // Uses read-only capability hints — no personal data collected.
+  const lowPerf = (
+    (navigator.hardwareConcurrency || 4) <= 2 ||
+    (navigator.deviceMemory !== undefined && navigator.deviceMemory < 2)
+  );
+  if (lowPerf) document.documentElement.setAttribute("data-perf", "low");
+
+  /* ─── Visibility-aware animation pausing (single consolidated handler) ─── */
+  // Pauses expensive continuous animations while the tab is hidden to save CPU.
+  // Covers both the background field and radar elements.
+  const PAUSEABLE_SEL =
+    ".field__scan, .field__scan-h, .field__bloom--1, .field__bloom--2, .field__bloom--3, .radar__sweep, .glass--pulse";
+  const setAnimPause = (paused) => {
+    const val = paused ? "paused" : "";
+    $$(PAUSEABLE_SEL).forEach((el) => { el.style.animationPlayState = val; });
+  };
+  document.addEventListener("visibilitychange", () => setAnimPause(document.hidden));
 
   /* ---------------------------------------------- 1. Click impact ripple */
   // Layered, depth-aware ripple originating from the pointer.
@@ -118,10 +135,10 @@
     }
   }
 
-  /* -------------- 4b. Metric tile data-pulse reveal (is-in class) ------- */
-  // Adds .is-in to .metric tiles when they enter the viewport, triggering
-  // the data-pulse keyframe defined in console.css.
-  if (!reduceMotion && "IntersectionObserver" in window) {
+  /* -------------- 4b. Metric tile in-view: data-pulse glow on entry */
+  // Adds .is-in to each .metric tile for the data-pulse keyframe.
+  // Sparkline drawing is handled in section 8 below.
+  if ("IntersectionObserver" in window && !reduceMotion) {
     const metricIO = new IntersectionObserver((entries) => {
       entries.forEach((en) => {
         if (en.isIntersecting) {
@@ -192,7 +209,7 @@
       logEl.prepend(line);
       while (logEl.children.length > MAX_LINES) logEl.lastElementChild.remove();
     };
-    // seed initial entries
+    // Seed initial entries
     events.slice(0, MAX_LINES).reverse().forEach(([t, m]) => push(t, m));
     if (!reduceMotion) {
       let i = 0;
@@ -206,32 +223,52 @@
     }
   }
 
-  /* -------------- 8. Visibility-aware animation pausing (performance) */
-  // Pause all continuous CSS animations when the tab is hidden.
-  // Uses animation-play-state so state is preserved and resumes cleanly.
-  const setPause = (paused) => {
-    const val = paused ? "paused" : "running";
-    $$(
-      ".field__scan, .field__scan-h, .field__bloom--1, .field__bloom--2, .field__bloom--3, .radar__sweep, .glass--pulse"
-    ).forEach((el) => { el.style.animationPlayState = val; });
-  };
-  document.addEventListener("visibilitychange", () => setPause(document.hidden));
-
-  /* ---------------------------------------------- 10. Mobile nav toggle */
-  const toggle = $("[data-nav-toggle]");
-  const nav = $("[data-nav]");
-  if (toggle && nav) {
-    toggle.addEventListener("click", () => {
-      const open = nav.classList.toggle("is-open");
-      toggle.setAttribute("aria-expanded", String(open));
-    });
-    $$("a", nav).forEach((a) => a.addEventListener("click", () => {
-      nav.classList.remove("is-open");
-      toggle.setAttribute("aria-expanded", "false");
-    }));
+  /* ----------------------- 8. Sparkline SVG path draw-in on scroll */
+  // Measures each sparkline path length, then triggers a CSS stroke-dashoffset
+  // animation (.is-drawn class) when the SVG enters the viewport.
+  // Without JS, sparklines show as static lines (safe fallback).
+  const sparkSvgs = $$(".metric__spark");
+  if (sparkSvgs.length) {
+    if (reduceMotion) {
+      // Show fully drawn without animation
+      sparkSvgs.forEach((svg) => {
+        const path = svg.querySelector("path");
+        if (path) { path.style.strokeDashoffset = "0"; path.style.strokeDasharray = "none"; }
+      });
+    } else {
+      // Measure path lengths and set initial dashoffset
+      sparkSvgs.forEach((svg) => {
+        const path = svg.querySelector("path");
+        if (!path) return;
+        try {
+          const len = Math.ceil(path.getTotalLength());
+          svg.style.setProperty("--spark-len", `${len}px`);
+          path.style.strokeDasharray = `${len}px`;
+          path.style.strokeDashoffset = `${len}px`;
+        } catch (_) { /* element not yet laid out — no-op */ }
+      });
+      // Trigger draw-in when the SVG enters the viewport
+      if ("IntersectionObserver" in window) {
+        const sparkIO = new IntersectionObserver((entries) => {
+          entries.forEach((en) => {
+            if (!en.isIntersecting) return;
+            const path = en.target.querySelector("path");
+            if (path) path.classList.add("is-drawn");
+            sparkIO.unobserve(en.target);
+          });
+        }, { threshold: 0.5 });
+        sparkSvgs.forEach((svg) => sparkIO.observe(svg));
+      } else {
+        // No IntersectionObserver — draw all immediately
+        sparkSvgs.forEach((svg) => {
+          const path = svg.querySelector("path");
+          if (path) path.classList.add("is-drawn");
+        });
+      }
+    }
   }
 
-  /* ------------ 12. Inject card signal-sweep layer (hover energy pulse) */
+  /* ------------ 9. Inject card signal-sweep layer (hover energy pulse) */
   if (!reduceMotion) {
     $$(".card.glass--ticks").forEach((card) => {
       const sweep = document.createElement("div");
@@ -241,7 +278,7 @@
     });
   }
 
-  /* -------------------------- 11. Command button demo loading state */
+  /* -------------------------- 10. Loading-state demo button */
   $$("[data-loading-demo]").forEach((btn) => {
     btn.addEventListener("click", () => {
       if (btn.classList.contains("is-loading")) return;
@@ -255,30 +292,18 @@
     });
   });
 
-  /* ----------------------- 13. Sparkline SVG path draw-in on scroll */
-  // Observes each .metric__spark SVG; when it enters the viewport the child
-  // <path> gets .is-drawn added, triggering the spark-draw CSS keyframe.
-  // Without JS, sparklines render as static lines (safe fallback).
-  const sparkSvgs = $$(".metric__spark");
-  if (sparkSvgs.length && !reduceMotion && "IntersectionObserver" in window) {
-    sparkSvgs.forEach((svg) => {
-      const path = svg.querySelector("path");
-      if (!path) return;
-      try {
-        const len = Math.ceil(path.getTotalLength());
-        path.style.strokeDasharray = len;
-        path.style.strokeDashoffset = len;
-      } catch (_) { /* no-op if element not yet laid out */ }
+  /* ---------------------------------------------- 11. Mobile nav toggle */
+  const toggle = $("[data-nav-toggle]");
+  const nav = $("[data-nav]");
+  if (toggle && nav) {
+    toggle.addEventListener("click", () => {
+      const open = nav.classList.toggle("is-open");
+      toggle.setAttribute("aria-expanded", String(open));
     });
-    const sparkIO = new IntersectionObserver((entries) => {
-      entries.forEach((en) => {
-        if (!en.isIntersecting) return;
-        const path = en.target.querySelector("path");
-        if (path) path.classList.add("is-drawn");
-        sparkIO.unobserve(en.target);
-      });
-    }, { threshold: 0.5 });
-    sparkSvgs.forEach((svg) => sparkIO.observe(svg));
+    $$("a", nav).forEach((a) => a.addEventListener("click", () => {
+      nav.classList.remove("is-open");
+      toggle.setAttribute("aria-expanded", "false");
+    }));
   }
 
 })();

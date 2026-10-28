@@ -88,6 +88,18 @@
     }
   }
 
+  /* ---- 2b. Spec-page: auto-apply staggered reveals to h2 sections ---- */
+  // spec.html wraps its entire content in one [data-reveal] div.
+  // This auto-tags each h2 so they cascade in as the reader scrolls.
+  if (!reduceMotion) {
+    $$(".spec-doc h2").forEach((el, i) => {
+      if (!el.hasAttribute("data-reveal")) {
+        el.setAttribute("data-reveal", "");
+        el.setAttribute("data-delay", String(i * 35));
+      }
+    });
+  }
+
   /* ----------------------------------------- 3. Reveal-on-scroll (IO) */
   const reveals = $$("[data-reveal]");
   if (reveals.length) {
@@ -291,19 +303,5 @@
       }, 1900);
     });
   });
-
-  /* ---------------------------------------------- 11. Mobile nav toggle */
-  const toggle = $("[data-nav-toggle]");
-  const nav = $("[data-nav]");
-  if (toggle && nav) {
-    toggle.addEventListener("click", () => {
-      const open = nav.classList.toggle("is-open");
-      toggle.setAttribute("aria-expanded", String(open));
-    });
-    $$("a", nav).forEach((a) => a.addEventListener("click", () => {
-      nav.classList.remove("is-open");
-      toggle.setAttribute("aria-expanded", "false");
-    }));
-  }
 
 })();

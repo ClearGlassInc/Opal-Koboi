@@ -217,16 +217,39 @@
         t.setAttribute("tabindex", "-1"); t.focus({ preventScroll: true });
       };
       const open = (href) => () => window.open(href, href.startsWith("http") ? "_blank" : "_self");
+
+      // Detect spec page by presence of a spec-only anchor.
+      const onSpecPage = !!$("#purpose-and-scope");
+
+      const shared = [
+        { group: "Open",    icon: ICONS.link,  title: "Repository",   hint: "github.com",                keys: ["repo","github","source"],  run: open("https://github.com/clearglassinc/opal-koboi") },
+        { group: "Systems", icon: ICONS.grid,  title: "Open Systems Drawer", hint: "Live status & controls", keys: ["drawer","status","systems"], run: () => Drawer.open() },
+        { group: "Systems", icon: ICONS.sync,  title: "Refresh Telemetry",   hint: "Re-poll all sources",    keys: ["refresh","reload","poll"],   run: () => Telemetry.refresh() },
+        { group: "Surface", icon: ICONS.motion,title: "Toggle Reduced Motion", hint: "Disable spring motion", keys: ["motion","animation","accessibility"], run: () => toggleMotion() },
+      ];
+
+      if (onSpecPage) {
+        return [
+          { group: "Navigate", icon: ICONS.doc,   title: "Overview",            hint: "Purpose & scope",             keys: ["overview","purpose","scope"],               run: go("#purpose-and-scope") },
+          { group: "Navigate", icon: ICONS.grid,  title: "Core Requirements",   hint: "Functional requirements",     keys: ["requirements","core","functional"],          run: go("#core-requirements") },
+          { group: "Navigate", icon: ICONS.pulse, title: "Domain Model",        hint: "Entities & state ownership",  keys: ["domain","model","entities","state"],         run: go("#domain-model") },
+          { group: "Navigate", icon: ICONS.bolt,  title: "AI Orchestration",    hint: "Command routing & intents",   keys: ["ai","orchestration","command","nlp"],        run: go("#ai-command-orchestration") },
+          { group: "Navigate", icon: ICONS.pulse, title: "Reactive State",      hint: "State fabric, events, reducers", keys: ["state","fabric","reactive","events"],    run: go("#reactive-state-fabric") },
+          { group: "Navigate", icon: ICONS.grid,  title: "Audit Ledger",        hint: "Immutable event recording",   keys: ["audit","ledger","log","immutable"],          run: go("#audit-ledger") },
+          { group: "Navigate", icon: ICONS.bolt,  title: "Security & Safety",   hint: "Zero-trust & hardening",      keys: ["security","safety","zero-trust","auth"],     run: go("#security-and-safety") },
+          { group: "Navigate", icon: ICONS.doc,   title: "Acceptance Criteria", hint: "Definition of done",          keys: ["acceptance","criteria","done","definition"], run: go("#acceptance-criteria") },
+          { group: "Open",     icon: ICONS.bolt,  title: "SENTINEL Console",    hint: "index.html",                  keys: ["console","sentinel","home","index"],         run: open("index.html") },
+          ...shared,
+        ];
+      }
+
       return [
         { group: "Navigate", icon: ICONS.bolt,  title: "Capabilities", hint: "Operational capabilities", keys: ["capabilities","features"], run: go("#capabilities") },
         { group: "Navigate", icon: ICONS.pulse, title: "Telemetry",    hint: "Live metric band",          keys: ["telemetry","metrics"],     run: go("#telemetry") },
         { group: "Navigate", icon: ICONS.grid,  title: "Systems",      hint: "Event stream & posture",    keys: ["systems","events","log"],  run: go("#systems") },
         { group: "Navigate", icon: ICONS.grid,  title: "Components",   hint: "Interface system",          keys: ["components","ui","library"], run: go("#components") },
         { group: "Open",     icon: ICONS.doc,   title: "Specification",hint: "spec.html",                 keys: ["spec","specification"],    run: open("spec.html") },
-        { group: "Open",     icon: ICONS.link,  title: "Repository",   hint: "github.com",                keys: ["repo","github","source"],  run: open("https://github.com/clearglassinc/opal-koboi") },
-        { group: "Systems",  icon: ICONS.grid,  title: "Open Systems Drawer", hint: "Live status & controls", keys: ["drawer","status","systems"], run: () => Drawer.open() },
-        { group: "Systems",  icon: ICONS.sync,  title: "Refresh Telemetry",   hint: "Re-poll all sources",    keys: ["refresh","reload","poll"],   run: () => Telemetry.refresh() },
-        { group: "Surface",  icon: ICONS.motion,title: "Toggle Reduced Motion", hint: "Disable spring motion", keys: ["motion","animation","accessibility"], run: () => toggleMotion() },
+        ...shared,
       ];
     },
     open() {

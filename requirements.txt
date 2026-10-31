@@ -38,7 +38,7 @@ reportlab>=5.0.1  # PDF generation
 Pillow>=12.3.0    # Image processing
 
 # Utilities
-python-dateutil>=2.9.0.post0
+python-dateutil>=3.0.0
 pytz>=2026.3.post1
 tqdm>=4.70.0
 

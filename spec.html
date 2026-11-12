@@ -140,6 +140,16 @@
     /* ── Scroll elevation for the spec nav ── */
     .cg-nav.is-stuck { box-shadow: 0 18px 40px -30px rgba(0,0,0,.9); border-bottom-color: rgba(52,227,234,0.18); }
 
+    /* Accent hairline along cg-nav bottom — mirrors cs-bar::after on index.html */
+    .cg-nav::after {
+      content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(52,227,234,.65), transparent);
+      opacity: .32; transition: opacity 0.32s ease;
+      pointer-events: none;
+    }
+    .cg-nav { position: sticky; top: 0; overflow: visible; }
+    .cg-nav.is-stuck::after { opacity: .8; }
+
     /* ── Command palette trigger in spec nav ── */
     .cg-cmdk {
       display: inline-flex; align-items: center; gap: 7px;

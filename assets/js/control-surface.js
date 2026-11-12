@@ -209,6 +209,9 @@
           e.preventDefault(); this.open();
         }
       });
+
+      // Wire ALL palette-open triggers document-wide (covers cg-nav, cs-bar, rail, etc.)
+      $$("[data-cs-open-palette]").forEach((b) => b.addEventListener("click", () => this.open()));
     },
     buildCommands() {
       const go = (sel) => () => {
@@ -333,6 +336,9 @@
       this.scrim.addEventListener("click", () => this.close());
       document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !this.el.hidden) this.close(); });
       Telemetry.subscribe(() => { if (!this.el.hidden) this.render(); });
+
+      // Wire ALL drawer-open triggers document-wide (covers cg-nav, cs-bar, rail, etc.)
+      $$("[data-cs-open-drawer]").forEach((b) => b.addEventListener("click", () => this.open()));
     },
     open() {
       if (!this.el.hidden) return;

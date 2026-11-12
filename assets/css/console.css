@@ -481,8 +481,14 @@ h1,h2,h3,h4 { font-family: var(--font-display); color: var(--text-hi); line-heig
   margin: 1.1rem 0 0;
 }
 .hero__title .glx {
-  background: linear-gradient(100deg, var(--cyan), var(--blue) 45%, var(--violet));
+  background: linear-gradient(100deg, var(--cyan), var(--blue) 35%, var(--violet) 65%, var(--cyan));
+  background-size: 220% 100%;
   -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: glx-shift 5s ease-in-out infinite alternate;
+}
+@keyframes glx-shift {
+  from { background-position: 0% 50%; }
+  to   { background-position: 100% 50%; }
 }
 .hero__lede { color: var(--text-dim); font-size: clamp(1rem, 1.4vw, 1.18rem); max-width: 52ch; margin-top: 1.4rem; }
 .hero__cta { margin-top: 2.2rem; }
@@ -583,12 +589,12 @@ h1,h2,h3,h4 { font-family: var(--font-display); color: var(--text-hi); line-heig
 .metric__delta { font-family: var(--font-mono); font-size: .72rem; margin-top: 8px; }
 .metric__delta.up   { color: var(--green); }
 .metric__delta.down { color: var(--danger); }
-/* sparkline baseline */
+/* sparkline baseline — initial hidden state; JS measures path length and sets --spark-len */
 .metric__spark { position: absolute; left: 0; right: 0; bottom: 0; height: 36px; opacity: .55; overflow: visible; }
 .metric__spark path {
   fill: none; stroke: var(--cyan); stroke-width: 1.6;
-  stroke-dasharray: var(--spark-len, 400);
-  stroke-dashoffset: var(--spark-len, 400);
+  stroke-dasharray: var(--spark-len, 300);
+  stroke-dashoffset: var(--spark-len, 300);
 }
 /* data-pulse on first scroll reveal — class added by sparkIO observer in console.js */
 .metric.is-in { animation: data-pulse .8s var(--ease-out) .1s both; }
@@ -605,7 +611,21 @@ h1,h2,h3,h4 { font-family: var(--font-display); color: var(--text-hi); line-heig
 
 /* ------------------------------------------------- 12. DATA TRACE / LOG */
 .trace { padding: 0; }
-.trace__head { display: flex; align-items: center; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--glass-stroke); }
+/* Signal-pulse: a glowing pixel that travels down the left edge of the trace panel,
+   simulating data streaming into the event buffer. */
+@keyframes trace-signal {
+  0%   { top: 0; opacity: 0; }
+  5%   { opacity: .8; }
+  90%  { opacity: .6; }
+  100% { top: 100%; opacity: 0; }
+}
+.trace::before {
+  content: ""; position: absolute; left: 0; width: 1px; height: 24px;
+  background: linear-gradient(180deg, transparent, var(--cyan) 50%, transparent);
+  animation: trace-signal 3.6s var(--ease-out) infinite;
+  pointer-events: none; z-index: 2;
+}
+.trace__head { display: flex; align-items: center; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--glass-stroke); position: relative; }
 .trace__head h3 { font-size: .86rem; font-family: var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--text-dim); font-weight: 500; }
 .log { font-family: var(--font-mono); font-size: .78rem; padding: 8px 0; max-height: 280px; overflow: hidden; }
 .log__line {
@@ -655,6 +675,10 @@ h1,h2,h3,h4 { font-family: var(--font-display); color: var(--text-hi); line-heig
 @keyframes metric-signal { 0%,100% { opacity: 0; } 50% { opacity: 1; } }
 /* Data pulse — short-lived glow on metric entry */
 @keyframes data-pulse { 0% { box-shadow: 0 0 0 0 rgba(52,227,234,.55); } 70% { box-shadow: 0 0 0 8px rgba(52,227,234,0); } 100% { box-shadow: 0 0 0 0 rgba(52,227,234,0); } }
+/* Periodic telemetry tick — subtle number glow simulating live data ping.
+   Applied once metric enters viewport (.is-ticking added by JS with staggered delay). */
+@keyframes metric-tick { 0%,92%,100% { text-shadow: none; } 94% { text-shadow: 0 0 10px rgba(52,227,234,.7), 0 0 24px rgba(52,227,234,.3); } }
+.metric__num.is-ticking { animation: metric-tick 7s ease-in-out infinite; }
 /* Sparkline draw + glow cycle — JS adds .is-drawn after measuring path length */
 @keyframes spark-draw { from { stroke-dashoffset: var(--spark-len, 300); } to { stroke-dashoffset: 0; } }
 @keyframes spark-glow { 0%,100% { opacity: .5; } 50% { opacity: .88; } }
@@ -687,31 +711,23 @@ h1,h2,h3,h4 { font-family: var(--font-display); color: var(--text-hi); line-heig
 }
 .metric:hover::after { animation: metric-scan 1.4s var(--ease-out) forwards; }
 
-/* Sparkline initial hidden state — JS measures path length and sets --spark-len */
-.metric__spark path {
-  stroke-dasharray: var(--spark-len, 300);
-  stroke-dashoffset: var(--spark-len, 300);
-}
-/* .spark-draw class added by IO observer as secondary fallback trigger */
-.metric__spark.spark-draw path {
-  animation: spark-draw 1.4s var(--ease-out) forwards;
-}
-
-/* Ambient bloom drift — slow, barely perceptible positional drift */
+/* Ambient bloom drift — slow, barely perceptible positional drift.
+   Uses the independent `translate` CSS property so it composes with
+   the JS pointer-parallax which uses `transform`. Both apply simultaneously. */
 @keyframes bloom-drift-1 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33%       { transform: translate(18px, -22px) scale(1.04); }
-  66%       { transform: translate(-12px, 14px) scale(.97); }
+  0%, 100% { translate:   0px   0px; }
+  33%       { translate:  18px -22px; }
+  66%       { translate: -12px  14px; }
 }
 @keyframes bloom-drift-2 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  40%       { transform: translate(-20px, 18px) scale(1.05); }
-  70%       { transform: translate(14px, -10px) scale(.98); }
+  0%, 100% { translate:   0px   0px; }
+  40%       { translate: -20px  18px; }
+  70%       { translate:  14px -10px; }
 }
 @keyframes bloom-drift-3 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  25%       { transform: translate(10px, 24px) scale(1.03); }
-  75%       { transform: translate(-16px, -18px) scale(.96); }
+  0%, 100% { translate:   0px   0px; }
+  25%       { translate:  10px  24px; }
+  75%       { translate: -16px -18px; }
 }
 .field__bloom--1 { animation: bloom-drift-1 28s ease-in-out infinite; }
 .field__bloom--2 { animation: bloom-drift-2 34s ease-in-out infinite; }
@@ -782,6 +798,10 @@ h1,h2,h3,h4 { font-family: var(--font-display); color: var(--text-hi); line-heig
   [data-reveal] { opacity: 1; transform: none; }
   .btn:hover { transform: none; }
   .field__scan, .field__scan-h, .radar__sweep, .glass--pulse { animation: none; }
+  /* Gradient shift on hero text — freeze at start position */
+  .hero__title .glx { animation: none; background-position: 0% 50%; }
+  /* Data-flow signal pulse — disable decorative motion */
+  .trace::before { animation: none; opacity: 0; }
   /* Ensure sparklines display fully drawn if JS hasn't had a chance to initialize */
   .metric__spark path { stroke-dashoffset: 0 !important; stroke-dasharray: none !important; }
   .metric::after { display: none; }
@@ -806,4 +826,7 @@ h1,h2,h3,h4 { font-family: var(--font-display); color: var(--text-hi); line-heig
   background-size: 100% 100%, 100% 100% !important;
   animation: none !important;
   border: 1px solid var(--glass-stroke-hi);
+}
+[data-perf="low"] .hero__title .glx {
+  animation-duration: 12s !important;
 }

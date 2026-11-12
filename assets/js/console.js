@@ -47,11 +47,14 @@
 
   /* ----------------------------------- 2. Pointer parallax / perspective tilt */
   // Subtle, engineered tilt on elements tagged [data-tilt].
+  // Guard: skip tilt while the element is still in its reveal animation
+  // (before .is-in is applied) so the reveal transition isn't interrupted.
   if (!reduceMotion) {
     const MAX = 6; // degrees
     $$("[data-tilt]").forEach((el) => {
       let raf = null;
       const onMove = (e) => {
+        if (el.dataset.reveal !== undefined && !el.classList.contains("is-in")) return;
         const r = el.getBoundingClientRect();
         const px = (e.clientX - r.left) / r.width - 0.5;
         const py = (e.clientY - r.top) / r.height - 0.5;
@@ -135,14 +138,21 @@
     }
   }
 
-  /* -------------- 4b. Metric tile in-view: data-pulse glow on entry */
-  // Adds .is-in to each .metric tile for the data-pulse keyframe.
-  // Sparkline drawing is handled in section 8 below.
+  /* -------------- 4b. Metric tile in-view: data-pulse glow + periodic tick */
+  // Adds .is-in (data-pulse keyframe) and .is-ticking (periodic telemetry-tick)
+  // to each .metric tile when it enters the viewport.
+  // Staggered animation-delay on the num element simulates independent live readings.
   if ("IntersectionObserver" in window && !reduceMotion) {
     const metricIO = new IntersectionObserver((entries) => {
       entries.forEach((en) => {
         if (en.isIntersecting) {
           en.target.classList.add("is-in");
+          const num = en.target.querySelector(".metric__num");
+          if (num) {
+            const idx = $$(".metric").indexOf(en.target);
+            num.style.animationDelay = `${(idx * 1.8).toFixed(1)}s`;
+            num.classList.add("is-ticking");
+          }
           metricIO.unobserve(en.target);
         }
       });

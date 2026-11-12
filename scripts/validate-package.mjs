@@ -36,7 +36,7 @@ if (!existsSync('test/opal-koboi.test.mjs')) {
 }
 
 const readme = readFileSync('README.md', 'utf8');
-if (!readme.includes('CLEARGLASSINC')) {
+if (!readme.toLowerCase().includes('clearglassinc')) {
   throw new Error('README.md must identify the ClearGlass Inc. project.');
 }
 

@@ -209,6 +209,10 @@
           e.preventDefault(); this.open();
         }
       });
+
+      // Wire every [data-cs-open-palette] trigger site-wide so the button works
+      // on any page (spec.html, index.html) regardless of which nav is present.
+      $$("[data-cs-open-palette]").forEach((b) => b.addEventListener("click", () => this.open()));
     },
     buildCommands() {
       const go = (sel) => () => {

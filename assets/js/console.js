@@ -85,6 +85,11 @@
           });
         });
       }, { passive: true });
+      /* Restore CSS bloom-drift animation when pointer leaves the window */
+      window.addEventListener("pointerleave", () => {
+        if (bloomRaf) { cancelAnimationFrame(bloomRaf); bloomRaf = null; }
+        blooms.forEach((b) => { b.style.transform = ""; });
+      }, { passive: true });
     }
   }
 

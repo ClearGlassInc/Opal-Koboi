@@ -7,6 +7,8 @@
 
 <h1 align="center">ClearGlass Inc. · Opal-Koboi</h1>
 
+<p align="center"><sup>GitHub org: <code>CLEARGLASSINC</code></sup></p>
+
 <p align="center">
   <strong>Transparency Is Infrastructure.</strong><br>
   Mission planning, policy-aware workflow orchestration, and auditable automation.

@@ -21,7 +21,8 @@
   // Pauses expensive continuous animations while the tab is hidden to save CPU.
   // Covers both the background field and radar elements.
   const PAUSEABLE_SEL =
-    ".field__scan, .field__scan-h, .field__bloom--1, .field__bloom--2, .field__bloom--3, .radar__sweep, .glass--pulse";
+    ".field__scan, .field__scan-h, .field__bloom--1, .field__bloom--2, .field__bloom--3, " +
+    ".radar__sweep, .glass--pulse, .field__node";
   const setAnimPause = (paused) => {
     const val = paused ? "paused" : "";
     $$(PAUSEABLE_SEL).forEach((el) => { el.style.animationPlayState = val; });
@@ -276,6 +277,18 @@
       sweep.setAttribute("aria-hidden", "true");
       card.appendChild(sweep);
     });
+  }
+
+  /* -------------------- 10a. Scroll progress bar (spec/long documents) */
+  const progressBar = $("[data-scroll-progress]");
+  if (progressBar) {
+    const updateProgress = () => {
+      const scrollTop = window.scrollY;
+      const docH = document.documentElement.scrollHeight - window.innerHeight;
+      progressBar.style.transform = `scaleX(${docH > 0 ? Math.min(scrollTop / docH, 1) : 0})`;
+    };
+    updateProgress();
+    window.addEventListener("scroll", updateProgress, { passive: true });
   }
 
   /* -------------------------- 10. Loading-state demo button */

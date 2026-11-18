@@ -775,6 +775,7 @@ h1,h2,h3,h4 { font-family: var(--font-display); color: var(--text-hi); line-heig
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .field__node { display: none !important; }
   *, *::before, *::after {
     animation-duration: .001ms !important; animation-iteration-count: 1 !important;
     transition-duration: .001ms !important; scroll-behavior: auto !important;
@@ -787,9 +788,48 @@ h1,h2,h3,h4 { font-family: var(--font-display); color: var(--text-hi); line-heig
   .metric::after { display: none; }
 }
 
+/* ── Ambient node network — sparse glowing nodes drifting in the background field ── */
+/* CSS-only: no canvas, no JS. Visibility pausing handled by console.js. */
+.field__nodes { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.field__node {
+  position: absolute; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--cyan); opacity: 0;
+  box-shadow: 0 0 12px 3px rgba(52,227,234,.5);
+  animation: node-drift var(--nd-dur, 24s) var(--nd-delay, 0s) ease-in-out infinite;
+  will-change: transform, opacity;
+}
+.field__node--2 { background: var(--violet); box-shadow: 0 0 12px 3px rgba(139,92,246,.5); }
+.field__node--4 { background: var(--blue);   box-shadow: 0 0 12px 3px rgba(47,107,255,.5);  }
+/* position + timing per node */
+.field__node--1 { top: 17%; left: 21%; --nd-dur: 22s; --nd-delay:   0s; --nd-tx: 28px; --nd-ty:-18px; }
+.field__node--2 { top: 43%; left: 71%; --nd-dur: 30s; --nd-delay:  -9s; --nd-tx:-34px; --nd-ty: 22px; }
+.field__node--3 { top: 68%; left: 36%; --nd-dur: 18s; --nd-delay: -13s; --nd-tx: 20px; --nd-ty: 26px; }
+.field__node--4 { top: 29%; left: 84%; --nd-dur: 26s; --nd-delay:  -5s; --nd-tx:-24px; --nd-ty:-16px; }
+.field__node--5 { top: 60%; left: 12%; --nd-dur: 34s; --nd-delay: -20s; --nd-tx: 38px; --nd-ty: 14px; }
+@keyframes node-drift {
+  0%, 100% { transform: translate(0, 0); opacity: 0; }
+  10% { opacity: .8; }
+  50% { transform: translate(var(--nd-tx, 24px), var(--nd-ty, -16px)); opacity: .45; }
+  90% { opacity: .8; }
+}
+
+/* Scroll progress bar — used on long documents (spec.html).
+   JS sets scaleX(0–1) via inline transform; transform-origin left. */
+.scroll-progress {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--cyan), var(--blue-electric) 55%, var(--violet));
+  transform: scaleX(0); transform-origin: left;
+  pointer-events: none; z-index: 1;
+  box-shadow: 0 0 8px rgba(52,227,234,.55);
+}
+@media (prefers-reduced-motion: reduce) {
+  .scroll-progress { transition: none !important; }
+}
+
 /* ── Performance adaptive: data-perf="low" applied by JS on limited hardware ── */
 /* Dims and slows ambient background animations to save battery/CPU.             */
 /* The page remains fully functional and readable.                               */
+[data-perf="low"] .field__node { display: none; }
 [data-perf="low"] .field__bloom {
   animation-duration: 60s !important;
   opacity: .25 !important;

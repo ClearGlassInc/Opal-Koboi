@@ -212,7 +212,12 @@
     },
     buildCommands() {
       const go = (sel) => () => {
-        const t = $(sel); if (!t) return;
+        const t = $(sel);
+        if (!t) {
+          // Cross-page: section lives on the main console — navigate there.
+          window.location.href = "index.html" + sel;
+          return;
+        }
         t.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
         t.setAttribute("tabindex", "-1"); t.focus({ preventScroll: true });
       };

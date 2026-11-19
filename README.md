@@ -18,7 +18,7 @@
   <a href="https://github.com/ClearGlassInc/Opal-Koboi/actions/workflows/ci.yml">CI checks</a> ·
   <a href="https://github.com/ClearGlassInc/Opal-Koboi/issues">Issues</a>
 </p>
-<!-- CLEARGLASS-BRAND:END -->
+<!-- CLEARGLASSINC / CLEARGLASS-BRAND:END -->
 
 > **Engineering status:** This is a multi-component development repository, not a claim that every system is hosted or production-ready. The Node.js CLI supports local planning and workflow demonstrations. The SENTINEL control surface uses simulated/demo telemetry. Architecture documents and product proposals describe scope, not verified deployments.
 

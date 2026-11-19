@@ -391,13 +391,15 @@
   const Bar = {
     el: null, status: null, label: null, dot: null, clock: null,
     init() {
+      // Wire open-palette / open-drawer triggers globally so they work on pages
+      // that don't have the full cs-bar element (e.g. spec.html with cg-nav).
+      $$("[data-cs-open-palette]").forEach((b) => b.addEventListener("click", () => Palette.open()));
+      $$("[data-cs-open-drawer]").forEach((b) => b.addEventListener("click", () => Drawer.open()));
       this.el = $("[data-cs-bar]"); if (!this.el) return;
       this.status = $("[data-cs-status]", this.el);
       this.label  = $("[data-cs-status-label]", this.el);
       this.dot    = $(".cs-dot", this.status);
       this.clock  = $("[data-cs-clock]", this.el);
-      $$("[data-cs-open-palette]").forEach((b) => b.addEventListener("click", () => Palette.open()));
-      $$("[data-cs-open-drawer]").forEach((b) => b.addEventListener("click", () => Drawer.open()));
 
       // Sticky elevation when scrolled.
       const onScroll = () => this.el.classList.toggle("is-stuck", window.scrollY > 8);

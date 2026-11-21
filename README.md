@@ -1,4 +1,4 @@
-<!-- CLEARGLASS-BRAND:START -->
+<!-- CLEARGLASSINC CLEARGLASS-BRAND:START -->
 <p align="center">
   <a href="https://clearglassinc.com">
     <img src="./Logo.png" alt="ClearGlass Inc. logo" width="120">

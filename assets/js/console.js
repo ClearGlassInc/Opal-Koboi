@@ -17,14 +17,42 @@
   );
   if (lowPerf) document.documentElement.setAttribute("data-perf", "low");
 
+  /* ─── FPS-adaptive performance guard ───────────────────────────────────── */
+  // Measures actual render frame time during the first 3 seconds of activity.
+  // If average fps falls below 30, escalates to data-perf="low".
+  // Runs only once; non-intrusive (no personal data, only frame timing).
+  if (!lowPerf && !reduceMotion) {
+    let _fpsSamples = 0, _fpsSum = 0, _fpsLast = 0, _fpsRaf = null;
+    const _fpsTick = (ts) => {
+      if (_fpsLast) {
+        const dt = ts - _fpsLast;
+        if (dt > 0 && dt < 500) { _fpsSum += 1000 / dt; _fpsSamples++; }
+      }
+      _fpsLast = ts;
+      if (_fpsSamples < 60) {
+        _fpsRaf = requestAnimationFrame(_fpsTick);
+      } else {
+        const avg = _fpsSum / _fpsSamples;
+        if (avg < 30) document.documentElement.setAttribute("data-perf", "low");
+      }
+    };
+    _fpsRaf = requestAnimationFrame(_fpsTick);
+    // Ensure we stop sampling if the page is hidden before 60 frames.
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden && _fpsRaf) { cancelAnimationFrame(_fpsRaf); _fpsRaf = null; }
+    }, { once: true });
+  }
+
   /* ─── Visibility-aware animation pausing (single consolidated handler) ─── */
   // Pauses expensive continuous animations while the tab is hidden to save CPU.
-  // Covers both the background field and radar elements.
+  // Covers background field, radar, and the hero meta signal.
   const PAUSEABLE_SEL =
     ".field__scan, .field__scan-h, .field__bloom--1, .field__bloom--2, .field__bloom--3, .radar__sweep, .glass--pulse";
   const setAnimPause = (paused) => {
     const val = paused ? "paused" : "";
     $$(PAUSEABLE_SEL).forEach((el) => { el.style.animationPlayState = val; });
+    // Also pause CSS pseudo-element animations via a data attribute the CSS can key on.
+    document.documentElement.classList.toggle("cs-bg-paused", paused);
   };
   document.addEventListener("visibilitychange", () => setAnimPause(document.hidden));
 
@@ -276,6 +304,54 @@
       sweep.setAttribute("aria-hidden", "true");
       card.appendChild(sweep);
     });
+  }
+
+  /* ──────────────── 10a. Spec-doc h2 section heading reveals */
+  // Injects [data-srev] onto every h2 inside .spec-doc and uses
+  // IntersectionObserver to class them .is-in as they scroll into view.
+  // Falls back gracefully if the page has no .spec-doc.
+  const specDoc = $(".spec-doc");
+  if (specDoc && !reduceMotion && "IntersectionObserver" in window) {
+    const h2s = $$("h2", specDoc);
+    h2s.forEach((h, i) => {
+      h.setAttribute("data-srev", "");
+      h.setAttribute("data-srev-delay", String(i * 0));
+    });
+    const srevIO = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (en.isIntersecting) {
+          en.target.classList.add("is-in");
+          srevIO.unobserve(en.target);
+        }
+      });
+    }, { threshold: 0.2, rootMargin: "0px 0px -6% 0px" });
+    h2s.forEach((h) => srevIO.observe(h));
+  }
+
+  /* ──────────────── 10b. Section eyebrow entry ping */
+  if (!reduceMotion && "IntersectionObserver" in window) {
+    const eyebrowIO = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (en.isIntersecting) {
+          en.target.classList.add("is-ping");
+          eyebrowIO.unobserve(en.target);
+        }
+      });
+    }, { threshold: 0.8 });
+    $$(".eyebrow").forEach((e) => eyebrowIO.observe(e));
+  }
+
+  /* ──────────────── 10c. Section-head entry scan */
+  if (!reduceMotion && "IntersectionObserver" in window) {
+    const sectionScanIO = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (en.isIntersecting) {
+          en.target.classList.add("is-scanned");
+          sectionScanIO.unobserve(en.target);
+        }
+      });
+    }, { threshold: 0.4 });
+    $$(".section-head").forEach((s) => sectionScanIO.observe(s));
   }
 
   /* -------------------------- 10. Loading-state demo button */

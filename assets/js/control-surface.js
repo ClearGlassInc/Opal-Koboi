@@ -468,7 +468,14 @@
     openDrawer: () => Drawer.open(),
   };
 
-  const boot = () => { Bar.init(); Rail.init(); Palette.init(); Drawer.init(); Telemetry.start(); };
+  const boot = () => {
+    Bar.init(); Rail.init(); Palette.init(); Drawer.init(); Telemetry.start();
+    // Global fallback bindings for pages that do not carry [data-cs-bar] (e.g. spec.html).
+    // Bar.init() already wires these when the bar is present; double-binding is safe because
+    // open() / close() guard against re-entrant calls.
+    $$("[data-cs-open-palette]").forEach((b) => b.addEventListener("click", () => Palette.open()));
+    $$("[data-cs-open-drawer]").forEach((b) => b.addEventListener("click", () => Drawer.open()));
+  };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
 })();

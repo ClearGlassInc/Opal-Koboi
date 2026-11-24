@@ -751,6 +751,111 @@ h1,h2,h3,h4 { font-family: var(--font-display); color: var(--text-hi); line-heig
 }
 .hud__bar { position: relative; overflow: visible; }
 
+/* ── SPEC DOCUMENT SECTION HEADING REVEAL ──────────────────────────────────
+   Triggered by IntersectionObserver in console.js.
+   Each h2 in .spec-doc gets [data-srev] injected by JS, then .is-in
+   as it scrolls into view — producing a left-accent glow + slide-in. */
+.spec-doc h2[data-srev] {
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity .52s var(--ease-out), transform .52s var(--ease-out),
+              border-left-color .52s var(--ease-out);
+  border-left: 2px solid transparent;
+  padding-left: .55em;
+  margin-left: -.55em;
+}
+.spec-doc h2[data-srev].is-in {
+  opacity: 1;
+  transform: none;
+  border-left-color: rgba(52,227,234,.5);
+}
+
+/* ── HERO STATS DATA-FLOW SIGNAL ────────────────────────────────────────────
+   A travelling highlight dot along the top border of the .hero__meta divider.
+   Communicates live data flow through the stats bar. */
+@keyframes signal-travel {
+  0%   { left: 0;    opacity: 0; }
+  4%   { opacity: 1; }
+  96%  { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+.hero__meta { position: relative; }
+.hero__meta::after {
+  content: "";
+  position: absolute; left: 0; top: 0; height: 1px; width: 36px;
+  background: linear-gradient(90deg, transparent, var(--cyan) 50%, transparent);
+  animation: signal-travel 4.2s var(--ease-out) 2.2s infinite;
+  pointer-events: none;
+}
+
+/* ── SECTION EYEBROW ENTRY SIGNAL ──────────────────────────────────────────
+   A one-shot horizontal ping that fires when an eyebrow enters the viewport.
+   The ::after line expands right then fades, reinforcing data-arrival. */
+@keyframes eyebrow-ping {
+  0%   { width: 0;    opacity: .95; }
+  100% { width: 48px; opacity: 0;   }
+}
+.eyebrow.is-ping::after {
+  content: "";
+  display: inline-block; vertical-align: middle;
+  margin-left: .65em; height: 1px; width: 0;
+  background: var(--cyan);
+  animation: eyebrow-ping .55s var(--ease-out) forwards;
+}
+
+/* ── SECTION HEAD SCAN ──────────────────────────────────────────────────────
+   A single one-shot horizontal scan beam that travels across a .section-head
+   when it enters the viewport (class .is-scanned added by JS). */
+@keyframes section-scan-once {
+  0%   { left: -18%; opacity: 0; }
+  10%  { opacity: .7; }
+  90%  { opacity: .7; }
+  100% { left: 108%;  opacity: 0; }
+}
+.section-head { position: relative; overflow: hidden; }
+.section-head.is-scanned::after {
+  content: "";
+  position: absolute; top: 0; left: -18%; bottom: 0; width: 18%;
+  background: linear-gradient(90deg, transparent, rgba(52,227,234,.045) 50%, transparent);
+  animation: section-scan-once .9s var(--ease-out) forwards;
+  pointer-events: none;
+}
+
+/* ── TELEMETRY STATUS CURSOR ────────────────────────────────────────────────
+   Blinking monospace cursor appended by JS to [data-cursor] elements —
+   communicates that the value is a live feed, not a static label. */
+@keyframes cursor-blink {
+  0%, 49% { opacity: 1; }
+  50%,100% { opacity: 0; }
+}
+[data-cursor]::after {
+  content: "▌";
+  font-family: var(--font-mono);
+  font-size: .75em;
+  color: var(--cyan);
+  margin-left: .08em;
+  animation: cursor-blink 1.1s step-end infinite;
+  vertical-align: baseline;
+}
+
+/* ── NODE SIGNAL PULSE ──────────────────────────────────────────────────────
+   Used by the hero capability list items to send a travelling dot from
+   the chevron marker through the item on a staggered cycle. */
+@keyframes node-signal {
+  0%   { transform: scaleX(0); transform-origin: left;  opacity: 0; }
+  10%  { opacity: 1; transform: scaleX(1); }
+  90%  { opacity: 1; transform: scaleX(1); transform-origin: left; }
+  100% { transform: scaleX(0); transform-origin: right; opacity: 0; }
+}
+
+/* ── CAPABILITY CARD BORDER SIGNAL ─────────────────────────────────────────
+   A slow-cycling gradient border trace that rotates around active cards,
+   signalling live operational status (applied by JS on .card--active). */
+@keyframes card-border-cycle {
+  0%   { background-position: 0 0, 0% 0%; }
+  100% { background-position: 0 0, 400% 0%; }
+}
+
 /* ------------------------------------------- 15. RESPONSIVE & REDUCED MOTION */
 @media (max-width: 900px) {
   .hero__grid { grid-template-columns: 1fr; }
@@ -780,11 +885,17 @@ h1,h2,h3,h4 { font-family: var(--font-display); color: var(--text-hi); line-heig
     transition-duration: .001ms !important; scroll-behavior: auto !important;
   }
   [data-reveal] { opacity: 1; transform: none; }
+  .spec-doc h2[data-srev] { opacity: 1; transform: none; border-left-color: rgba(52,227,234,.4); transition: none; }
   .btn:hover { transform: none; }
   .field__scan, .field__scan-h, .radar__sweep, .glass--pulse { animation: none; }
   /* Ensure sparklines display fully drawn if JS hasn't had a chance to initialize */
   .metric__spark path { stroke-dashoffset: 0 !important; stroke-dasharray: none !important; }
   .metric::after { display: none; }
+  /* Strip new ambient / data-flow animations */
+  .hero__meta::after { display: none; }
+  .eyebrow.is-ping::after { display: none; }
+  .section-head.is-scanned::after { display: none; }
+  [data-cursor]::after { animation: none; opacity: 1; }
 }
 
 /* ── Performance adaptive: data-perf="low" applied by JS on limited hardware ── */
@@ -807,3 +918,12 @@ h1,h2,h3,h4 { font-family: var(--font-display); color: var(--text-hi); line-heig
   animation: none !important;
   border: 1px solid var(--glass-stroke-hi);
 }
+[data-perf="low"] .hero__meta::after { animation-duration: 8s !important; opacity: .3 !important; }
+[data-perf="low"] .section-head.is-scanned::after { animation: none !important; }
+[data-perf="low"] .spec-doc h2[data-srev] { transition-duration: .001ms !important; }
+
+/* ── Background-tab pause state applied by JS on visibilitychange ───────── */
+/* When the tab is hidden, JS sets .cs-bg-paused on <html>; CSS pauses       */
+/* pseudo-element animations that cannot be targeted via style.animationPlayState. */
+.cs-bg-paused .hero__meta::after { animation-play-state: paused !important; }
+.cs-bg-paused [data-cursor]::after { animation-play-state: paused !important; }

@@ -209,6 +209,10 @@
           e.preventDefault(); this.open();
         }
       });
+
+      // Wire ALL data-cs-open-palette triggers globally so pages without a
+      // cs-bar (e.g. spec.html with its own cg-nav) also get click handling.
+      $$("[data-cs-open-palette]").forEach((b) => b.addEventListener("click", () => this.open()));
     },
     buildCommands() {
       const go = (sel) => () => {
@@ -333,6 +337,9 @@
       this.scrim.addEventListener("click", () => this.close());
       document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !this.el.hidden) this.close(); });
       Telemetry.subscribe(() => { if (!this.el.hidden) this.render(); });
+
+      // Wire ALL data-cs-open-drawer triggers globally (covers pages without cs-bar).
+      $$("[data-cs-open-drawer]").forEach((b) => b.addEventListener("click", () => this.open()));
     },
     open() {
       if (!this.el.hidden) return;

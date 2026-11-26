@@ -141,5 +141,6 @@ The root Node.js package identifies [`LICENSE`](./LICENSE) as **MIT**. This repo
 <p align="center">
   <strong>ClearGlass Inc.</strong><br>
   See clearly. Operate securely.<br>
-  <a href="https://clearglassinc.com">clearglassinc.com</a>
+  <a href="https://clearglassinc.com">clearglassinc.com</a><br>
+  <small>© 2026 CLEARGLASSINC</small>
 </p>

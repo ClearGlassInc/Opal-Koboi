@@ -211,9 +211,10 @@ h1,h2,h3,h4 { font-family: var(--font-display); color: var(--text-hi); line-heig
   background: radial-gradient(circle, rgba(52,227,234,.16), transparent 65%); }
 /* slow drifting scan line across whole viewport */
 .field__scan {
-  position: absolute; left: 0; right: 0; height: 220px;
+  position: absolute; left: 0; right: 0; height: 220px; top: 0;
   background: linear-gradient(180deg, transparent, rgba(52,227,234,.045) 50%, transparent);
   animation: field-scan 11s linear infinite;
+  will-change: transform;
 }
 /* vignette + noise */
 .field__vignette {
@@ -642,7 +643,7 @@ h1,h2,h3,h4 { font-family: var(--font-display); color: var(--text-hi); line-heig
 [data-reveal].is-in { opacity: 1; transform: none; }
 
 /* -------------------------------------------------------- 14. KEYFRAMES */
-@keyframes field-scan { 0% { top: -240px; } 100% { top: 120%; } }
+@keyframes field-scan { 0% { transform: translateY(-240px); } 100% { transform: translateY(120vh); } }
 @keyframes border-flow { 0% { background-position: 0 0, 0% 50%; } 100% { background-position: 0 0, 300% 50%; } }
 @keyframes ripple { to { transform: scale(2.4); opacity: 0; } }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -664,14 +665,15 @@ h1,h2,h3,h4 { font-family: var(--font-display); color: var(--text-hi); line-heig
 
 /* Ambient horizontal scan across the background field */
 @keyframes field-scan-h {
-  0%   { left: -280px; }
-  100% { left: 110%; }
+  0%   { transform: translateX(-280px); }
+  100% { transform: translateX(110vw); }
 }
 .field__scan-h {
-  position: absolute; top: 0; bottom: 0; width: 280px;
+  position: absolute; top: 0; bottom: 0; width: 280px; left: 0;
   background: linear-gradient(90deg, transparent, rgba(52,227,234,.022) 50%, transparent);
   animation: field-scan-h 26s linear infinite;
   animation-delay: -14s;
+  will-change: transform;
 }
 
 /* Metric card hover scan — a single-pixel horizontal beam that sweeps down */

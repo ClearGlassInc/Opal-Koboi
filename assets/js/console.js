@@ -17,6 +17,31 @@
   );
   if (lowPerf) document.documentElement.setAttribute("data-perf", "low");
 
+  /* ─── FPS adaptive: degrade to low-perf mode if rendering struggles ─── */
+  // Monitors actual frame rate for 10s after load. Applies data-perf=low
+  // when sustained FPS falls below 30 — covers devices not caught by capability
+  // hints (e.g. thermal throttling, integrated GPU). Stops after 10s to avoid
+  // indefinite overhead. No personal data collected.
+  if (!reduceMotion && !lowPerf) {
+    let _fpsFrames = 0, _fpsLast = performance.now(), _fpsActive = true;
+    const _fpsTick = (now) => {
+      if (!_fpsActive) return;
+      _fpsFrames++;
+      if (now - _fpsLast >= 2000) {
+        const fps = _fpsFrames / ((now - _fpsLast) / 1000);
+        _fpsFrames = 0; _fpsLast = now;
+        if (fps < 30) {
+          document.documentElement.setAttribute("data-perf", "low");
+          _fpsActive = false;
+          return;
+        }
+      }
+      requestAnimationFrame(_fpsTick);
+    };
+    requestAnimationFrame(_fpsTick);
+    setTimeout(() => { _fpsActive = false; }, 10000);
+  }
+
   /* ─── Visibility-aware animation pausing (single consolidated handler) ─── */
   // Pauses expensive continuous animations while the tab is hidden to save CPU.
   // Covers both the background field and radar elements.
